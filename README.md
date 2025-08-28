@@ -23,11 +23,19 @@
 
 ### How to run vasbia
 
-```git clone https://github.com/Vasbia/vasbia-react-native.git``` 
-```cd vasbia-react-native```
-```npm install``` (for typeScript)
-```cd vasbia```
-```npm install``` (for react-native, maplibre)
+```sh
+git clone https://github.com/Vasbia/vasbia-react-native.git
+
+cd vasbia-react-native
+
+# install packet typeScript
+npm install
+
+cd vasbia
+
+# install react-native dependecies, maplibre lib
+npm install
+```
 
 **open 2 terminal**
 terminal 1 : ```npm start```
