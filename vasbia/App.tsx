@@ -1,30 +1,28 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { MapView, Camera, PointAnnotation, MarkerView} from '@maplibre/maplibre-react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import LoginScreen from "./src/screens/LoginScreen";
+import MapScreen from "./src/screens/MapScreen";
+
+const Stack = createNativeStackNavigator<StackParamList>();
+
+const isLoggedIn = false; //will be replace with google auth
+
+export type StackParamList = {
+  Login: undefined;
+  Map: undefined;
+  //Search: undefined;
+  //Notification: undefined;
+};
 
 export default function App() {
   return (
-    <View style={styles.page}>
-      <MapView style={styles.map} mapStyle="https://maptiler.code4.dad/api/maps/bangkok/style.json">
-        <Camera centerCoordinate={[100.772451, 13.727075]} zoomLevel={18}/>
-        {/* <PointAnnotation id={"test"} coordinate={[100.5018, 13.7563]}/> */}
-        <MarkerView coordinate={[100.772451, 13.727075]}>
-          <View style={styles.marker} />
-        </MarkerView>
-      </MapView>
-    </View>
+    <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={isLoggedIn ? "Map" : "Login"}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Map" component={MapScreen} />
+        </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  page: { flex: 1 },
-  map: { flex: 1 },
-  marker: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'blue',
-    borderColor: 'white',
-    borderWidth: 2,
-  },
-});
