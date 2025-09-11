@@ -35,6 +35,11 @@ cd vasbia
 
 # install react-native dependecies, maplibre lib
 npm install
+
+npm install @react-navigation/native
+npm install react-native-screens react-native-safe-area-context
+
+npm install react-native-svg
 ```
 
 **open 2 terminal**
