@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { StackParamList } from '../../App'; 
+import type { StackParamList } from '../../App';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'Login'>;
 
@@ -14,7 +14,7 @@ export default function LoginScreen() {
       <Text style={styles.subtitle}>welcome !</Text>
       <Text style={styles.description}>login with your Google account.</Text>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.replace("Map")}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.replace('Map')}>
         <Text style={styles.buttonText}>Sign in with Google</Text>
       </TouchableOpacity>
     </View>

@@ -1,11 +1,11 @@
-import Svg, { G, Path, Defs, ClipPath } from "react-native-svg";
+import Svg, { G, Path, Defs, ClipPath } from 'react-native-svg';
 
 type IconProps = {
   size?: number;
   color?: string;
 };
 
-export default function LandmarkIcon({ size = 49, color = "#2D6EFF" }: IconProps) {
+export default function LandmarkIcon({ size = 49}: IconProps) {
   return (
     <Svg
       width={size}
