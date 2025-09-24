@@ -7,7 +7,7 @@ import MapScreen from "./src/screens/MapScreen";
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-const isLoggedIn = false; //will be replace with google auth
+const isLoggedIn = true; //will be replace with google auth
 
 export type StackParamList = {
   Login: undefined;
