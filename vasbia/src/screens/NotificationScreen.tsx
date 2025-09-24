@@ -1,25 +1,13 @@
 import * as React from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Platform,
-} from 'react-native';
+  View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Platform} from 'react-native';
 import BackIcon from '../assets/icons/BackIcon';
 import NotificationCard from '../components/NotificationCard';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
 import { Dimensions } from 'react-native';
-
-type Notification = {
-  title: string;
-  date: string;
-  subtitle: string;
-};
+import { Notification } from '../types/Notification';
 
 export default function NotificationScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -113,8 +101,17 @@ const styles = StyleSheet.create({
     top: '30%',
     transform: [{ translateY: -screenWidth * 0.035 }],
   },
-  pageTitle: { fontSize: screenWidth * 0.06, fontWeight: 'bold', color: '#000', textAlign: 'center' },
-  form: { width: '90%', alignSelf: 'center', marginVertical: screenWidth * 0.025 },
+  pageTitle: {
+    fontSize: screenWidth * 0.06,
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center',
+  },
+  form: {
+    width: '90%',
+    alignSelf: 'center',
+    marginVertical: screenWidth * 0.025,
+  },
   input: {
     borderWidth: 1,
     borderColor: '#ccc',
@@ -129,5 +126,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignItems: 'center',
   },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: screenWidth * 0.045 },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: screenWidth * 0.045,
+  },
 });

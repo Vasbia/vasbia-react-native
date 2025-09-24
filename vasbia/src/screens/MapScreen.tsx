@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity, Text, TextInput, Dimensions } from 'react-native';
+import { View, StyleSheet, Modal, TouchableOpacity, Text, TextInput, Dimensions, Platform } from 'react-native';
 import { MapView, Camera, MarkerView} from '@maplibre/maplibre-react-native';
 
 import FloatingIconButton from '../components/FloatingIconButton';
@@ -13,6 +13,7 @@ import LandmarkIcon from '../assets/icons/LandmarkIcon';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import SearchBar from '../components/SearchBar';
 
 export default function MapScreen() {
 
@@ -20,9 +21,20 @@ export default function MapScreen() {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [rating, setRating] = React.useState(0);
   const [feedback, setFeedback] = React.useState('');
+  const [searchText, setSearchText] = React.useState('');
 
   return (
     <View style={styles.page}>
+      <View style={styles.searchBarContainer}>
+        <SearchBar
+          value={searchText}
+          onChangeText={setSearchText}
+          placeholder="Search..."
+          style={styles.functionalSearchBar}
+          inputStyle={styles.functionalSearchInput}
+        />
+      </View>
+
       <MapView style={styles.map} mapStyle="https://maptiler.code4.dad/api/maps/bangkok/style.json">
         <Camera centerCoordinate={[100.772451, 13.727075]} zoomLevel={18}/>
         <MarkerView coordinate={[100.772451, 13.727075]}>
@@ -92,13 +104,57 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
+  searchBarContainer: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 50 : 30,
+    left: 0,
+    right: 0,
+    zIndex: 20,
+    alignItems: 'center',
+  width: '100%',
+  },
+  functionalSearchBar: {
+    width: '90%',
+    alignSelf: 'center',
+  },
+  functionalSearchInput: {
+    fontSize: 16,
+    color: '#222',
+  },
+  searchBarBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    width: '90%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#222',
+    paddingVertical: 0,
+    backgroundColor: 'transparent',
+  },
+  searchIcon: {
+    marginLeft: 8,
+  },
+  searchIconLeft: {
+    marginRight: 8,
+  },
   sheetContent: {
     backgroundColor: '#353638',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 24,
     alignItems: 'center',
-    width: '100%', 
+    width: '100%',
   },
   feedbackInput: {
     width: '100%',
@@ -178,7 +234,6 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 2,
   },
-
   buttonContainer: {
     position: 'absolute',
     right: 15,
