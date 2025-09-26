@@ -8,6 +8,7 @@ import ToggleModeButton from "../components/ToggleModeButton";
 import RatingButton from "../components/RatingButton";
 import { Rating } from 'react-native-elements';
 import NotificationButton from "../components/NotificationButton";
+import SuggestionButton from '../components/SuggestionButton';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -82,6 +83,10 @@ export default function MapScreen() {
         }} />
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
+      </View>
+
+      <View style={styles.suggestButton}>
+        <SuggestionButton />
       </View>
 
       <Modal
@@ -277,6 +282,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 7,
+  },
+  suggestButton: {
+    position: 'absolute',
+    right: 15,
+    bottom: '15%',
   },
 
 });
