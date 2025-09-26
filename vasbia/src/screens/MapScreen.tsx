@@ -1,21 +1,30 @@
 import React from 'react';
+import { useState, useRef } from "react";
 import { View, StyleSheet, Modal, TouchableOpacity, Text, TextInput, Dimensions, Platform } from 'react-native';
-import { MapView, Camera, MarkerView} from '@maplibre/maplibre-react-native';
-
-import FloatingIconButton from '../components/FloatingIconButton';
+import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
+import { useFlyTo } from "../map/useFlyTo";
 import XBIcon from '../assets/icons/XBIcon';
-import ToggleModeBIcon from '../assets/icons/ToggleModeBIcon';
-import RatingBIcon from '../assets/icons/RatingBIcon';
+import ToggleModeButton from "../components/ToggleModeButton";
+import RatingButton from "../components/RatingButton";
 import { Rating } from 'react-native-elements';
-import NotificationBIcon from '../assets/icons/NotificationBIcon';
-import RouteIcon from '../assets/icons/RouteIcon';
-import LandmarkIcon from '../assets/icons/LandmarkIcon';
+import NotificationButton from "../components/NotificationButton";
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import SearchBar from '../components/SearchBar';
+import RenderAllBusStops from "../map/RenderBusStop";
+import RenderAllBusRoutes from "../map/RenderBusRoute";
+import RenderAllLandmarks from "../map/RenderLandmark";
+
+type MapMode = "bus" | "landmark";
 
 export default function MapScreen() {
+  const [initialSet, setInitialSet] = useState(false);
+  const [mode, setMode] = useState<MapMode>("bus");
+  const [selectedId, setSelectedId] = useState<string | null>("null");
+  
+  const cameraRef = useRef<CameraRef>(null);
+  const flyTo = useFlyTo(cameraRef);
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -35,17 +44,44 @@ export default function MapScreen() {
         />
       </View>
 
-      <MapView style={styles.map} mapStyle="https://maptiler.code4.dad/api/maps/bangkok/style.json">
-        <Camera centerCoordinate={[100.772451, 13.727075]} zoomLevel={18}/>
+      <MapView style={styles.map} mapStyle="https://maptiler.code4.dad/api/maps/bangkok/style.json"
+        onDidFinishLoadingMap={() => {
+          if (!initialSet) {
+            cameraRef.current?.setCamera({
+              centerCoordinate: [100.772451, 13.727075],
+              zoomLevel: 18,
+              animationDuration: 1000,
+            });
+            setInitialSet(true);
+          }
+        }}
+      >
+        <Camera ref={cameraRef} />
+        
         <MarkerView coordinate={[100.772451, 13.727075]}>
           <View style={styles.marker} />
         </MarkerView>
+
+        {mode === "bus" && (
+          <>
+            <RenderAllBusRoutes selectedId={selectedId} setSelectedId={setSelectedId} />
+            <RenderAllBusStops selectedId={selectedId} setSelectedId={setSelectedId} flyTo={flyTo}/>
+          </>
+        )}
+
+        {mode === "landmark" && (
+          <RenderAllLandmarks selectedId={selectedId} setSelectedId={setSelectedId} flyTo={flyTo}/>
+        )}
+
       </MapView>
 
       <View style={styles.buttonContainer}>
-        <ToggleModeBIcon iconOn={<RouteIcon  />} iconOff={<LandmarkIcon  />}/>
-        <FloatingIconButton icon={<RatingBIcon />} onPress={() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
-        <FloatingIconButton icon={<NotificationBIcon />} onPress={() => navigation.navigate('Notification')} />
+        <ToggleModeButton onToggle={(isBusMode) => {
+          setMode(isBusMode ? "bus" : "landmark");
+          setSelectedId(null);
+        }} />
+        <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
+        <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
       </View>
 
       <Modal
@@ -240,5 +276,7 @@ const styles = StyleSheet.create({
     top: '35%',
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 7,
   },
+
 });
