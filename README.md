@@ -40,6 +40,7 @@ npm install @react-navigation/native
 npm install react-native-screens react-native-safe-area-context
 
 npm install react-native-svg
+npm install react-native-elements 
 ```
 
 **open 2 terminal**

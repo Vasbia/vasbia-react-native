@@ -5,8 +5,6 @@ type IconProps = {
   color?: string;
 };
 
-
-
 export default function NotificationBIcon({ size = 49}: IconProps) {
   return (
     <Svg
