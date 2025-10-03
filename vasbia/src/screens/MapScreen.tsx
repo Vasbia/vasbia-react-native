@@ -1,28 +1,28 @@
 import React from 'react';
-import { useState, useRef } from "react";
+import { useState, useRef } from 'react';
 import { View, StyleSheet, Modal, TouchableOpacity, Text, TextInput, Dimensions, Platform } from 'react-native';
 import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
-import { useFlyTo } from "../map/useFlyTo";
+import { useFlyTo } from '../map/useFlyTo';
 import XBIcon from '../assets/icons/XBIcon';
-import ToggleModeButton from "../components/ToggleModeButton";
-import RatingButton from "../components/RatingButton";
+import ToggleModeButton from '../components/ToggleModeButton';
+import RatingButton from '../components/RatingButton';
 import { Rating } from 'react-native-elements';
-import NotificationButton from "../components/NotificationButton";
+import NotificationButton from '../components/NotificationButton';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import SearchBar from '../components/SearchBar';
-import RenderAllBusStops from "../map/RenderBusStop";
-import RenderAllBusRoutes from "../map/RenderBusRoute";
-import RenderAllLandmarks from "../map/RenderLandmark";
+import RenderAllBusStops from '../map/RenderBusStop';
+import RenderAllBusRoutes from '../map/RenderBusRoute';
+import RenderAllLandmarks from '../map/RenderLandmark';
 
-type MapMode = "bus" | "landmark";
+type MapMode = 'bus' | 'landmark';
 
 export default function MapScreen() {
   const [initialSet, setInitialSet] = useState(false);
-  const [mode, setMode] = useState<MapMode>("bus");
-  const [selectedId, setSelectedId] = useState<string | null>("null");
-  
+  const [mode, setMode] = useState<MapMode>('bus');
+  const [selectedId, setSelectedId] = useState<string | null>('null');
+
   const cameraRef = useRef<CameraRef>(null);
   const flyTo = useFlyTo(cameraRef);
 
@@ -57,19 +57,19 @@ export default function MapScreen() {
         }}
       >
         <Camera ref={cameraRef} />
-        
+
         <MarkerView coordinate={[100.772451, 13.727075]}>
           <View style={styles.marker} />
         </MarkerView>
 
-        {mode === "bus" && (
+        {mode === 'bus' && (
           <>
             <RenderAllBusRoutes selectedId={selectedId} setSelectedId={setSelectedId} />
             <RenderAllBusStops selectedId={selectedId} setSelectedId={setSelectedId} flyTo={flyTo}/>
           </>
         )}
 
-        {mode === "landmark" && (
+        {mode === 'landmark' && (
           <RenderAllLandmarks selectedId={selectedId} setSelectedId={setSelectedId} flyTo={flyTo}/>
         )}
 
@@ -77,11 +77,17 @@ export default function MapScreen() {
 
       <View style={styles.buttonContainer}>
         <ToggleModeButton onToggle={(isBusMode) => {
-          setMode(isBusMode ? "bus" : "landmark");
+          setMode(isBusMode ? 'bus' : 'landmark');
           setSelectedId(null);
         }} />
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
+        <TouchableOpacity onPress = {() => navigation.navigate('BusStopTimeTable')}>
+          <Text>Test1</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress = {() => navigation.navigate('BusRouteTimeTable')}>
+          <Text>Test2</Text>
+        </TouchableOpacity>
       </View>
 
       <Modal
