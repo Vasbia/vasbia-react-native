@@ -22,7 +22,7 @@ type MapMode = "bus" | "landmark";
 export default function MapScreen() {
   const [initialSet, setInitialSet] = useState(false);
   const [mode, setMode] = useState<MapMode>("bus");
-  const [selectedId, setSelectedId] = useState<string | null>("null");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   
   const cameraRef = useRef<CameraRef>(null);
   const flyTo = useFlyTo(cameraRef);

@@ -98,14 +98,16 @@ export default function RenderAllBusRoutes({ selectedId, setSelectedId }: Render
       >
         <LineLayer id="selectedLine"
           style={{
-            lineColor: "#2D6EFF",
+            lineColor: "#a02dffff",
             lineWidth: 7,
             lineOpacity: 1,
           }}
         />
       </ShapeSource>
       
-      {selectedId && <RenderTrackBus selectedRouteId={selectedId}/>}
+      {selected.features.length > 0 && selected.features[0].properties?.routeId === selectedId && 
+        ( <RenderTrackBus selectedRouteId={selectedId!} /> ) 
+      }
     </>
   );
 }
