@@ -28,6 +28,7 @@ const loadedLandmark: Landmark[] = [
 ];
 
 export default function RenderAllLandmarks({ selectedId, setSelectedId, flyTo }: RenderProps) {  
+
   return (
     <>
         {loadedLandmark.map((landmark) => (

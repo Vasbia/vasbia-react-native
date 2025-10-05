@@ -5,7 +5,7 @@ import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react
 import { useFlyTo } from '../map/useFlyTo';
 import ToggleModeButton from '../components/ToggleModeButton';
 import RatingButton from '../components/RatingButton';
-import RatingModal from "../components/RatingModal";
+import RatingModal from "../components/bottomSheet/RatingModal";
 import NotificationButton from "../components/NotificationButton";
 import SuggestionButton from '../components/SuggestionButton';
 import { useNavigation } from '@react-navigation/native';
@@ -15,6 +15,8 @@ import SearchBar from '../components/SearchBar';
 import RenderAllBusStops from '../map/RenderBusStop';
 import RenderAllBusRoutes from '../map/RenderBusRoute';
 import RenderAllLandmarks from '../map/RenderLandmark';
+
+import BottomSheetHeader from '../components/bottomSheet/BottomSheetHeader';
 
 type MapMode = 'bus' | 'landmark';
 

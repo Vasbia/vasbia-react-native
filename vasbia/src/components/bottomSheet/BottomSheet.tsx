@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, View, TouchableOpacity, StyleSheet } from "react-native";
-import XBIcon from "../assets/icons/XBIcon"; 
+import XBIcon from "../../assets/icons/XBIcon"; 
 
 type BottomSheetProps = {
   visible: boolean;
