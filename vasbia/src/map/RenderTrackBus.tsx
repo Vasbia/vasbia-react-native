@@ -17,19 +17,26 @@ function useMockTrackedBuses(selectedRouteId: string | null) {
 
   useEffect(() => {
     if (!selectedRouteId) {
+      setBuses([]);
       return;
     }
 
-    const interval = setInterval(() => {
-      //API 
+    const fetchMockBuses = () => {
       setBuses([
         {
           busId: "bus-1",
           routeId: selectedRouteId,
-          coordinate: [100.772451 + Math.random() * 0.001, 13.727075 + Math.random() * 0.001,]
+          coordinate: [
+            100.772451 + Math.random() * 0.001,
+            13.727075 + Math.random() * 0.001,
+          ],
         },
       ]);
-    }, 3000);
+    }
+
+    fetchMockBuses();
+
+    const interval = setInterval(fetchMockBuses, 3000);
 
     return () => clearInterval(interval);
   }, [selectedRouteId]);

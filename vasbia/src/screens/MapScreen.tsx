@@ -7,7 +7,8 @@ import XBIcon from '../assets/icons/XBIcon';
 import ToggleModeButton from '../components/ToggleModeButton';
 import RatingButton from '../components/RatingButton';
 import { Rating } from 'react-native-elements';
-import NotificationButton from '../components/NotificationButton';
+import NotificationButton from "../components/NotificationButton";
+import SuggestionButton from '../components/SuggestionButton';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,7 +22,7 @@ type MapMode = 'bus' | 'landmark';
 export default function MapScreen() {
   const [initialSet, setInitialSet] = useState(false);
   const [mode, setMode] = useState<MapMode>('bus');
-  const [selectedId, setSelectedId] = useState<string | null>('null');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const cameraRef = useRef<CameraRef>(null);
   const flyTo = useFlyTo(cameraRef);
@@ -88,6 +89,10 @@ export default function MapScreen() {
         <TouchableOpacity onPress = {() => navigation.navigate('BusRouteTimeTable')}>
           <Text>Test2</Text>
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.suggestButton}>
+        <SuggestionButton />
       </View>
 
       <Modal
@@ -283,6 +288,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 7,
+  },
+  suggestButton: {
+    position: 'absolute',
+    right: 15,
+    bottom: '15%',
   },
 
 });
