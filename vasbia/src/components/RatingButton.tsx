@@ -1,8 +1,8 @@
-import { TouchableOpacity, StyleSheet } from "react-native";
-import RatingBIcon from "../assets/icons/RatingBIcon";
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import RatingBIcon from '../assets/icons/RatingBIcon';
 
 type ButtonProps = {
-  onPressButton?: () => void;   
+  onPressButton?: () => void;
 };
 
 export default function RatingButton({ onPressButton }: ButtonProps) {
@@ -15,6 +15,6 @@ export default function RatingButton({ onPressButton }: ButtonProps) {
 
 const styles = StyleSheet.create({
   button: {
-    
+
   },
 });
