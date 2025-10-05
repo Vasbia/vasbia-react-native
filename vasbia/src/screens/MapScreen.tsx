@@ -3,10 +3,9 @@ import { useState, useRef } from 'react';
 import { View, StyleSheet, Modal, TouchableOpacity, Text, TextInput, Dimensions, Platform } from 'react-native';
 import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
 import { useFlyTo } from '../map/useFlyTo';
-import XBIcon from '../assets/icons/XBIcon';
 import ToggleModeButton from '../components/ToggleModeButton';
 import RatingButton from '../components/RatingButton';
-import { Rating } from 'react-native-elements';
+import RatingModal from "../components/RatingModal";
 import NotificationButton from "../components/NotificationButton";
 import SuggestionButton from '../components/SuggestionButton';
 import { useNavigation } from '@react-navigation/native';
@@ -29,8 +28,6 @@ export default function MapScreen() {
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [rating, setRating] = React.useState(0);
-  const [feedback, setFeedback] = React.useState('');
   const [searchText, setSearchText] = React.useState('');
 
   return (
@@ -89,62 +86,14 @@ export default function MapScreen() {
         <SuggestionButton />
       </View>
 
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="none"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.sheetOverlay}>
-          <View style={styles.sheetContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <XBIcon/>
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>How do you rate our application?</Text>
-            <Rating
-              imageSize={36}
-              startingValue={rating}
-              onFinishRating={setRating}
-              style={styles.rating}
-              tintColor="#353638"
-              ratingColor="#ccd"
-              ratingBackgroundColor="#fff"
-              type="custom"
-            />
-            <Text style={styles.feedbackLabel}>Tell us more (optional)</Text>
-            <TextInput
-              style={styles.feedbackInput}
-              placeholder="Please comment here..."
-              placeholderTextColor="#fff"
-              value={feedback}
-              onChangeText={setFeedback}
-              multiline
-              numberOfLines={8}
-            />
-            <TouchableOpacity
-              style={styles.submitButtonBlack}
-              onPress={() => {
-                setModalVisible(false);
-                setFeedback('');
-                setRating(0);
-              }}
-            >
-              <Text style={styles.submitButtonTextWhite}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+      <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      
     </View>
   );
 }
 
 const { width: screenWidth } = Dimensions.get('window');
 const styles = StyleSheet.create({
-  sheetOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-  },
   searchBarContainer: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 50 : 30,
@@ -188,82 +137,6 @@ const styles = StyleSheet.create({
   },
   searchIconLeft: {
     marginRight: 8,
-  },
-  sheetContent: {
-    backgroundColor: '#353638',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 24,
-    alignItems: 'center',
-    width: '100%',
-  },
-  feedbackInput: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#fff',
-    color: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
-    marginBottom: 10,
-    fontSize: 16,
-    minHeight: 60,
-    textAlignVertical: 'top',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-  },
-  submitButtonBlack: {
-    backgroundColor: '#000',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    marginTop: 8,
-    alignItems: 'center',
-    width: '100%',
-  },
-  feedbackLabel: {
-    alignSelf: 'flex-start',
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  submitButtonTextWhite: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    backgroundColor: 'transparent',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 20,
-    right: 16,
-    zIndex: 10,
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#fff',
-    maxWidth: screenWidth * 0.7,
-    alignSelf: 'center',
-    textAlign: 'center',
-  },
-  rating: {
-    marginBottom: 16,
-    color: '#fff',
-  },
-  submitButton: {
-    backgroundColor: '#2D6EFF',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 24,
-    marginTop: 8,
-  },
-  submitButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-    paddingHorizontal: screenWidth * 0.3,
-    backgroundColor: 'transparent',
   },
   page: { flex: 1 },
   map: { flex: 1 },
