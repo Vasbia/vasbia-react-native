@@ -83,12 +83,6 @@ export default function MapScreen() {
         }} />
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
-        <TouchableOpacity onPress = {() => navigation.navigate('BusStopTimeTable')}>
-          <Text>Test1</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress = {() => navigation.navigate('BusRouteTimeTable')}>
-          <Text>Test2</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.suggestButton}>
