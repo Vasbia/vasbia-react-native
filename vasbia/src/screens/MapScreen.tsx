@@ -16,8 +16,6 @@ import RenderAllBusStops from '../map/RenderBusStop';
 import RenderAllBusRoutes from '../map/RenderBusRoute';
 import RenderAllLandmarks from '../map/RenderLandmark';
 
-import BottomSheetHeader from '../components/bottomSheet/BottomSheetHeader';
-
 type MapMode = 'bus' | 'landmark';
 
 export default function MapScreen() {
