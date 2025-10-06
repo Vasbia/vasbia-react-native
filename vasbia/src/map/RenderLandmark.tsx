@@ -1,5 +1,4 @@
-import { CameraRef, MarkerView } from "@maplibre/maplibre-react-native";
-import { useState } from "react";
+import { MarkerView } from "@maplibre/maplibre-react-native";
 import LandmarkButton from "../components/LandmarkButton";
 
 type Landmark= {
