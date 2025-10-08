@@ -1,5 +1,4 @@
-import { CameraRef, MarkerView } from "@maplibre/maplibre-react-native";
-import { useState } from "react";
+import { MarkerView } from "@maplibre/maplibre-react-native";
 import BusStopButton from "../components/BusStopButton";
 
 type BusStop= {
@@ -8,9 +7,14 @@ type BusStop= {
   coordinate: [number, number];
 };
 
+type SelectedItem = {
+  type: "busStop" | "busRoute" | "landmark" | null;
+  id: string | null;
+};
+
 type RenderProps = {
-  selectedId: string | null;
-  setSelectedId: (id: string | null) => void;
+  selected: SelectedItem;
+  setSelected: (item: SelectedItem) => void;
   flyTo: (coordinate: [number, number], duration?: number, zoom?: number) => void;
 };
 
@@ -27,7 +31,7 @@ const loadedBusStops: BusStop[] = [
   }
 ];
 
-export default function RenderAllBusStops({ selectedId, setSelectedId, flyTo }: RenderProps) {  
+export default function RenderAllBusStops({ selected, setSelected, flyTo }: RenderProps) {  
   return (
     <>
         {loadedBusStops.map((stop) => (
@@ -37,11 +41,15 @@ export default function RenderAllBusStops({ selectedId, setSelectedId, flyTo }: 
             anchor={{ x: 0.5, y: 1 }} //bottom-center hits the coordinate
           >
             <BusStopButton 
-              selected={selectedId === stop.stopId} 
+              selected={selected.id === stop.stopId && selected.type === "busStop"} 
               onPress={() => {
-                setSelectedId(selectedId === stop.stopId ? null : stop.stopId);
+                if (selected.id === stop.stopId && selected.type === "busStop") {
+                  setSelected({ type: null, id: null });
+                } else {
+                  setSelected({type: "busStop", id: stop.stopId});
+                }
                 flyTo(stop.coordinate);
-              }}
+              }} 
             />
           </MarkerView>
         ))}

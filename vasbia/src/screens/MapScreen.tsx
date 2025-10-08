@@ -21,7 +21,11 @@ type MapMode = 'bus' | 'landmark';
 export default function MapScreen() {
   const [initialSet, setInitialSet] = useState(false);
   const [mode, setMode] = useState<MapMode>('bus');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<{
+    type: 'busStop' | 'busRoute' | 'landmark' | null;
+    id: string | null;
+  }>({ type: null, id: null });
+
 
   const cameraRef = useRef<CameraRef>(null);
   const flyTo = useFlyTo(cameraRef);
@@ -62,13 +66,13 @@ export default function MapScreen() {
 
         {mode === 'bus' && (
           <>
-            <RenderAllBusRoutes selectedId={selectedId} setSelectedId={setSelectedId} />
-            <RenderAllBusStops selectedId={selectedId} setSelectedId={setSelectedId} flyTo={flyTo}/>
+            <RenderAllBusRoutes selected={selected} setSelected={setSelected} />
+            <RenderAllBusStops selected={selected} setSelected={setSelected} flyTo={flyTo}/>
           </>
         )}
 
         {mode === 'landmark' && (
-          <RenderAllLandmarks selectedId={selectedId} setSelectedId={setSelectedId} flyTo={flyTo}/>
+          <RenderAllLandmarks selected={selected} setSelected={setSelected} flyTo={flyTo}/>
         )}
 
       </MapView>
@@ -76,7 +80,7 @@ export default function MapScreen() {
       <View style={styles.buttonContainer}>
         <ToggleModeButton onToggle={(isBusMode) => {
           setMode(isBusMode ? 'bus' : 'landmark');
-          setSelectedId(null);
+          setSelected({ type: null, id: null });
         }} />
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />

@@ -7,9 +7,14 @@ type Landmark= {
   coordinate: [number, number];
 };
 
+type SelectedItem = {
+  type: "busStop" | "busRoute" | "landmark" | null;
+  id: string | null;
+};
+
 type RenderProps = {
-  selectedId: string | null;
-  setSelectedId: (id: string | null) => void;
+  selected: SelectedItem;
+  setSelected: (item: SelectedItem) => void;
   flyTo: (coordinate: [number, number], duration?: number, zoom?: number) => void;
 };
 
@@ -26,7 +31,7 @@ const loadedLandmark: Landmark[] = [
   }
 ];
 
-export default function RenderAllLandmarks({ selectedId, setSelectedId, flyTo }: RenderProps) {  
+export default function RenderAllLandmarks({ selected, setSelected, flyTo }: RenderProps) {  
 
   return (
     <>
@@ -37,9 +42,13 @@ export default function RenderAllLandmarks({ selectedId, setSelectedId, flyTo }:
             anchor={{ x: 0.5, y: 1 }} //bottom-center hits the coordinate
             >
             <LandmarkButton 
-              selected={selectedId === landmark.landmarkId} 
+              selected={selected.id === landmark.landmarkId && selected.type === "landmark"} 
               onPress={() => {
-                setSelectedId(selectedId === landmark.landmarkId ? null : landmark.landmarkId);
+                if (selected.id === landmark.landmarkId && selected.type === "landmark") {
+                  setSelected({ type: null, id: null });
+                } else {
+                  setSelected({type: "landmark", id: landmark.landmarkId});
+                }
                 flyTo(landmark.coordinate);
               }} 
             />

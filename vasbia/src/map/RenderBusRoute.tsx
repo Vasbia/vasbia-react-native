@@ -7,9 +7,14 @@ type busRoute= {
   coordinates: [number, number][];
 };
 
+type SelectedItem = {
+  type: "busStop" | "busRoute" | "landmark" | null;
+  id: string | null;
+};
+
 type RenderProps = {
-  selectedId: string | null;
-  setSelectedId: (id: string | null) => void;
+  selected: SelectedItem;
+  setSelected: (item: SelectedItem) => void;
 };
 
 const engineerRoutePaths:busRoute = {
@@ -68,16 +73,22 @@ const loadedBusRoutes: busRoute[] =  [
   engineerRoutePaths,
 ]
 
-export default function RenderAllBusRoutes({ selectedId, setSelectedId }: RenderProps) {
-  const { unselected, selected } = splitRoutesGeoJSON(loadedBusRoutes, selectedId);
+export default function RenderAllBusRoutes({ selected, setSelected }: RenderProps) {
+  const { unSelectedRoute, selectedRoute } = splitRoutesGeoJSON(loadedBusRoutes, selected);
 
   return (
     <>
-      <ShapeSource id="unselectedRoutes" shape={unselected}
+      <ShapeSource id="unselectedRoutes" shape={unSelectedRoute}
         onPress={(e) => {
           const pressedFeature = e.features[0];
           const routeId = pressedFeature?.properties?.routeId;
-          if (routeId) { setSelectedId(selectedId === routeId ? null : routeId); }
+          if (routeId) { 
+            if (selected.id === routeId && selected.type === "busRoute") {
+              setSelected({ type: null, id: null });
+            } else {
+              setSelected({type: "busRoute", id: routeId});
+            }
+          }
         }}
       >
         <LineLayer id="unselectedLine"
@@ -89,11 +100,17 @@ export default function RenderAllBusRoutes({ selectedId, setSelectedId }: Render
         />
       </ShapeSource>
 
-      <ShapeSource id="selectedRoute" shape={selected}
+      <ShapeSource id="selectedRoute" shape={selectedRoute}
         onPress={(e) => {
           const pressedFeature = e.features[0];
           const routeId = pressedFeature?.properties?.routeId;
-          if (routeId) { setSelectedId(selectedId === routeId ? null : routeId); }
+          if (routeId) { 
+            if (selected.id === routeId && selected.type === "busRoute") {
+              setSelected({ type: null, id: null });
+            } else {
+              setSelected({type: "busRoute", id: routeId});
+            }
+          }
         }}
       >
         <LineLayer id="selectedLine"
@@ -105,20 +122,20 @@ export default function RenderAllBusRoutes({ selectedId, setSelectedId }: Render
         />
       </ShapeSource>
       
-      {selected.features.length > 0 && selected.features[0].properties?.routeId === selectedId && 
-        ( <RenderTrackBus selectedRouteId={selectedId!} /> ) 
+      {selectedRoute.features.length > 0 && selectedRoute.features[0].properties?.routeId === selected.id && 
+        ( <RenderTrackBus selectedRouteId={selected.id} /> ) 
       }
     </>
   );
 }
 
-function splitRoutesGeoJSON(busRoutes: busRoute[], selectedId: string | null) 
+function splitRoutesGeoJSON(busRoutes: busRoute[], selected: SelectedItem) 
   : {
-    unselected: GeoJSON.FeatureCollection;
-    selected: GeoJSON.FeatureCollection;
+    unSelectedRoute: GeoJSON.FeatureCollection;
+    selectedRoute: GeoJSON.FeatureCollection;
   } {
-  const selected: GeoJSON.Feature[] = [];
-  const unselected: GeoJSON.Feature[] = [];
+  const selectedRoute: GeoJSON.Feature[] = [];
+  const unSelectedRoute: GeoJSON.Feature[] = [];
 
   busRoutes.forEach((route) => {
     const feature: GeoJSON.Feature = {
@@ -133,16 +150,16 @@ function splitRoutesGeoJSON(busRoutes: busRoute[], selectedId: string | null)
       },
     };
 
-    if (selectedId && route.routeId === selectedId) {
-      selected.push(feature);
+    if (selected.type && route.routeId === selected.id) {
+      selectedRoute.push(feature);
     } else {
-      unselected.push(feature);
+      unSelectedRoute.push(feature);
     }
   });
 
   return {
-    unselected: { type: "FeatureCollection", features: unselected },
-    selected: { type: "FeatureCollection", features: selected },
+    unSelectedRoute: { type: "FeatureCollection", features: unSelectedRoute },
+    selectedRoute: { type: "FeatureCollection", features: selectedRoute }
   };
 }
 
