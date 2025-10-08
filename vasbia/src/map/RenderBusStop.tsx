@@ -37,7 +37,7 @@ fetch(`${Config.BASE_API_URL}/api/busstop/route/1`) // fixed id 1 for now
   return response.json();
 })
 .then((data) => {
-  console.log('Data received:', data);
+  // console.log('Data received:', data);
   loadedBusStops = [];
   data.forEach((stopData: any) => {
     loadedBusStops.push({

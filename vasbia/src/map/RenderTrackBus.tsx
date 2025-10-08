@@ -20,31 +20,44 @@ function useMockTrackedBuses(selectedRouteId: string | null) {
     if (!selectedRouteId) {
       return;
     }
+    // ============================ update bus position from API ===============================
+     const interval = setInterval(async () => {
+    try {
+      const activeBusResponse = await fetch(`${Config.BASE_API_URL}/api/busroute/activebus/${selectedRouteId}`);
+      if (!activeBusResponse.ok) throw new Error('Network response was not ok');
+      const activeBus = await activeBusResponse.json();
+      // console.log('Active buses:', activeBus);
 
-    const interval = setInterval(() => {
-      // ============================ track bus API ===============================
-      fetch(`${Config.BASE_API_URL}/api/bus/position/1`) // fixed id 1 for now
-      .then((response) => {
-        if (!response.ok) {
-          // throw new Error('Network response was not ok ' + response.status);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log('Data received:', data);
-        setBuses([
-          {
-            busId: "bus-1",
-            routeId: selectedRouteId,
-            coordinate: [data.longitude, data.latitude]
-          },
-        ]);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-      // ============================ track bus API ===============================
-    }, 3000);
+      const busData = await Promise.all(
+        activeBus.map(async (bus: any) => {
+          try {
+            const positionRes = await fetch(`${Config.BASE_API_URL}/api/bus/position/${bus.busId}`);
+            if (!positionRes.ok) throw new Error('Network response was not ok');
+            const data = await positionRes.json();
+            // console.log('Bus position data:', data);
+
+            if (data.message === "NO_BUS_ACTIVE") return null;
+
+            return {
+              busId: bus.busId,
+              routeId: selectedRouteId,
+              coordinate: [data.data.longitude, data.data.latitude],
+            } as TrackedBus;
+          } catch (error) {
+            console.error(`Error fetching bus ${bus.busId} position:`, error);
+            return null;
+          }
+        })
+      );
+
+      const validBuses = busData.filter((b): b is TrackedBus => b !== null);
+      // console.log('Active bus data to set:', validBuses);
+      setBuses(validBuses);
+    } catch (error) {
+      console.error('Error fetching active buses:', error);
+    }
+  }, 3000);
+  // ============================ update bus position from API ===============================
 
     return () => clearInterval(interval);
   }, [selectedRouteId]);
