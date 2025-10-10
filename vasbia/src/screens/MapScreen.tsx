@@ -15,6 +15,7 @@ import SearchBar from '../components/SearchBar';
 import RenderAllBusStops from '../map/RenderBusStop';
 import RenderAllBusRoutes from '../map/RenderBusRoute';
 import RenderAllLandmarks from '../map/RenderLandmark';
+import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
 
 type MapMode = 'bus' | 'landmark';
 
@@ -46,7 +47,7 @@ export default function MapScreen() {
         />
       </View>
 
-      <MapView style={styles.map} mapStyle="https://maptiler.code4.dad/api/maps/bangkok/style.json"
+      <MapView style={styles.map} mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=oQ7ceXLhobx6gMFyLsem"
         onDidFinishLoadingMap={() => {
           if (!initialSet) {
             cameraRef.current?.setCamera({
@@ -76,6 +77,8 @@ export default function MapScreen() {
         )}
 
       </MapView>
+
+      {RenderDetailsBottomSheet(selected)}
 
       <View style={styles.buttonContainer}>
         <ToggleModeButton onToggle={(isBusMode) => {

@@ -1,5 +1,7 @@
 import { MarkerView } from "@maplibre/maplibre-react-native";
 import BusStopButton from "../components/BusStopButton";
+import BottomSheetWithHeader from "../components/bottomSheet/BottomSheetWithHeader";
+import { Text } from "react-native-svg";
 
 type BusStop= {
   stopId: string;
