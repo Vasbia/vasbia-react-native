@@ -1,26 +1,51 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import BottomSheetWithHeader from "./BottomSheetWithHeader";
 
-export default function LandmarkDetails({ data }: { data: any }) {
+type LandmarkDetails = {
+  id: string;
+  landmarkName: string;
+  coordinate: [number, number]; 
+  description?: string;         
+  imageUrl?: string;            
+};
+
+export default function LandmarkDetails({ data }: { data: LandmarkDetails }) {
   if (!data) return null;
+
+  const header = data.landmarkName;
+  const subHeader = data.coordinate.join(", ");
 
   return (
     <BottomSheetWithHeader
-      header={data.landmarkName}
-      subHeader={"Landmark details"}
+      header={header}
+      subHeader={subHeader}
     >
       <View style={{ alignItems: "center" }}>
-        <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
-          {data.landmarkName}
+        <Text style={styles.headerText}>
+          {header}
         </Text>
-        <Text>
-            {"Landmark details"}
+        <Text style={styles.subHeaderText}>
+          {subHeader}
         </Text>
-        <Text style={{ color: "#ccc", marginTop: 8 }}>
+        <Text style={styles.description}>
           {data.description ?? "No description"}
         </Text>
       </View>
     </BottomSheetWithHeader>
   );
 }
+
+const styles = StyleSheet.create({
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  subHeaderText: {
+    color: "#ccc",
+  },
+  description: {
+
+  },
+});

@@ -1,26 +1,50 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import BottomSheetWithHeader from "./BottomSheetWithHeader";
 
-export default function BusStopDetails({ data }: { data: any }) {
+type BusStopDetails = {
+  id: string;
+  busStopName: string;
+  coordinate: [number, number]; 
+  routes: string[];          
+};
+
+export default function BusStopDetails({ data }: { data: BusStopDetails }) {
   if (!data) return null;
+
+  const header = data.busStopName;
+  const subHeader = data.coordinate.join(", ");
 
   return (
     <BottomSheetWithHeader
-      header={data.busStopName}
-      subHeader={"Bus stop information"}
+      header={header}
+      subHeader={subHeader}
     >
       <View style={{ alignItems: "center" }}>
-        <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
-          Bus Stop: {data.busStopName}
+        <Text style={styles.headerText}>
+          Bus Stop: {header}
         </Text>
-        <Text>
-            {"Bus stop information"}
+        <Text style={styles.subHeaderText}>
+            {subHeader}
         </Text>
-        <Text style={{ color: "#ccc", marginTop: 8 }}>
+        <Text style={styles.description}>
           Routes: {data.routes?.join(", ") ?? "N/A"}
         </Text>
       </View>
     </BottomSheetWithHeader>
   );
 }
+
+const styles = StyleSheet.create({
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  subHeaderText: {
+    color: "#ccc",
+  },
+  description: {
+
+  },
+});

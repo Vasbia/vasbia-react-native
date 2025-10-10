@@ -1,21 +1,33 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import BottomSheetWithHeader from "./BottomSheetWithHeader";
+
+type BusRouteDetails = {
+  id: string;
+  routeName: string;
+  stops: {
+    id: string;
+    name: string;
+  }[];
+};
 
 export default function BusRouteDetails({ data }: { data: any }) {
   if (!data) return null;
 
+  const header = data.routeName;
+  const subHeader = "";
+
   return (
     <BottomSheetWithHeader
-      header={data.routeName}
-      subHeader={"Bus route details"}
+      header={header}
+      subHeader={subHeader}
     >
       <View style={{ alignItems: "center" }}>
-        <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
-          Route: {data.routeName}
+        <Text style={styles.headerText}>
+          Route: {header}
         </Text>
-        <Text>
-            {"Bus route details"}
+        <Text style={styles.subHeaderText}>
+            {subHeader}
         </Text>
         <Text style={{ color: "#ccc", marginTop: 8 }}>
           Stops: {data.stops?.map((s: any) => s.name).join(", ") ?? "N/A"}
@@ -24,3 +36,17 @@ export default function BusRouteDetails({ data }: { data: any }) {
     </BottomSheetWithHeader>
   );
 }
+
+const styles = StyleSheet.create({
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  subHeaderText: {
+    color: "#ccc",
+  },
+  description: {
+
+  },
+});

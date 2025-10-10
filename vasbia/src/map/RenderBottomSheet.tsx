@@ -10,26 +10,28 @@ type SelectedItem = {
 
 //Mock API calls for details
 async function fetchLandmarkDetails(id: string) {
-  await new Promise((r) => setTimeout(r, 1000));
+  await new Promise((r) => setTimeout(r, 300));
   return {
     id,
     landmarkName: "อาคาร 12 ชั้น",
+    coordinate: [100.772388, 13.727487],
     description: "อาคารเรียนสูง 12 ชั้น เป็นจุดสำคัญของคณะวิศวกรรมศาสตร์",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Example-image.jpg",
+    imageUrl: "https://admin.curriculum.kmitl.ac.th/api/media/file/1440753623-72-o.jpg",
   };
 }
 
 async function fetchBusStopDetails(id: string) {
-  await new Promise((r) => setTimeout(r, 1000));
+  await new Promise((r) => setTimeout(r, 300));
   return {
     id,
     busStopName: "Bus Stop A",
+    coordinate: [100.772123, 13.727050],
     routes: ["Route 1", "Route 2"],
   };
 }
 
 async function fetchBusRouteDetails(id: string) {
-  await new Promise((r) => setTimeout(r, 1000));
+  await new Promise((r) => setTimeout(r, 300));
   return {
     id,
     routeName: "Route 1",

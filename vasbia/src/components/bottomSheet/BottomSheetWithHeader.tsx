@@ -64,5 +64,6 @@ const styles = StyleSheet.create({
   },
   subHeaderText: {
     color: "#ccc",
+    paddingBottom: 10,
   },
 });
