@@ -21,21 +21,23 @@ export default function LoginScreen() {
       <Text style={styles.description}>login with your imagination.</Text>
 
       <TextInput
-        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10 }}
+        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10, color: 'black' }}
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
         onChangeText={setEmail}
         value={email}
         placeholder="Email"
+        placeholderTextColor={'gray'}
       />
 
       <TextInput
-        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10}}
+        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10, color: 'black' }}
         onChangeText={setPassword}
         value={password}
         placeholder="Password"
         secureTextEntry={true}
+        placeholderTextColor={'gray'}
       />
 
       {/* ============================ login API =============================== */}
@@ -82,11 +84,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
+    color: '#555'
   },
   subtitle: {
     fontSize: 20,
     marginBottom: 4,
     textAlign: 'center',
+    color: '#555'
   },
   description: {
     fontSize: 16,
