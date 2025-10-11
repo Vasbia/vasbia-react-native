@@ -62,8 +62,10 @@ export default function LoginScreen() {
           .then(response => response.json())
           .then((res) => {
             CookieManager.clearAll();
+
+            console.log('Login response:', res);
             
-            if (res.status != 200) {
+            if (res.message != "Login Success!!") {
               setErrorMessage("Invalid email or password.");
               return;
             }
