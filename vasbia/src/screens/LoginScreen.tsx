@@ -5,6 +5,8 @@ import type { StackParamList } from '../../App';
 import { useState } from 'react';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
+import ToastError from '../components/ToastError';
+import ToastSuccess from '../components/ToastSuccess';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'Login'>;
 
@@ -13,9 +15,15 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>("Test error message for ToastError");
+  const [successMessage, setSuccessMessage] = useState<string | null>("Test success message ");
 
   return (
     <View style={styles.container}>
+      {errorMessage && <ToastError toastMessage={errorMessage} />}
+      {successMessage && <ToastSuccess toastMessage={successMessage} />}
+      
       <Text style={styles.title}>Vusbia</Text>
       <Text style={styles.subtitle}>welcome !</Text>
       <Text style={styles.description}>login with your imagination.</Text>
@@ -47,6 +55,10 @@ export default function LoginScreen() {
         await fetch(`${Config.BASE_API_URL}/api/auth/login?email=${encodedEmail}&password=${encodedPassword}`, {method: 'POST'})
         .then(response => response.text())
         .then((jwtToken) => {
+          if (!jwtToken){
+            setErrorMessage("Invalid email or password.");
+            return;
+          }
             CookieManager.set(`${Config.BASE_API_URL}`, {
             name: 'token',
             value: jwtToken,
@@ -58,11 +70,14 @@ export default function LoginScreen() {
         })
         .catch((error) => {
           console.error('Error:', error);
+          setErrorMessage("An error occurred. Please try again..");
           // Handle any errors that occurred during the request
         });
         navigation.replace('Map');
+        setSuccessMessage("Login successful!");
         const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
         console.log('Cookies after login:', cookies["token"].value);
+
         }}>
         <Text style={styles.buttonText}>Sign in</Text>
       </TouchableOpacity>
