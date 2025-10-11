@@ -15,14 +15,14 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>("Test error message for ToastError");
-  const [successMessage, setSuccessMessage] = useState<string | null>("Test success message ");
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   return (
     <View style={styles.container}>
-      {errorMessage && <ToastError toastMessage={errorMessage} />}
-      {successMessage && <ToastSuccess toastMessage={successMessage} />}
+      {errorMessage && <ToastError toastMessage={errorMessage} onHide={() => setErrorMessage(null)} />}
+      {successMessage && <ToastSuccess toastMessage={successMessage} onHide={() => setErrorMessage(null)} />}
       
       <Text style={styles.title}>Vusbia</Text>
       <Text style={styles.subtitle}>welcome !</Text>
@@ -52,31 +52,48 @@ export default function LoginScreen() {
       <TouchableOpacity style={styles.button} onPress={async () => {
         var encodedEmail = encodeURIComponent(email);
         var encodedPassword = encodeURIComponent(password);
+
+        if (email === '' || password === '') {
+          setErrorMessage("Please enter both email and password.");
+          return;
+        }
+
         await fetch(`${Config.BASE_API_URL}/api/auth/login?email=${encodedEmail}&password=${encodedPassword}`, {method: 'POST'})
-        .then(response => response.text())
-        .then((jwtToken) => {
-          if (!jwtToken){
+          .then(response => response.json())
+          .then((res) => {
+            CookieManager.clearAll();
+            
+            if (res.status != 200) {
+              setErrorMessage("Invalid email or password.");
+              return;
+            }
+
+          
+            CookieManager.set(`${Config.BASE_API_URL}`, {
+              name: 'token',
+              value: res.token,
+              domain: `${(Config.BASE_API_URL)?.replace('https://', '')}`,
+              path: '/',
+              version: '1',
+              // expires: '2030-12-31T23:59:59.00-00:00',
+            });
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            setErrorMessage("An error occurred. Please try again..");
+            // Handle any errors that occurred during the request
+          });
+
+          const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
+          console.log('Cookies after login:', cookies["token"].value);
+          
+          if (cookies["token"] === undefined) {
             setErrorMessage("Invalid email or password.");
             return;
           }
-            CookieManager.set(`${Config.BASE_API_URL}`, {
-            name: 'token',
-            value: jwtToken,
-            domain: `${(Config.BASE_API_URL)?.replace('https://', '')}`,
-            path: '/',
-            version: '1',
-            // expires: '2030-12-31T23:59:59.00-00:00',
-          });
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          setErrorMessage("An error occurred. Please try again..");
-          // Handle any errors that occurred during the request
-        });
-        navigation.replace('Map');
+          
         setSuccessMessage("Login successful!");
-        const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-        console.log('Cookies after login:', cookies["token"].value);
+        navigation.replace('Map');
 
         }}>
         <Text style={styles.buttonText}>Sign in</Text>

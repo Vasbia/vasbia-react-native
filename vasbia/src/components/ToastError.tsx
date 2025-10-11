@@ -1,11 +1,12 @@
 import {TouchableOpacity, View, StyleSheet, Text} from "react-native";
-import {useState} from "react";
+import {useState, useEffect, useDebugValue} from "react";
 
 interface ToastErrorProps {
     toastMessage: string;
+    onHide?: () => void; // callback when the toast hides
 }
 
-export default function ToastError({ toastMessage }: ToastErrorProps) {
+export default function ToastError({ toastMessage, onHide }: ToastErrorProps) {
 
     const [isVisible, setIsVisible] = useState(true);
 
@@ -13,9 +14,14 @@ export default function ToastError({ toastMessage }: ToastErrorProps) {
         setIsVisible(false);
     }
 
-    setTimeout(() => {
-        setIsVisible(false);
-    }, 3000);
+   useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsVisible(false);
+            onHide?.();  
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [onHide]);
 
     if (!isVisible) return null;
 
