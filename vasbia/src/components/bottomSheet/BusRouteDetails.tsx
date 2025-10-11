@@ -1,6 +1,9 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import BottomSheetWithHeader from "./BottomSheetWithHeader";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../../../App";
 
 type BusRouteDetails = {
   id: string;
@@ -14,21 +17,30 @@ type BusRouteDetails = {
 export default function BusRouteDetails({ data }: { data: any }) {
   if (!data) return null;
 
+  const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+
   const header = data.routeName;
-  const subHeader = "";
+  const subHeader = data.id;
 
   return (
     <BottomSheetWithHeader
       header={header}
       subHeader={subHeader}
     >
-      <View style={{ alignItems: "center" }}>
-        <Text style={styles.headerText}>
-          Route: {header}
-        </Text>
-        <Text style={styles.subHeaderText}>
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.headerText}>
+            Bus stop: {header}
+          </Text>
+          <Text style={styles.subHeaderText}>
             {subHeader}
-        </Text>
+          </Text>
+        </View>
+
+        <TouchableOpacity onPress = {() => navigation.navigate('BusRouteTimeTable')}>
+          <Text style={styles.timeTable}>ดูตารางเวลา</Text>
+        </TouchableOpacity>
+        
         <Text style={{ color: "#ccc", marginTop: 8 }}>
           Stops: {data.stops?.map((s: any) => s.name).join(", ") ?? "N/A"}
         </Text>
@@ -38,15 +50,28 @@ export default function BusRouteDetails({ data }: { data: any }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+  },
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#fff"
   },
   subHeaderText: {
-    color: "#ccc",
+    fontWeight: "medium",
+    paddingBottom: 12,
+    color: "#fff"
+  },
+  timeTable: {
+    fontWeight: "bold", 
+    fontSize: 16, 
+    paddingBottom: 12, 
+    alignSelf: "center", 
+    color: "#fff"
   },
   description: {
-
+    fontWeight: "medium",
+    color: "#fff"
   },
 });

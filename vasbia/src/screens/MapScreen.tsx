@@ -1,13 +1,14 @@
 import React from 'react';
 import { useState, useRef } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity, Text, TextInput, Dimensions, Platform } from 'react-native';
+import { View, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
 import { useFlyTo } from '../map/useFlyTo';
 import ToggleModeButton from '../components/ToggleModeButton';
 import RatingButton from '../components/RatingButton';
 import RatingModal from "../components/bottomSheet/RatingModal";
 import NotificationButton from "../components/NotificationButton";
-import SuggestionButton from '../components/SuggestionButton';
+import SuggestionBIcon from '../assets/icons/SuggestionBIcon';
+import SuggestBottomSheet from '../components/bottomSheet/SuggestBottomSheet';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -33,6 +34,7 @@ export default function MapScreen() {
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [suggestVisible, setSuggestVisible] = React.useState(false);
   const [searchText, setSearchText] = React.useState('');
 
   return (
@@ -81,20 +83,23 @@ export default function MapScreen() {
       {RenderDetailsBottomSheet(selected)}
 
       <View style={styles.buttonContainer}>
-        <ToggleModeButton onToggle={(isBusMode) => {
-          setMode(isBusMode ? 'bus' : 'landmark');
-          setSelected({ type: null, id: null });
-        }} />
+        <ToggleModeButton mode={mode} setMode={setMode} onToggle={() => setSelected({type: null, id: null})}/>
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
       </View>
 
-      <View style={styles.suggestButton}>
-        <SuggestionButton />
-      </View>
+      <TouchableOpacity onPress={() => {setSuggestVisible(true)}} style={styles.suggestButton}>
+        <SuggestionBIcon />
+      </TouchableOpacity>
 
       <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
-      
+      <SuggestBottomSheet 
+        visible={suggestVisible} 
+        setVisible={setSuggestVisible} 
+        setSelected={setSelected} 
+        flyTo={flyTo}
+        setMode={setMode}
+      />
     </View>
   );
 }

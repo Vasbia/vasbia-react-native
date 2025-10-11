@@ -13,8 +13,8 @@ async function fetchLandmarkDetails(id: string) {
   await new Promise((r) => setTimeout(r, 300));
   return {
     id,
-    landmarkName: "อาคาร 12 ชั้น",
-    coordinate: [100.772388, 13.727487],
+    landmarkName: "Faculty of Engineering, KMITL",
+    subDetails: "Chalong Krung 1 Alley, Lat Krabang, Bangkok 10520",
     description: "อาคารเรียนสูง 12 ชั้น เป็นจุดสำคัญของคณะวิศวกรรมศาสตร์",
     imageUrl: "https://admin.curriculum.kmitl.ac.th/api/media/file/1440753623-72-o.jpg",
   };
@@ -25,7 +25,7 @@ async function fetchBusStopDetails(id: string) {
   return {
     id,
     busStopName: "Bus Stop A",
-    coordinate: [100.772123, 13.727050],
+    subDetails: "Chalong Krung 1 Alley, Lat Krabang, Bangkok 10520",
     routes: ["Route 1", "Route 2"],
   };
 }
@@ -48,8 +48,8 @@ export default function RenderDetailsBottomSheet(selected : SelectedItem) {
 
     useEffect(() => {
         if (!selected || !selected.type || !selected.id) {
-            setDetails(null);
-            return;
+          setDetails(null);
+          return;
         }
 
         let active = true;
@@ -57,10 +57,8 @@ export default function RenderDetailsBottomSheet(selected : SelectedItem) {
         setDetails(null);
         
         const fetcher =
-        selected.type === "landmark"
-            ? fetchLandmarkDetails
-            : selected.type === "busStop"
-            ? fetchBusStopDetails
+        selected.type === "landmark" ? fetchLandmarkDetails
+            : selected.type === "busStop" ? fetchBusStopDetails
             : fetchBusRouteDetails;
 
         fetcher(selected.id)
@@ -78,8 +76,7 @@ export default function RenderDetailsBottomSheet(selected : SelectedItem) {
     }, [selected]);
 
   if (!selected?.type || !selected.id) return null;
-  if (loading) return null; // you can replace with a spinner if you like
-  if (!details) return null;
+  if (loading || !details) return null; //replace with a spinner?
 
   switch (selected.type) {
     case "landmark":

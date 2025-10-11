@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingVertical: 16,
-    paddingHorizontal: 50,
+    paddingHorizontal: 30,
   },
   dragHandle: {
 

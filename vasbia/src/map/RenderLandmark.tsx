@@ -41,17 +41,7 @@ export default function RenderAllLandmarks({ selected, setSelected, flyTo }: Ren
             coordinate={landmark.coordinate} 
             anchor={{ x: 0.5, y: 1 }} //bottom-center hits the coordinate
             >
-            <LandmarkButton 
-              selected={selected.id === landmark.landmarkId && selected.type === "landmark"} 
-              onPress={() => {
-                if (selected.id === landmark.landmarkId && selected.type === "landmark") {
-                  setSelected({ type: null, id: null });
-                } else {
-                  setSelected({type: "landmark", id: landmark.landmarkId});
-                }
-                flyTo(landmark.coordinate);
-              }} 
-            />
+            <LandmarkButton landmark={landmark} selected={selected} setSelected={setSelected} flyTo={flyTo} />
           </MarkerView>
         ))}
     </>
