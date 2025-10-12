@@ -6,8 +6,8 @@ type LandmarkDetails = {
   id: string;
   landmarkName: string;
   subDetails: string; 
-  description?: string;         
-  imageUrl?: string;            
+  description?: string;
+  imageUrl?: string;
 };
 
 export default function LandmarkDetails({ data }: { data: LandmarkDetails }) {

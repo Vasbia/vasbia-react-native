@@ -38,7 +38,7 @@ var loadedLandmark: Landmark[] = [];
 fetch(`${Config.BASE_API_URL}/api/place/route/1`)
 .then((response) => response.json())
 .then((data) => {
-  console.log("Fetched landmarks:", data);
+  //console.log("Fetched landmarks:", data);
   data.forEach((landmark:any) => {
     // console.log("Processing landmark:", landmark.place_id);
     loadedLandmark.push({
@@ -47,7 +47,7 @@ fetch(`${Config.BASE_API_URL}/api/place/route/1`)
       coordinate: [landmark.longitude, landmark.latitude],
     });
   })
-  // console.log("Loaded bus landmarks:", loadedLandmark);
+  // console.log("Loaded landmarks:", loadedLandmark);
 })
 .catch((error) => {
   console.error("Error fetching landmarks:", error);

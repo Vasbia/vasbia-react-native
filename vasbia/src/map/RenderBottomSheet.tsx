@@ -2,22 +2,34 @@ import { useEffect, useState } from "react";
 import LandmarkDetails from "../components/bottomSheet/LandmarkDetails";
 import BusStopDetails from "../components/bottomSheet/BusStopDetails";
 import BusRouteDetails from "../components/bottomSheet/BusRouteDetails";
+import Config from "react-native-config";
 
 type SelectedItem = {
   type: "busStop" | "busRoute" | "landmark" | null;
   id: string | null;
 };
 
-//Mock API calls for details
+//API calls for details
 async function fetchLandmarkDetails(id: string) {
-  await new Promise((r) => setTimeout(r, 300));
-  return {
-    id,
-    landmarkName: "Faculty of Engineering, KMITL",
-    subDetails: "Chalong Krung 1 Alley, Lat Krabang, Bangkok 10520",
-    description: "อาคารเรียนสูง 12 ชั้น เป็นจุดสำคัญของคณะวิศวกรรมศาสตร์",
-    imageUrl: "https://admin.curriculum.kmitl.ac.th/api/media/file/1440753623-72-o.jpg",
+  const details = {
+    id: {id},
+    landmarkName: null as string | null,
+    subDetails: null as string | null,
+    imageUrl: null as string | null,
   };
+  await fetch(`${Config.BASE_API_URL}/api/place/${id}`)
+  .then((response) => response.json())
+  .then((data) => {
+    // console.log("Fetched landmark details:", data);
+    details.landmarkName = data.name;
+    details.subDetails = data.name;
+    details.imageUrl = data.image;
+  })
+  // console.log("Loaded landmark details:", loadedLandmark);
+  .catch((error) => {
+    console.error("Error fetching landmark details:", error);
+  });
+  return details;
 }
 
 async function fetchBusStopDetails(id: string) {

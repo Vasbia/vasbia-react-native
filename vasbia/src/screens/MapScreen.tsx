@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: 'absolute',
     right: 15,
-    top: '35%',
+    top: '25%',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 7,
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   suggestButton: {
     position: 'absolute',
     right: 15,
-    bottom: '15%',
+    bottom: '30%',
   },
 
 });
