@@ -1,33 +1,37 @@
 import React from 'react';
 import { useState, useRef } from 'react';
 import { View, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { StackParamList } from '../../App';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
 import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
 import { useFlyTo } from '../map/useFlyTo';
+import SearchBar from '../components/SearchBar';
 import ToggleModeButton from '../components/ToggleModeButton';
 import RatingButton from '../components/RatingButton';
 import RatingModal from "../components/bottomSheet/RatingModal";
 import NotificationButton from "../components/NotificationButton";
 import SuggestionBIcon from '../assets/icons/SuggestionBIcon';
 import SuggestBottomSheet from '../components/bottomSheet/SuggestBottomSheet';
-import { useNavigation } from '@react-navigation/native';
-import type { StackParamList } from '../../App';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import SearchBar from '../components/SearchBar';
+
 import RenderAllBusStops from '../map/RenderBusStop';
 import RenderAllBusRoutes from '../map/RenderBusRoute';
 import RenderAllLandmarks from '../map/RenderLandmark';
 import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
 
+import useUserLocation from '../map/UserLocation';
+
 type MapMode = 'bus' | 'landmark';
 
 export default function MapScreen() {
+  const { location, hasPermission } = useUserLocation();
   const [initialSet, setInitialSet] = useState(false);
   const [mode, setMode] = useState<MapMode>('bus');
   const [selected, setSelected] = useState<{
     type: 'busStop' | 'busRoute' | 'landmark' | null;
     id: string | null;
   }>({ type: null, id: null });
-
 
   const cameraRef = useRef<CameraRef>(null);
   const flyTo = useFlyTo(cameraRef);
@@ -52,20 +56,30 @@ export default function MapScreen() {
       <MapView style={styles.map} mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=oQ7ceXLhobx6gMFyLsem"
         onDidFinishLoadingMap={() => {
           if (!initialSet) {
-            cameraRef.current?.setCamera({
-              centerCoordinate: [100.772451, 13.727075],
-              zoomLevel: 18,
-              animationDuration: 1000,
-            });
+            if (hasPermission && location) {
+              cameraRef.current?.setCamera({
+                centerCoordinate: [location.longitude, location.latitude],
+                zoomLevel: 17,
+                animationDuration: 1000,
+              });
+            } else {
+              cameraRef.current?.setCamera({
+                centerCoordinate: [100.772451, 13.727075],
+                zoomLevel: 18,
+                animationDuration: 1000,
+              });
+            }
             setInitialSet(true);
           }
         }}
       >
         <Camera ref={cameraRef} />
 
-        <MarkerView coordinate={[100.772451, 13.727075]}>
-          <View style={styles.marker} />
-        </MarkerView>
+        {location && (
+          <MarkerView coordinate={[location.longitude, location.latitude]}>
+            <View style={styles.marker} />
+          </MarkerView>
+        )}
 
         {mode === 'bus' && (
           <>
