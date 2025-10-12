@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { Rating } from "react-native-ratings";
 import BottomSheet from "./BottomSheet";
+import Config from "react-native-config";
+import CookieManager from "@react-native-cookies/cookies";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -14,11 +16,27 @@ export default function RatingModal({ visible, onClose }: RatingModalProps) {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState("");
 
-  const handleSubmit = () => {
-    console.log("Submitted rating:", rating, feedback);
+  const handleSubmit = async () => {
+    // ============================ feedback application API ===============================
+    const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
+    console.log('Submitting feedback with token:', cookies.token?.value);
+    fetch(`${Config.BASE_API_URL}/api/feedback-application?rating=${rating}&comment=${feedback}&token=${cookies.token?.value}`, { method: 'POST' })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.status);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log('Feedback submitted successfully:', data);
+    })
+    .catch((error) => {
+      console.error('Error submitting feedback:', error);
+    });
+    // ============================ feedback application API =============================== 
+    onClose();
     setFeedback("");
     setRating(0);
-    onClose();
   };
 
   return (

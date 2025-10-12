@@ -109,6 +109,7 @@ export default function MapScreen() {
       </TouchableOpacity>
 
       <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+
       <SuggestBottomSheet 
         visible={suggestVisible} 
         setVisible={setSuggestVisible} 
@@ -116,26 +117,6 @@ export default function MapScreen() {
         flyTo={flyTo}
         setMode={setMode}
       />
-      /*
-      // ============================ feedback application API ===============================
-              onPress={async () => {
-                const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-                console.log('Submitting feedback with token:', cookies.token?.value);
-                fetch(`${Config.BASE_API_URL}/api/feedback-application?rating=${rating}&comment=${feedback}&token=${cookies.token?.value}`, { method: 'POST' })
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.status);
-                  }
-                  return response.json();
-                })
-                .then((data) => {
-                  console.log('Feedback submitted successfully:', data);
-                })
-                .catch((error) => {
-                  console.error('Error submitting feedback:', error);
-                });
-                // ============================ feedback application API =============================== 
-      */
     </View>
   );
 }
