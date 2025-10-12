@@ -79,6 +79,7 @@ type RenderProps = {
 // ============================ Load bus routes from API ===============================
 var loadedBusRoutes: busRoute[] = [];
 
+// ============================ Load bus routes from API ===============================
 fetch(`${Config.BASE_API_URL}/api/busroute/all`)
 .then((response) => response.json())
 .then((data) => {
