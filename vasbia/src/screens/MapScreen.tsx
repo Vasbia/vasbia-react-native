@@ -12,21 +12,19 @@ import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import SearchBar from '../components/SearchBar';
-import RenderAllBusStops from '../map/RenderBusStop';
-import RenderAllBusRoutes from '../map/RenderBusRoute';
-import RenderAllLandmarks from '../map/RenderLandmark';
+import RenderAllBusStops from "../map/RenderBusStop";
+import RenderAllBusRoutes from "../map/RenderBusRoute";
+import RenderAllLandmarks from "../map/RenderLandmark";
+import CookieManager from '@react-native-cookies/cookies';
+import Config from 'react-native-config';
 
 type MapMode = 'bus' | 'landmark';
 
 export default function MapScreen() {
   const [initialSet, setInitialSet] = useState(false);
-  const [mode, setMode] = useState<MapMode>('bus');
-  const [selected, setSelected] = useState<{
-    type: 'busStop' | 'busRoute' | 'landmark' | null;
-    id: string | null;
-  }>({ type: null, id: null });
-
-
+  const [mode, setMode] = useState<MapMode>("bus");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  
   const cameraRef = useRef<CameraRef>(null);
   const flyTo = useFlyTo(cameraRef);
 
@@ -81,11 +79,68 @@ export default function MapScreen() {
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
       </View>
 
-      <View style={styles.suggestButton}>
-        <SuggestionButton />
-      </View>
-
-      <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="none"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.sheetOverlay}>
+          <View style={styles.sheetContent}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <XBIcon/>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>How do you rate our application?</Text>
+            <Rating
+              imageSize={36}
+              startingValue={rating}
+              onFinishRating={setRating}
+              style={styles.rating}
+              tintColor="#353638"
+              ratingColor="#ccd"
+              ratingBackgroundColor="#fff"
+              type="custom"
+            />
+            <Text style={styles.feedbackLabel}>Tell us more (optional)</Text>
+            <TextInput
+              style={styles.feedbackInput}
+              placeholder="Please comment here..."
+              placeholderTextColor="#fff"
+              value={feedback}
+              onChangeText={setFeedback}
+              multiline
+              numberOfLines={8}
+            />
+            <TouchableOpacity
+              style={styles.submitButtonBlack}
+              // ============================ feedback application API ===============================
+              onPress={async () => {
+                const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
+                console.log('Submitting feedback with token:', cookies.token?.value);
+                fetch(`${Config.BASE_API_URL}/api/feedback-application?rating=${rating}&comment=${feedback}&token=${cookies.token?.value}`, { method: 'POST' })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.status);
+                  }
+                  return response.json();
+                })
+                .then((data) => {
+                  console.log('Feedback submitted successfully:', data);
+                })
+                .catch((error) => {
+                  console.error('Error submitting feedback:', error);
+                });
+                // ============================ feedback application API ===============================
+                setModalVisible(false);
+                setFeedback('');
+                setRating(0);
+              }}
+            >
+              <Text style={styles.submitButtonTextWhite}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

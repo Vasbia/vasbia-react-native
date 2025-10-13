@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, TouchableHighlight } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
@@ -23,13 +23,13 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {errorMessage && <ToastError toastMessage={errorMessage} onHide={() => setErrorMessage(null)} />}
       {successMessage && <ToastSuccess toastMessage={successMessage} onHide={() => setErrorMessage(null)} />}
-
-      <Text style={styles.title}>VUSBIA</Text>
-      <Text style={styles.subtitle}>Welcome Back !</Text>
-      <Text style={styles.description}>Enter your username and password to sign in.</Text>
+      
+      <Text style={styles.title}>Vusbia</Text>
+      <Text style={styles.subtitle}>welcome !</Text>
+      <Text style={styles.description}>login with your imagination.</Text>
 
       <TextInput
-        style={styles.inputText}
+        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10, color: 'black' }}
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
@@ -40,7 +40,7 @@ export default function LoginScreen() {
       />
 
       <TextInput
-        style={styles.inputText}
+        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10, color: 'black' }}
         onChangeText={setPassword}
         value={password}
         placeholder="Password"
@@ -49,12 +49,12 @@ export default function LoginScreen() {
       />
 
       {/* ============================ login API =============================== */}
-      <TouchableHighlight style={styles.button} underlayColor="#113EFF" activeOpacity={0.8}  onPress={async () => {
+      <TouchableOpacity style={styles.button} onPress={async () => {
         var encodedEmail = encodeURIComponent(email);
         var encodedPassword = encodeURIComponent(password);
 
         if (email === '' || password === '') {
-          setErrorMessage('Please enter both email and password.');
+          setErrorMessage("Please enter both email and password.");
           return;
         }
 
@@ -64,12 +64,13 @@ export default function LoginScreen() {
             CookieManager.clearAll();
 
             console.log('Login response:', res);
-
-            if (res.message != 'Login Success!!') {
-              setErrorMessage('Invalid email or password.');
+            
+            if (res.message != "Login Success!!") {
+              setErrorMessage("Invalid email or password.");
               return;
             }
 
+          
             CookieManager.set(`${Config.BASE_API_URL}`, {
               name: 'token',
               value: res.token,
@@ -81,24 +82,24 @@ export default function LoginScreen() {
           })
           .catch((error) => {
             console.error('Error:', error);
-            setErrorMessage('An error occurred. Please try again..');
+            setErrorMessage("An error occurred. Please try again..");
             // Handle any errors that occurred during the request
           });
 
           const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-          console.log('Cookies after login:', cookies['token'].value);
-
-          if (cookies['token'] === undefined) {
-            setErrorMessage('Invalid email or password.');
+          console.log('Cookies after login:', cookies["token"].value);
+          
+          if (cookies["token"] === undefined) {
+            setErrorMessage("Invalid email or password.");
             return;
           }
-
-        setSuccessMessage('Login successful!');
+          
+        setSuccessMessage("Login successful!");
         navigation.replace('Map');
 
         }}>
         <Text style={styles.buttonText}>Sign in</Text>
-      </TouchableHighlight>
+      </TouchableOpacity>
       {/* ============================ login API =============================== */}
     </View>
   );
@@ -154,6 +155,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
+    margin: 30,
     borderRadius: 6,
   },
   buttonText: {

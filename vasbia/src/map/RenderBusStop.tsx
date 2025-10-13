@@ -1,5 +1,6 @@
 import { MarkerView } from "@maplibre/maplibre-react-native";
 import BusStopButton from "../components/BusStopButton";
+import Config from "react-native-config";
 
 type BusStop= {
   stopId: string;
@@ -18,7 +19,7 @@ type RenderProps = {
   flyTo: (coordinate: [number, number], duration?: number, zoom?: number) => void;
 };
 
-const loadedBusStops: BusStop[] = [
+var loadedBusStops: BusStop[] = [
   {
     stopId: "stop1",
     stopName: "โรงอาหาร C",
@@ -31,7 +32,31 @@ const loadedBusStops: BusStop[] = [
   }
 ];
 
-export default function RenderAllBusStops({ selected, setSelected, flyTo }: RenderProps) {  
+// ============================ Load bus stops from API ===============================
+fetch(`${Config.BASE_API_URL}/api/busstop/route/1`) // fixed id 1 for now
+.then((response) => {
+  if (!response.ok) {
+    throw new Error('Network response was not ok ' + response.status);
+  }
+  return response.json();
+})
+.then((data) => {
+  // console.log('Data received:', data);
+  loadedBusStops = [];
+  data.forEach((stopData: any) => {
+    loadedBusStops.push({
+      stopId: stopData.name,
+      stopName: stopData.name,
+      coordinate: [stopData.longitude, stopData.latitude]
+    });
+  })
+})
+.catch((error) => {
+  console.error('Error fetching data:', error);
+});
+// ============================ Load bus stops from API ===============================
+
+export default function RenderAllBusStops({ selectedId, setSelectedId, flyTo }: RenderProps) {  
   return (
     <>
         {loadedBusStops.map((stop) => (
