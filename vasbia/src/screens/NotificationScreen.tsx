@@ -40,7 +40,7 @@ export default function NotificationScreen() {
         <Text style={styles.pageTitle}>Notifications</Text>
       </View>
 
-      <View style={styles.form}>
+      {/* <View style={styles.form}>
         <TextInput
           style={styles.input}
           placeholder="Enter Title..."
@@ -57,7 +57,7 @@ export default function NotificationScreen() {
         <TouchableOpacity style={styles.button} onPress={handleAddNotification}>
           <Text style={styles.buttonText}>Add Notification</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* Notifications */}
       <FlatList
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   titleBar: {
     width: '100%',
-    marginTop: Platform.OS === 'ios' ? screenWidth * 0.13 : screenWidth * 0.08,
-    marginBottom: screenWidth * 0.025,
+    marginTop: 44,
+    // marginBottom: screenWidth * 0.025,
     paddingHorizontal: screenWidth * 0.025,
     justifyContent: 'center',
     alignItems: 'center',

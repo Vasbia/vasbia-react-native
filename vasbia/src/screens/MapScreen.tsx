@@ -1,12 +1,12 @@
 import React from 'react';
 import { useState, useRef } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity, Text, TextInput, Dimensions, Platform } from 'react-native';
+import { View, StyleSheet, Text} from 'react-native';
 import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
 import { useFlyTo } from '../map/useFlyTo';
 import ToggleModeButton from '../components/ToggleModeButton';
 import RatingButton from '../components/RatingButton';
-import RatingModal from "../components/bottomSheet/RatingModal";
-import NotificationButton from "../components/NotificationButton";
+import RatingModal from '../components/bottomSheet/RatingModal';
+import NotificationButton from '../components/NotificationButton';
 import SuggestionButton from '../components/SuggestionButton';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
@@ -32,18 +32,13 @@ export default function MapScreen() {
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [searchText, setSearchText] = React.useState('');
+  // const [searchText, setSearchText] = React.useState('');
 
   return (
     <View style={styles.page}>
       <View style={styles.searchBarContainer}>
-        <SearchBar
-          value={searchText}
-          onChangeText={setSearchText}
-          placeholder="Search..."
-          style={styles.functionalSearchBar}
-          inputStyle={styles.functionalSearchInput}
-        />
+        <Text style={styles.appTitle}>VASBIA</Text>
+        <SearchBar/>
       </View>
 
       <MapView style={styles.map} mapStyle="https://maptiler.code4.dad/api/maps/bangkok/style.json"
@@ -91,21 +86,26 @@ export default function MapScreen() {
       </View>
 
       <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
-      
     </View>
   );
 }
 
-const { width: screenWidth } = Dimensions.get('window');
+// const { width: screenWidth } = Dimensions.get('window');
 const styles = StyleSheet.create({
+  appTitle:{
+    marginTop: 64,
+    fontSize: 40,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    color: 'black',
+  },
   searchBarContainer: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 50 : 30,
-    left: 0,
-    right: 0,
     zIndex: 20,
     alignItems: 'center',
-  width: '100%',
+    // width: screenWidth - 64,
+    left: 32,
+    right: 32,
   },
   functionalSearchBar: {
     width: '90%',
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   searchIconLeft: {
     marginRight: 8,
   },
-  page: { flex: 1 },
+  page: { flex: 1},
   map: { flex: 1 },
   marker: {
     width: 20,
@@ -154,11 +154,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    right: 15,
+    right: 16,
     top: '35%',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 7,
+
   },
   suggestButton: {
     position: 'absolute',

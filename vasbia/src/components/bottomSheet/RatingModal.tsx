@@ -1,9 +1,12 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
-import { Rating } from "react-native-ratings";
-import BottomSheet from "./BottomSheet";
+import React, { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { Rating } from 'react-native-ratings';
+import BottomSheet from './BottomSheet';
 
-const { width: screenWidth } = Dimensions.get("window");
+import CookieManager from '@react-native-cookies/cookies';
+import Config from 'react-native-config';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 type RatingModalProps = {
   visible: boolean;
@@ -12,11 +15,24 @@ type RatingModalProps = {
 
 export default function RatingModal({ visible, onClose }: RatingModalProps) {
   const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState("");
+  const [feedback, setFeedback] = useState('');
 
-  const handleSubmit = () => {
-    console.log("Submitted rating:", rating, feedback);
-    setFeedback("");
+  const handleSubmit = async () => {
+    try {
+      const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
+      console.log('Submitting feedback with token:', cookies.token?.value);
+      const response = await fetch(`${Config.BASE_API_URL}/api/feedback-application?rating=${rating}&comment=${feedback}&token=${cookies.token?.value}`, {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.status);
+      }
+      const data = await response.json();
+      console.log('Feedback submitted successfully:', data);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
+    setFeedback('');
     setRating(0);
     onClose();
   };
@@ -29,23 +45,22 @@ export default function RatingModal({ visible, onClose }: RatingModalProps) {
         startingValue={rating}
         onFinishRating={setRating}
         style={styles.rating}
-        tintColor="#353638"
-        ratingColor="#ccd"
-        ratingBackgroundColor="#fff"
+        tintColor="#ffffff"
+        ratingColor="#fbb405"
+        ratingBackgroundColor="#eeeeee"
         type="custom"
       />
-      <Text style={styles.feedbackLabel}>Tell us more (optional)</Text>
       <TextInput
         style={styles.feedbackInput}
         placeholder="Please comment here..."
-        placeholderTextColor="#fff"
+        placeholderTextColor="#828282"
         value={feedback}
         onChangeText={setFeedback}
         multiline
         numberOfLines={8}
       />
-      <TouchableOpacity style={styles.submitButtonBlack} onPress={handleSubmit}>
-        <Text style={styles.submitButtonTextWhite}>Submit</Text>
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </BottomSheet>
   );
@@ -54,39 +69,34 @@ export default function RatingModal({ visible, onClose }: RatingModalProps) {
 const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_24pt-SemiBold',
     marginBottom: 16,
-    color: '#fff',
+    color: '#000',
     maxWidth: screenWidth * 0.7,
     alignSelf: 'center',
     textAlign: 'center',
   },
   rating: {
     marginBottom: 16,
-    color: '#fff',
-  },
-  feedbackLabel: {
-    alignSelf: 'flex-start',
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#000',
   },
   feedbackInput: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#fff',
-    color: '#fff',
+    borderColor: '#303030',
+    color: '#000',
     borderRadius: 8,
     padding: 10,
     marginTop: 10,
     marginBottom: 10,
-    fontSize: 16,
+    fontFamily: 'Inter_24pt-Regular',
+    fontSize: 12,
     minHeight: 60,
     textAlignVertical: 'top',
     backgroundColor: 'rgba(255,255,255,0.1)',
   },
-  submitButtonBlack: {
-    backgroundColor: '#000',
+  submitButton: {
+    backgroundColor: '#2d6eff',
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 24,
@@ -94,10 +104,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  submitButtonTextWhite: {
+  submitButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: 'Inter_24pt-SemiBold',
     backgroundColor: 'transparent',
   },
 });
