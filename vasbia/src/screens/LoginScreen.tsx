@@ -23,13 +23,13 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {errorMessage && <ToastError toastMessage={errorMessage} onHide={() => setErrorMessage(null)} />}
       {successMessage && <ToastSuccess toastMessage={successMessage} onHide={() => setErrorMessage(null)} />}
-      
-      <Text style={styles.title}>Vusbia</Text>
-      <Text style={styles.subtitle}>welcome !</Text>
-      <Text style={styles.description}>login with your imagination.</Text>
+
+      <Text style={styles.title}>VUSBIA</Text>
+      <Text style={styles.subtitle}>Welcome Back !</Text>
+      <Text style={styles.description}>Enter your username and password to sign in.</Text>
 
       <TextInput
-        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10, color: 'black' }}
+        style={styles.inputText}
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
@@ -40,7 +40,7 @@ export default function LoginScreen() {
       />
 
       <TextInput
-        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10, color: 'black' }}
+        style={styles.inputText}
         onChangeText={setPassword}
         value={password}
         placeholder="Password"
@@ -54,7 +54,7 @@ export default function LoginScreen() {
         var encodedPassword = encodeURIComponent(password);
 
         if (email === '' || password === '') {
-          setErrorMessage("Please enter both email and password.");
+          setErrorMessage('Please enter both email and password.');
           return;
         }
 
@@ -65,8 +65,8 @@ export default function LoginScreen() {
 
             console.log('Login response:', res);
             
-            if (res.message != "Login Success!!") {
-              setErrorMessage("Invalid email or password.");
+            if (res.message != 'Login Success!!') {
+              setErrorMessage('Invalid email or password.');
               return;
             }
 
@@ -82,19 +82,19 @@ export default function LoginScreen() {
           })
           .catch((error) => {
             console.error('Error:', error);
-            setErrorMessage("An error occurred. Please try again..");
+            setErrorMessage('An error occurred. Please try again..');
             // Handle any errors that occurred during the request
           });
 
           const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-          console.log('Cookies after login:', cookies["token"].value);
+          console.log('Cookies after login:', cookies['token'].value);
           
-          if (cookies["token"] === undefined) {
-            setErrorMessage("Invalid email or password.");
+          if (cookies['token'] === undefined) {
+            setErrorMessage('Invalid email or password.');
             return;
           }
           
-        setSuccessMessage("Login successful!");
+        setSuccessMessage('Login successful!');
         navigation.replace('Map');
 
         }}>
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   description: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Inter_24pt-Regular',
     marginBottom: 24,
     textAlign: 'center',
