@@ -69,11 +69,10 @@ export default function LoginScreen() {
               setErrorMessage("Invalid email or password.");
               return;
             }
-
           
             CookieManager.set(`${Config.BASE_API_URL}`, {
               name: 'token',
-              value: res.token,
+              value: res.data,
               domain: `${(Config.BASE_API_URL)?.replace('https://', '')}`,
               path: '/',
               version: '1',
