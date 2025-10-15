@@ -1,19 +1,10 @@
 import Geolocation from '@react-native-community/geolocation';
 import { useEffect, useState } from 'react';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 
-async function requestLocationPermission() {
+export async function requestLocationPermission() {
   try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'Location Permission',
-        message: 'This app needs access to your location.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,);
     return granted === PermissionsAndroid.RESULTS.GRANTED;
   } catch (err) {
     console.warn(err);
@@ -27,33 +18,37 @@ export default function useUserLocation() {
 
   useEffect(() => {
     const startWatching = async () => {
-      const granted =
-        Platform.OS === 'ios' || (await requestLocationPermission());
+      const granted = Platform.OS === 'ios' || (await requestLocationPermission());
       setHasPermission(granted);
 
       if (!granted) {
-        console.log('Permission denied — using fallback location');
+        Alert.alert(
+          'เปิดการเข้าถึงตำแหน่ง',
+          'กรุณาเปิดการเข้าถึงตำแหน่งในการตั้งค่า เพื่อใช้งานฟังก์ชันแนะนำสถานที่ใกล้เคียง',
+          [
+            { text: 'ยกเลิก', style: 'cancel' },
+            { text: 'เปิดการตั้งค่า', onPress: () => Linking.openSettings() },
+          ],
+        );
         return;
       }
 
-      // Start continuous watch
-      const watchId = Geolocation.watchPosition(
+      Geolocation.watchPosition(
         position => {
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
-          console.log('Updated location:', latitude, longitude);
+          // console.log('Updated location:', latitude, longitude);
         },
-        error => console.error('Location error:', error),
+        error => {
+          console.log('Location error:', error);
+        },
         {
           enableHighAccuracy: true,
-          distanceFilter: 3, // update every 3 meters
-          interval: 2000,    // Android only: update every 2s
+          distanceFilter: 3,
+          interval: 2000,
           fastestInterval: 1000,
         },
       );
-
-      // Cleanup
-      return () => Geolocation.clearWatch(watchId);
     };
 
     startWatching();
