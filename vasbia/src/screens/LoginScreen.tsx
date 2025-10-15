@@ -23,13 +23,13 @@ export default function LoginScreen() {
     <View style={styles.container}>
       {errorMessage && <ToastError toastMessage={errorMessage} onHide={() => setErrorMessage(null)} />}
       {successMessage && <ToastSuccess toastMessage={successMessage} onHide={() => setErrorMessage(null)} />}
-      
-      <Text style={styles.title}>Vusbia</Text>
-      <Text style={styles.subtitle}>welcome !</Text>
-      <Text style={styles.description}>login with your imagination.</Text>
+
+      <Text style={styles.title}>VUSBIA</Text>
+      <Text style={styles.subtitle}>Welcome Back !</Text>
+      <Text style={styles.description}>Enter your username and password to sign in.</Text>
 
       <TextInput
-        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10, color: 'black' }}
+        style={styles.inputText}
         keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
@@ -40,7 +40,7 @@ export default function LoginScreen() {
       />
 
       <TextInput
-        style={{ height: 40, width: '50%', borderColor: 'gray', borderWidth: 1, borderRadius: 5, marginTop: 20, paddingHorizontal: 10, color: 'black' }}
+        style={styles.inputText}
         onChangeText={setPassword}
         value={password}
         placeholder="Password"
@@ -54,7 +54,7 @@ export default function LoginScreen() {
         var encodedPassword = encodeURIComponent(password);
 
         if (email === '' || password === '') {
-          setErrorMessage("Please enter both email and password.");
+          setErrorMessage('Please enter both email and password.');
           return;
         }
 
@@ -65,8 +65,8 @@ export default function LoginScreen() {
 
             console.log('Login response:', res);
             
-            if (res.message != "Login Success!!") {
-              setErrorMessage("Invalid email or password.");
+            if (res.message != 'Login Success!!') {
+              setErrorMessage('Invalid email or password.');
               return;
             }
           
@@ -81,19 +81,19 @@ export default function LoginScreen() {
           })
           .catch((error) => {
             console.error('Error:', error);
-            setErrorMessage("An error occurred. Please try again..");
+            setErrorMessage('An error occurred. Please try again..');
             // Handle any errors that occurred during the request
           });
 
           const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-          console.log('Cookies after login:', cookies["token"].value);
+          console.log('Cookies after login:', cookies['token'].value);
           
-          if (cookies["token"] === undefined) {
-            setErrorMessage("Invalid email or password.");
+          if (cookies['token'] === undefined) {
+            setErrorMessage('Invalid email or password.');
             return;
           }
           
-        setSuccessMessage("Login successful!");
+        setSuccessMessage('Login successful!');
         navigation.replace('Map');
 
         }}>
@@ -112,27 +112,46 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
+  inputText:{
+    height: 40,
+    width: '80%',
+    marginLeft: 32,
+    marginRight: 32,
+
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    fontFamily: 'Inter_24pt-Regular',
+    fontSize: 14,
+    textAlign: 'left',
+  },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
+    fontSize: 40,
+    fontFamily: 'Inter_24pt-SemiBold',
     marginBottom: 8,
     textAlign: 'center',
-    color: '#555'
+    color: '#000',
   },
   subtitle: {
-    fontSize: 20,
+    fontSize: 16,
+    fontFamily: 'Inter_24pt-SemiBold',
     marginBottom: 4,
     textAlign: 'center',
-    color: '#555'
+    color: '#555',
   },
   description: {
-    fontSize: 16,
-    marginBottom: 40,
+    fontSize: 12,
+    fontFamily: 'Inter_24pt-Regular',
+    marginBottom: 24,
     textAlign: 'center',
     color: '#555',
   },
   button: {
     backgroundColor: '#4285F4',
+    width: '80%',
+    marginTop: 8,
     paddingVertical: 12,
     paddingHorizontal: 24,
     margin: 30,
@@ -140,7 +159,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
+    textAlign: 'center',
+    fontSize: 14,
+    fontFamily: 'Inter_24pt-Medium',
   },
 });

@@ -1,5 +1,5 @@
 import {TouchableOpacity, View, StyleSheet, Text} from "react-native";
-import {useState, useEffect, useDebugValue} from "react";
+import {useState, useEffect} from "react";
 
 interface ToastErrorProps {
     toastMessage: string;
@@ -67,16 +67,17 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         gap: 2,
         maxWidth: '90%',
-        
+
     },
 
     titleToast:{
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 14,
+        fontFamily: 'Inter_24pt-Medium',
         color: 'black',
     },
     subTitleToast:{
         fontSize: 14,
+        fontFamily: 'Inter_24pt-Regular',
         color: '#555',
     },
     closeButton:{
