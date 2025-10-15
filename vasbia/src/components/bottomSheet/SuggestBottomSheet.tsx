@@ -1,29 +1,21 @@
-import React, { useState } from "react";
-import {
-  View,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Text,
-  ScrollView,
-  Animated,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import {View, Image, TouchableOpacity, StyleSheet, Text, ScrollView, Animated,} from "react-native";
 import ChevronUp from "../../assets/icons/ChevronUp";
 import BottomSheet from "./BottomSheet";
-import { Slider } from "react-native-elements";
+import Config from "react-native-config";
 
 type LandmarkDetails = {
-  id: string;
+  id: number;
   landmarkName: string;
   coordinate: [number, number];
-  subDetails: string;
+  subDetails?: string;
   description?: string;
   imageUrl?: string;
 };
 
 type SelectedItem = {
   type: "busStop" | "busRoute" | "landmark" | null;
-  id: string | null;
+  id: number | null;
 };
 
 type SuggestBottomSheetProps = {
@@ -32,41 +24,52 @@ type SuggestBottomSheetProps = {
   setSelected: (item: SelectedItem) => void;
   flyTo: (coordinate: [number, number], duration?: number, zoom?: number) => void;
   setMode: (item: 'bus' | 'landmark') => void;
+  location: { latitude: number; longitude: number } | null;
 };
 
-const landmarkSuggestion: LandmarkDetails[] = [
-  {
-    id: "landmark1",
-    landmarkName: "Faculty of Engineering, KMITL",
-    coordinate: [100.772388, 13.727487],
-    subDetails: "Chalong Krung 1 Alley, Lat Krabang, Bangkok 10520",
-    description: "อาคารเรียนสูง 1 ชั้น เป็นจุดสำคัญของคณะวิศวกรรมศาสตร์",
-    imageUrl:
-      "https://admin.curriculum.kmitl.ac.th/api/media/file/1440753623-72-o.jpg",
-  },
-  {
-    id: "landmark2",
-    landmarkName: "Faculty of TWO, KMITL",
-    coordinate: [100.77255, 13.726472],
-    subDetails: "Chalong Krung 1 Alley, Lat Krabang, Bangkok 10520",
-    description: "อาคารเรียนสูง 2 ชั้น เป็นจุดสำคัญของคณะวิศวกรรมศาสตร์",
-    imageUrl:
-      "https://admin.curriculum.kmitl.ac.th/api/media/file/1440753623-72-o.jpg",
-  },
-  {
-    id: "landmark1",
-    landmarkName: "Faculty of THREE, KMITL",
-    coordinate: [100.772388, 13.727487],
-    subDetails: "Chalong Krung 1 Alley, Lat Krabang, Bangkok 10520",
-    description: "อาคารเรียนสูง 3 ชั้น เป็นจุดสำคัญของคณะวิศวกรรมศาสตร์",
-    imageUrl:
-      "https://admin.curriculum.kmitl.ac.th/api/media/file/1440753623-72-o.jpg",
-  },
-];
+async function fetchSuggestLandmark(userLongitude: number, userLatitude: number) {
+  try {
+    const response = await fetch(`${Config.BASE_API_URL}/api/place/findNearByPlace`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userLatitude: userLatitude,
+        userLongitude: userLongitude,
+        routeId: 1, // route ID?
+      }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-export default function SuggestBottomSheet({ visible, setVisible, setSelected, flyTo, setMode}: SuggestBottomSheetProps) {
+    const data = await response.json();
+    return data.map((landmark: any) => ({
+      id: landmark.place_id,
+      landmarkName: landmark.name,
+      imageUrl: landmark.image,
+      coordinate: [landmark.longitude, landmark.latitude]
+    }));
+  } catch (error) {
+    console.error("Error fetching suggest landmarks:", error);
+    return [];
+  }
+};
+
+export default function SuggestBottomSheet({ visible, setVisible, setSelected, flyTo, setMode, location}: SuggestBottomSheetProps) {
+  const [suggestLandmark, setSuggestLandmark] = useState<LandmarkDetails[]>([]);
   const [current, setCurrent] = useState(0);
   const fadeAnim = useState(new Animated.Value(1))[0];
+
+  useEffect(() => {
+    if (visible && location) {
+      fetchSuggestLandmark(location.longitude, location.latitude)
+        .then((data:any) => setSuggestLandmark(data));
+      console.log(suggestLandmark);
+    }
+  }, [visible]);  
 
   const changeSlide = (direction: "next" | "prev") => {
     Animated.sequence([
@@ -76,12 +79,22 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
 
     setCurrent((prev) =>
       direction === "next"
-        ? (prev + 1) % landmarkSuggestion.length
-        : (prev - 1 + landmarkSuggestion.length) % landmarkSuggestion.length
+        ? (prev + 1) % suggestLandmark.length
+        : (prev - 1 + suggestLandmark.length) % suggestLandmark.length
     );
   };
 
-  const currentLandmark = landmarkSuggestion[current];
+  const currentLandmark = suggestLandmark[current];
+  
+  if (!currentLandmark) {
+    return (
+      <BottomSheet visible={visible} onClose={() => setVisible(false)}>
+        <View style={{ alignItems: "center", padding: 20 }}>
+          <Text style={{ color: "#fff" }}>กำลังโหลดสถานที่แนะนำ...</Text>
+        </View>
+      </BottomSheet>
+    );
+  }
 
   return (
     <BottomSheet visible={visible} onClose={() => {setVisible(false)}}>
@@ -90,9 +103,11 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
         <Text style={styles.subDetails}>{currentLandmark.subDetails}</Text>
 
         <View style={styles.slide}>
+          {currentLandmark.imageUrl &&
             <Animated.View style={{ opacity: fadeAnim }}>
               <Image source={{ uri: currentLandmark.imageUrl }} style={styles.image} />
             </Animated.View>
+          }
 
             <View style={styles.slideControls}>
               <TouchableOpacity onPress={() => changeSlide("prev")} style={styles.arrowButton}>
