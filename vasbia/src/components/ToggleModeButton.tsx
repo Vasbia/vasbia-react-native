@@ -1,20 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import RouteToggleIcon from '../assets/icons/RouteToggleIcon';
 import LandmarkToggleIcon from '../assets/icons/LandmarkToggleIcon';
 
+type MapMode = 'bus' | 'landmark';
+
 type ToggleIconButtonProps = {
-  onToggle?: (state: boolean) => void;
-  initial?: boolean;
+  mode: MapMode;
+  setMode: (item: MapMode) => void;
+  onToggle: () => void;
 };
 
-export default function ToggleModeButton({onToggle, initial = true}: ToggleIconButtonProps) {
-  const [isOn, setIsOn] = useState(initial);
+export default function ToggleModeButton({mode, setMode, onToggle}: ToggleIconButtonProps) {
 
   const handlePress = () => {
-    const newState = !isOn;
-    setIsOn(newState);
-    if (onToggle) onToggle(newState);
+    (mode === 'bus') ? setMode('landmark') : setMode('bus')
+    if (onToggle) onToggle();
   };
 
   return (
@@ -23,7 +24,7 @@ export default function ToggleModeButton({onToggle, initial = true}: ToggleIconB
       onPress={handlePress}
       activeOpacity={0.8}
     >
-      {isOn ? <RouteToggleIcon /> : <LandmarkToggleIcon />}
+      {(mode === 'bus') ? <RouteToggleIcon /> : <LandmarkToggleIcon />}
     </TouchableOpacity>
   );
 }

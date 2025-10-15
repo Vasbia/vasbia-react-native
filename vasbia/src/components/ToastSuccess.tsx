@@ -1,5 +1,5 @@
-import {TouchableOpacity, View, StyleSheet, Text} from "react-native";
-import {useState, useEffect} from "react";
+import {TouchableOpacity, View, StyleSheet, Text} from 'react-native';
+import {useState, useEffect} from 'react';
 
 interface ToastErrorProps {
     toastMessage: string;
@@ -12,24 +12,24 @@ export default function ToastSuccess({ toastMessage, onHide}: ToastErrorProps) {
 
     const handleClose = () => {
         setIsVisible(false);
-    }
+    };
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(false);
-            onHide?.();  
+            onHide?.();
         }, 3000);
 
         return () => clearTimeout(timer);
     }, [onHide]);
 
-    
 
-    if (!isVisible) return null;
+
+    if (!isVisible) {return null;}
 
     return (
         <View style={styles.container}>
-            <View style={styles.messageContainer}>  
+            <View style={styles.messageContainer}>
                 <Text style={styles.titleToast} >Success!</Text>
                 <Text style={styles.subTitleToast}>{toastMessage}</Text>
             </View>
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         gap: 2,
         maxWidth: '90%',
-        
+
     },
 
     titleToast:{
@@ -85,6 +85,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: 'black',
-    }
+    },
 
 });

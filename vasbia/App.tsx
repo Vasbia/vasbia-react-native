@@ -8,6 +8,7 @@ import NotificationScreen from './src/screens/NotificationScreen';
 import FullNotificationInfoScreen from './src/screens/FullNotificationInfoScreen';
 import BusStopTimeTableScreen from './src/screens/BusStopTimeTableScreen';
 import BusRouteTimeTableScreen from './src/screens/BusRouteTimeTableScreen';
+import RegisterScreen from './src/screens/RegisterScreen';
 
 
 import type { Notification } from './src/types/Notification';
@@ -23,6 +24,7 @@ export type StackParamList = {
   FullNotificationInfo: { notification: Notification };
   BusStopTimeTable: undefined;
   BusRouteTimeTable: undefined;
+  Register: undefined;
 };
 
 export default function App() {
@@ -35,6 +37,7 @@ export default function App() {
           <Stack.Screen name="FullNotificationInfo" component={FullNotificationInfoScreen} />
           <Stack.Screen name="BusStopTimeTable" component={BusStopTimeTableScreen} />
           <Stack.Screen name="BusRouteTimeTable" component={BusRouteTimeTableScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
         </Stack.Navigator>
     </NavigationContainer>
   );

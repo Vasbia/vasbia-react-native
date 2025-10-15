@@ -3,31 +3,78 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
 import { useState } from 'react';
-import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
 import ToastError from '../components/ToastError';
 import ToastSuccess from '../components/ToastSuccess';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'Login'>;
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const handleRegister = async () => {
+    if (!firstName || !lastName || !email || !password) {
+      setErrorMessage('Please fill in all fields.');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${Config.BASE_API_URL}/api/auth/createUser?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=USER&key=%2B%3Dh%2B%5Daq%5E%29Vd%3BEh4mr%5Df%5EvGgmgh%3Ck-7`,
+        { method: 'POST' }
+      );
+
+      const res = await response.json();
+      console.log('Register response:', res);
+
+      if (!res.email || !res.fname || !res.lname) {
+        setErrorMessage('Registration failed. Please try again.');
+        return;
+      }
+
+      setSuccessMessage('Register successful!');
+      setTimeout(() => {
+        navigation.replace('Login');
+      }, 1200);
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage('An error occurred. Please try again.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       {errorMessage && <ToastError toastMessage={errorMessage} onHide={() => setErrorMessage(null)} />}
-      {successMessage && <ToastSuccess toastMessage={successMessage} onHide={() => setErrorMessage(null)} />}
+      {successMessage && <ToastSuccess toastMessage={successMessage} onHide={() => setSuccessMessage(null)} />}
 
       <View style={styles.infoContainer}>
         <Text style={styles.title}>VASBIA</Text>
-        <Text style={styles.subtitle}>Welcome Back !</Text>
-        <Text style={styles.description}>Enter your username and password to sign in.</Text>
+        <Text style={styles.subtitle}>Create an account</Text>
+        <Text style={styles.description}>Enter your information to sign up.</Text>
+
+        <TextInput
+          style={styles.inputText}
+          onChangeText={setFirstName}
+          value={firstName}
+          placeholder="First Name"
+          placeholderTextColor={'gray'}
+        />
+
+        <TextInput
+          style={styles.inputText}
+          onChangeText={setLastName}
+          value={lastName}
+          placeholder="Last Name"
+          placeholderTextColor={'gray'}
+        />
 
         <TextInput
           style={styles.inputText}
@@ -49,64 +96,14 @@ export default function LoginScreen() {
           placeholderTextColor={'gray'}
         />
 
-        {/* ============================ login API =============================== */}
-        <TouchableOpacity style={styles.button} onPress={async () => {
-          var encodedEmail = encodeURIComponent(email);
-          var encodedPassword = encodeURIComponent(password);
-
-          if (email === '' || password === '') {
-            setErrorMessage('Please enter both email and password.');
-            return;
-          }
-
-          await fetch(`${Config.BASE_API_URL}/api/auth/login?email=${encodedEmail}&password=${encodedPassword}`, {method: 'POST'})
-            .then(response => response.json())
-            .then((res) => {
-              CookieManager.clearAll();
-
-              console.log('Login response:', res);
-              
-              if (res.message != 'Login Success!!') {
-                setErrorMessage('Invalid email or password.');
-                return;
-              }
-            
-              CookieManager.set(`${Config.BASE_API_URL}`, {
-                name: 'token',
-                value: res.data,
-                domain: `${(Config.BASE_API_URL)?.replace('https://', '')}`,
-                path: '/',
-                version: '1',
-                // expires: '2030-12-31T23:59:59.00-00:00',
-              });
-            })
-            .catch((error) => {
-              console.error('Error:', error);
-              setErrorMessage('An error occurred. Please try again..');
-              // Handle any errors that occurred during the request
-            });
-
-            const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-            console.log('Cookies after login:', cookies['token'].value);
-            
-            if (cookies['token'] === undefined) {
-              setErrorMessage('Invalid email or password.');
-              return;
-            }
-            
-          setSuccessMessage('Login successful!');
-          navigation.replace('Map');
-
-          }}>
-          <Text style={styles.buttonText}>Continue</Text>
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text style={styles.buttonText}>Sign up</Text>
         </TouchableOpacity>
 
-        
-        <TouchableOpacity onPress={() => navigation.replace('Register')}>
-          <Text style={styles.suggestText}>Don't have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.replace('Login')}>
+          <Text style={styles.suggestText}>Already have an account?</Text>
         </TouchableOpacity>
       </View>
-      {/* ============================ login API =============================== */}
     </View>
   );
 }
@@ -116,19 +113,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
-    // justifyContent: 'center',
     paddingHorizontal: 16,
   },
   infoContainer: {
-    marginTop: '50%',
+    marginTop: '45%',
     width: '100%',
   },
-  inputText:{
+  inputText: {
     height: 40,
     width: '80%',
     marginLeft: 32,
     marginRight: 32,
-
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 8,
@@ -167,7 +162,6 @@ const styles = StyleSheet.create({
     marginLeft: '10%',
     paddingVertical: 8,
     paddingHorizontal: 24,
-
     borderRadius: 6,
   },
   buttonText: {

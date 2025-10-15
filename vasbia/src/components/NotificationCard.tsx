@@ -79,7 +79,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 4,
   },
-  title: { fontSize: 18, fontWeight: 'bold', color: '#000' },
-  date: { color: '#888', fontSize: 12 },
-  description: { fontSize: 16, color: '#666' },
+  title: { 
+    fontSize: 20,
+    fontFamily: 'Inter_24pt-Bold',
+    color: '#2d6eff' },
+  date: { 
+    color: '#888',
+    fontSize: 14,
+    fontFamily: 'Inter_24pt-Regular',
+  },
+  description: { 
+    fontSize: 16,
+    fontFamily: 'Inter_24pt-Regular',
+    color: '#666'
+  },
 });

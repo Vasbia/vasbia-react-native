@@ -1,31 +1,94 @@
 import * as React from 'react';
 import {
-  View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Platform} from 'react-native';
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import BackIcon from '../assets/icons/BackIcon';
 import NotificationCard from '../components/NotificationCard';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { StackParamList } from '../../App';
-import { Dimensions } from 'react-native';
-import { Notification } from '../types/Notification';
+import {useNavigation} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import type {StackParamList} from '../../App';
+import {Notification} from '../types/Notification';
+import CookieManager from '@react-native-cookies/cookies';
+import Config from 'react-native-config';
 
 export default function NotificationScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [notifications, setNotifications] = React.useState<Notification[]>([]);
-  const [title, setTitle] = React.useState('');
-  const [subtitle, setSubtitle] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
 
-  function handleAddNotification() {
-    if (!title || !subtitle) {
-      return;
+  // --- Fetch notifications ---
+  const fetchNotifications = async (token: string) => {
+    try {
+      const response = await fetch(
+        `${Config.BASE_API_URL}/api/notification/getNotification?token=${token}`,
+      );
+      if (!response.ok) throw new Error('Failed to fetch notifications');
+
+      const data = await response.json();
+      console.log('Fetched notifications:', data);
+      setNotifications(data);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      Alert.alert('Error', 'Failed to fetch notifications.');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const now = new Date();
-    // const date = now.toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' });
+  // --- Update notifications before fetching ---
+  const updateNotifications = async () => {
+    try {
+      const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
+      const token = cookies.token?.value;
 
-    setNotifications([{ title, date: now.toISOString(), subtitle }, ...notifications]);
-    setTitle('');
-    setSubtitle('');
+      if (!token) {
+        console.warn('No token found in cookies');
+        return;
+      }
+
+      console.log('Updating notifications with token:', token);
+
+      const response = await fetch(
+        `${Config.BASE_API_URL}/api/notification/update`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        },
+      );
+
+      if (!response.ok)
+        throw new Error('Network response was not ok ' + response.status);
+
+      const data = await response.json();
+      console.log('Notification update response:', data);
+
+      // After updating, fetch the latest list
+      await fetchNotifications(token);
+    } catch (error) {
+      console.error('Error updating notifications:', error);
+      Alert.alert('Error', 'Failed to update notifications.');
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    updateNotifications();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, {justifyContent: 'center'}]}>
+        <ActivityIndicator size="large" color="#000" />
+      </View>
+    );
   }
 
   return (
@@ -33,38 +96,17 @@ export default function NotificationScreen() {
       <View style={styles.titleBar}>
         <TouchableOpacity
           style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
+          onPress={() => navigation.goBack()}>
           <BackIcon size={40} color="#000" />
         </TouchableOpacity>
         <Text style={styles.pageTitle}>Notifications</Text>
       </View>
 
-      {/* <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Title..."
-          value={title}
-          onChangeText={setTitle}
-        />
-        <TextInput
-          style={[styles.input, { height: 80 }]}
-          placeholder="Enter Description..."
-          value={subtitle}
-          onChangeText={setSubtitle}
-          multiline
-        />
-        <TouchableOpacity style={styles.button} onPress={handleAddNotification}>
-          <Text style={styles.buttonText}>Add Notification</Text>
-        </TouchableOpacity>
-      </View> */}
-
-      {/* Notifications */}
       <FlatList
         data={notifications}
         keyExtractor={(_, index) => index.toString()}
-        contentContainerStyle={{ padding: 16 }}
-        renderItem={({ item }) => (
+        contentContainerStyle={{padding: 16}}
+        renderItem={({item}) => (
           <NotificationCard
             title={item.title}
             date={item.date}
@@ -81,13 +123,12 @@ export default function NotificationScreen() {
   );
 }
 
-const { width: screenWidth } = Dimensions.get('window');
+const {width: screenWidth} = Dimensions.get('window');
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: {flex: 1, backgroundColor: '#fff'},
   titleBar: {
     width: '100%',
     marginTop: 44,
-    // marginBottom: screenWidth * 0.025,
     paddingHorizontal: screenWidth * 0.025,
     justifyContent: 'center',
     alignItems: 'center',
@@ -99,36 +140,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: screenWidth * 0.025,
     top: '30%',
-    transform: [{ translateY: -screenWidth * 0.035 }],
+    transform: [{translateY: -screenWidth * 0.035}],
   },
   pageTitle: {
     fontSize: screenWidth * 0.06,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_24pt-Bold',
     color: '#000',
     textAlign: 'center',
-  },
-  form: {
-    width: '90%',
-    alignSelf: 'center',
-    marginVertical: screenWidth * 0.025,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: screenWidth * 0.02,
-    marginBottom: screenWidth * 0.02,
-    fontSize: screenWidth * 0.04,
-  },
-  button: {
-    backgroundColor: '#000',
-    paddingVertical: screenWidth * 0.025,
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: screenWidth * 0.045,
   },
 });

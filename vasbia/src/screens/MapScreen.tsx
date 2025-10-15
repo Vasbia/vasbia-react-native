@@ -1,35 +1,65 @@
+// import React from 'react';
+// import { useState, useRef } from 'react';
+// import { View, StyleSheet, Text} from 'react-native';
+// import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
+// import { useFlyTo } from '../map/useFlyTo';
+// import ToggleModeButton from '../components/ToggleModeButton';
+// import RatingButton from '../components/RatingButton';
+// import RatingModal from '../components/bottomSheet/RatingModal';
+// import NotificationButton from '../components/NotificationButton';
+// import SuggestionButton from '../components/SuggestionButton';
+// import { useNavigation } from '@react-navigation/native';
+// import type { StackParamList } from '../../App';
+// import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// import SearchBar from '../components/SearchBar';
+// import RenderAllBusStops from "../map/RenderBusStop";
+// import RenderAllBusRoutes from "../map/RenderBusRoute";
+// import RenderAllLandmarks from "../map/RenderLandmark";
+// import CookieManager from '@react-native-cookies/cookies';
+// import Config from 'react-native-config';
 import React from 'react';
 import { useState, useRef } from 'react';
-import { View, StyleSheet, Text} from 'react-native';
-import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
-import { useFlyTo } from '../map/useFlyTo';
-import ToggleModeButton from '../components/ToggleModeButton';
-import RatingButton from '../components/RatingButton';
-import RatingModal from '../components/bottomSheet/RatingModal';
-import NotificationButton from '../components/NotificationButton';
-import SuggestionButton from '../components/SuggestionButton';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
+import { useFlyTo } from '../map/useFlyTo';
 import SearchBar from '../components/SearchBar';
-import RenderAllBusStops from "../map/RenderBusStop";
-import RenderAllBusRoutes from "../map/RenderBusRoute";
-import RenderAllLandmarks from "../map/RenderLandmark";
-import CookieManager from '@react-native-cookies/cookies';
-import Config from 'react-native-config';
+import ToggleModeButton from '../components/ToggleModeButton';
+import RatingButton from '../components/RatingButton';
+import RatingModal from "../components/bottomSheet/RatingModal";
+import NotificationButton from "../components/NotificationButton";
+import SuggestionBIcon from '../assets/icons/SuggestionBIcon';
+import SuggestBottomSheet from '../components/bottomSheet/SuggestBottomSheet';
+
+import RenderAllBusStops from '../map/RenderBusStop';
+import RenderAllBusRoutes from '../map/RenderBusRoute';
+import RenderAllLandmarks from '../map/RenderLandmark';
+import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
+
+import useUserLocation from '../map/UserLocation';
+// import CookieManager from '@react-native-cookies/cookies';
+// import Config from 'react-native-config';
 
 type MapMode = 'bus' | 'landmark';
 
 export default function MapScreen() {
+  const {location, hasPermission } = useUserLocation();
   const [initialSet, setInitialSet] = useState(false);
   const [mode, setMode] = useState<MapMode>("bus");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<{
+    type: 'busStop' | 'busRoute' | 'landmark' | null;
+    id: string | null;
+  }>({ type: null, id: null });
   
   const cameraRef = useRef<CameraRef>(null);
   const flyTo = useFlyTo(cameraRef);
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [suggestVisible, setSuggestVisible] = React.useState(false);
   // const [searchText, setSearchText] = React.useState('');
 
   return (
@@ -39,23 +69,33 @@ export default function MapScreen() {
         <SearchBar/>
       </View>
 
-      <MapView style={styles.map} mapStyle="https://maptiler.code4.dad/api/maps/bangkok/style.json"
+      <MapView style={styles.map} mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=oQ7ceXLhobx6gMFyLsem"
         onDidFinishLoadingMap={() => {
           if (!initialSet) {
-            cameraRef.current?.setCamera({
-              centerCoordinate: [100.772451, 13.727075],
-              zoomLevel: 18,
-              animationDuration: 1000,
-            });
+            if (hasPermission && location) {
+              cameraRef.current?.setCamera({
+                centerCoordinate: [location.longitude, location.latitude],
+                zoomLevel: 17,
+                animationDuration: 1000,
+              });
+            } else {
+              cameraRef.current?.setCamera({
+                centerCoordinate: [100.772451, 13.727075],
+                zoomLevel: 18,
+                animationDuration: 1000,
+              });
+            }
             setInitialSet(true);
           }
         }}
       >
         <Camera ref={cameraRef} />
 
-        <MarkerView coordinate={[100.772451, 13.727075]}>
-          <View style={styles.marker} />
-        </MarkerView>
+        {location && (
+          <MarkerView coordinate={[location.longitude, location.latitude]}>
+            <View style={styles.marker} />
+          </MarkerView>
+        )}
 
         {mode === 'bus' && (
           <>
@@ -70,79 +110,28 @@ export default function MapScreen() {
 
       </MapView>
 
+      {RenderDetailsBottomSheet(selected)}
+
       <View style={styles.buttonContainer}>
-        <ToggleModeButton onToggle={(isBusMode) => {
-          setMode(isBusMode ? 'bus' : 'landmark');
-          setSelected({ type: null, id: null });
-        }} />
+        <ToggleModeButton mode={mode} setMode={setMode} onToggle={() => setSelected({type: null, id: null})}/>
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
       </View>
 
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="none"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.sheetOverlay}>
-          <View style={styles.sheetContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <XBIcon/>
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>How do you rate our application?</Text>
-            <Rating
-              imageSize={36}
-              startingValue={rating}
-              onFinishRating={setRating}
-              style={styles.rating}
-              tintColor="#353638"
-              ratingColor="#ccd"
-              ratingBackgroundColor="#fff"
-              type="custom"
-            />
-            <Text style={styles.feedbackLabel}>Tell us more (optional)</Text>
-            <TextInput
-              style={styles.feedbackInput}
-              placeholder="Please comment here..."
-              placeholderTextColor="#fff"
-              value={feedback}
-              onChangeText={setFeedback}
-              multiline
-              numberOfLines={8}
-            />
-            <TouchableOpacity
-              style={styles.submitButtonBlack}
-              // ============================ feedback application API ===============================
-              onPress={async () => {
-                const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-                console.log('Submitting feedback with token:', cookies.token?.value);
-                fetch(`${Config.BASE_API_URL}/api/feedback-application?rating=${rating}&comment=${feedback}&token=${cookies.token?.value}`, { method: 'POST' })
-                .then((response) => {
-                  if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.status);
-                  }
-                  return response.json();
-                })
-                .then((data) => {
-                  console.log('Feedback submitted successfully:', data);
-                })
-                .catch((error) => {
-                  console.error('Error submitting feedback:', error);
-                });
-                // ============================ feedback application API ===============================
-                setModalVisible(false);
-                setFeedback('');
-                setRating(0);
-              }}
-            >
-              <Text style={styles.submitButtonTextWhite}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </View>
-  );
+      <TouchableOpacity onPress={() => {setSuggestVisible(true)}} style={styles.suggestButton}>
+        <SuggestionBIcon />
+      </TouchableOpacity>
+
+      <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+
+      <SuggestBottomSheet 
+        visible={suggestVisible} 
+        setVisible={setSuggestVisible} 
+        setSelected={setSelected} 
+        flyTo={flyTo}
+        setMode={setMode}
+      />
+    </View>);
 }
 
 // const { width: screenWidth } = Dimensions.get('window');
@@ -150,7 +139,7 @@ const styles = StyleSheet.create({
   appTitle:{
     marginTop: 64,
     fontSize: 40,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_24pt-SemiBold',
     alignSelf: 'center',
     color: 'black',
   },
