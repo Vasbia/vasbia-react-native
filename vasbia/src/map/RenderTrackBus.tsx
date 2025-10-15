@@ -4,16 +4,16 @@ import TrackBusIcon from "../assets/icons/TrackBusIcon";
 import Config from "react-native-config";
 
 type TrackedBus = {
-  busId: string;
-  routeId: string;
+  busId: number;
+  routeId: number;
   coordinate: [number, number];
 };
 
 type RenderTrackedBusesProps = {
-  selectedRouteId: string | null;
+  selectedRouteId: number | null;
 };
 
-function useMockTrackedBuses(selectedRouteId: string | null) {
+function useMockTrackedBuses(selectedRouteId: number | null) {
   const [buses, setBuses] = useState<TrackedBus[]>([]);
 
   useEffect(() => {
@@ -74,7 +74,6 @@ export default function RenderTrackBus({ selectedRouteId }: RenderTrackedBusesPr
       {trackedBuses.map((bus) => (
         <MarkerView
           key={bus.busId}
-          id={bus.busId}
           coordinate={bus.coordinate}
           anchor={{ x: 0.5, y: 1 }} // bottom-center hits the coordinate
         >

@@ -2,14 +2,14 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import LandmarkIcon from "../assets/icons/LandmarkIcon";
 
 type Landmark= {
-  landmarkId: string;
+  landmarkId: number;
   landmarkName: string;
   coordinate: [number, number];
 };
 
 type SelectedItem = {
   type: "busStop" | "busRoute" | "landmark" | null;
-  id: string | null;
+  id: number | null;
 };
 
 type LandmarkButtonProps = {
@@ -21,13 +21,13 @@ type LandmarkButtonProps = {
 
 export default function LandmarkButton({ landmark, selected, setSelected, flyTo }: LandmarkButtonProps) {
   const isSelected = (selected.id === landmark.landmarkId && selected.type === "landmark")
-  const size = isSelected ? 35 : 27; 
+  const size = isSelected ? 44 : 32; 
 
   return (
     <TouchableOpacity 
       style={[
         styles.container,
-        { width: size, height: (size * 41) / 29 },
+        { width: size, height: (size * 46) / 32 },
       ]}
       onPress={ () => {
         if (isSelected) {

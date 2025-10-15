@@ -3,14 +3,14 @@ import LandmarkButton from "../components/LandmarkButton";
 import Config from "react-native-config";
 
 type Landmark= {
-  landmarkId: string;
+  landmarkId: number;
   landmarkName: string;
   coordinate: [number, number];
 };
 
 type SelectedItem = {
   type: "busStop" | "busRoute" | "landmark" | null;
-  id: string | null;
+  id: number | null;
 };
 
 type RenderProps = {
@@ -35,7 +35,7 @@ type RenderProps = {
 var loadedLandmark: Landmark[] = [];
 
 // ============================ Load landmarks from API ===============================
-fetch(`${Config.BASE_API_URL}/api/place/route/1`)
+fetch(`${Config.BASE_API_URL}/api/place/route/1`) // id 1
 .then((response) => response.json())
 .then((data) => {
   //console.log("Fetched landmarks:", data);
@@ -48,6 +48,24 @@ fetch(`${Config.BASE_API_URL}/api/place/route/1`)
     });
   })
   // console.log("Loaded landmarks:", loadedLandmark);
+})
+.catch((error) => {
+  console.error("Error fetching landmarks:", error);
+});
+
+fetch(`${Config.BASE_API_URL}/api/place/route/2`) // id 2
+.then((response) => response.json())
+.then((data) => {
+  //console.log("Fetched landmarks:", data);
+  data.forEach((landmark:any) => {
+    // console.log("Processing landmark:", landmark.place_id);
+    loadedLandmark.push({
+      landmarkId: landmark.place_id,
+      landmarkName: landmark.name,
+      coordinate: [landmark.longitude, landmark.latitude],
+    });
+  })
+  //console.log("Loaded landmarks:", loadedLandmark);
 })
 .catch((error) => {
   console.error("Error fetching landmarks:", error);

@@ -3,9 +3,9 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import BottomSheetWithHeader from "./BottomSheetWithHeader";
 
 type LandmarkDetails = {
-  id: string;
+  id: number;
   landmarkName: string;
-  subDetails: string; 
+  subDetails?: string; 
   description?: string;
   imageUrl?: string;
 };

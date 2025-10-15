@@ -3,55 +3,75 @@ import LandmarkDetails from "../components/bottomSheet/LandmarkDetails";
 import BusStopDetails from "../components/bottomSheet/BusStopDetails";
 import BusRouteDetails from "../components/bottomSheet/BusRouteDetails";
 import Config from "react-native-config";
+import {RouteNames} from "./RenderBusRoute"
 
 type SelectedItem = {
   type: "busStop" | "busRoute" | "landmark" | null;
-  id: string | null;
+  id: number | null;
 };
 
 //API calls for details
-async function fetchLandmarkDetails(id: string) {
+async function fetchLandmarkDetails(id: number) {
   const details = {
     id: {id},
     landmarkName: null as string | null,
-    subDetails: null as string | null,
     imageUrl: null as string | null,
   };
   await fetch(`${Config.BASE_API_URL}/api/place/${id}`)
   .then((response) => response.json())
   .then((data) => {
-    // console.log("Fetched landmark details:", data);
+    console.log("Fetched landmark details:", data);
     details.landmarkName = data.name;
-    details.subDetails = data.name;
     details.imageUrl = data.image;
   })
-  // console.log("Loaded landmark details:", loadedLandmark);
+  // console.log("Loaded landmark details:", details);
   .catch((error) => {
     console.error("Error fetching landmark details:", error);
   });
   return details;
 }
 
-async function fetchBusStopDetails(id: string) {
-  await new Promise((r) => setTimeout(r, 300));
-  return {
-    id,
-    busStopName: "Bus Stop A",
-    subDetails: "Chalong Krung 1 Alley, Lat Krabang, Bangkok 10520",
-    routes: ["Route 1", "Route 2"],
+async function fetchBusStopDetails(id: number) {
+  const details = {
+    id: {id},
+    busStopName: null as number | null,
   };
+  await fetch(`${Config.BASE_API_URL}/api/busstop/${id}`)
+  .then((response) => response.json())
+  .then((data) => {
+    // console.log("Fetched busStop details:", data);
+    details.busStopName = data.name;
+  })
+  // console.log("Loaded busStop details:", details);
+  .catch((error) => {
+    console.error("Error fetching busStop details:", error);
+  });
+  return details;
 }
 
-async function fetchBusRouteDetails(id: string) {
-  await new Promise((r) => setTimeout(r, 300));
-  return {
-    id,
-    routeName: "Route 1",
-    stops: [
-      { id: "stop1", name: "Stop A" },
-      { id: "stop2", name: "Stop B" },
-    ],
+async function fetchBusRouteDetails(id: number) {
+  const details =  {
+    id: {id},
+    routeName: RouteNames[Math.max(0, id - 1)],
+    stops: [] as {busStopId:number, name:string}[],
   };
+  await fetch(`${Config.BASE_API_URL}/api/busstop/route/${id}`)
+  .then((response) => response.json())
+  .then((data) => {
+    // console.log("Fetched busRoute details:", data);
+    data.forEach((stop:any) => {
+      // console.log("Processing stop in route:", stop);
+      details.stops.push({
+        busStopId: stop.busStopId,
+        name: stop.name,
+      });
+    })
+  })
+  // console.log("Loaded busRoute details:", details);
+  .catch((error) => {
+    console.error("Error fetching busRoute details:", error);
+  });
+  return details;
 }
 
 export default function RenderDetailsBottomSheet(selected : SelectedItem) {

@@ -6,21 +6,22 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../../App";
 
 type BusRouteDetails = {
-  id: string;
+  id: number;
   routeName: string;
+  subDetails?: string;
   stops: {
-    id: string;
+    busStopId: number;
     name: string;
   }[];
 };
 
-export default function BusRouteDetails({ data }: { data: any }) {
+export default function BusRouteDetails({ data }: { data: BusRouteDetails }) {
   if (!data) return null;
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const header = data.routeName;
-  const subHeader = data.id;
+  const header = "สายรถ : " + data.routeName;
+  const subHeader = data.subDetails;
 
   return (
     <BottomSheetWithHeader
@@ -30,7 +31,7 @@ export default function BusRouteDetails({ data }: { data: any }) {
       <View style={styles.container}>
         <View>
           <Text style={styles.headerText}>
-            Bus stop: {header}
+            {header}
           </Text>
           <Text style={styles.subHeaderText}>
             {subHeader}

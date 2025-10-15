@@ -3,14 +3,14 @@ import BusStopButton from "../components/BusStopButton";
 import Config from "react-native-config";
 
 type BusStop= {
-  stopId: string;
+  stopId: number;
   stopName: string;
   coordinate: [number, number];
 };
 
 type SelectedItem = {
   type: "busStop" | "busRoute" | "landmark" | null;
-  id: string | null;
+  id: number | null;
 };
 
 type RenderProps = {
@@ -19,21 +19,23 @@ type RenderProps = {
   flyTo: (coordinate: [number, number], duration?: number, zoom?: number) => void;
 };
 
-var loadedBusStops: BusStop[] = [
-  {
-    stopId: "stop1",
-    stopName: "โรงอาหาร C",
-    coordinate: [100.772123, 13.727050]
-  },
-  {
-    stopId: "stop2",
-    stopName: "CCA",
-    coordinate: [100.772751, 13.726169]
-  }
-];
+//var loadedBusStops: BusStop[] = [
+//  {
+//    stopId: "stop1",
+//    stopName: "โรงอาหาร C",
+//    coordinate: [100.772123, 13.727050]
+//  },
+//  {
+//    stopId: "stop2",
+//    stopName: "CCA",
+//    coordinate: [100.772751, 13.726169]
+//  }
+//];
+
+var loadedBusStops: BusStop[] = [];
 
 // ============================ Load bus stops from API ===============================
-fetch(`${Config.BASE_API_URL}/api/busstop/route/1`) // fixed id 1 for now
+fetch(`${Config.BASE_API_URL}/api/busstop/route/1`) // id 1
 .then((response) => {
   if (!response.ok) {
     throw new Error('Network response was not ok ' + response.status);
@@ -42,10 +44,30 @@ fetch(`${Config.BASE_API_URL}/api/busstop/route/1`) // fixed id 1 for now
 })
 .then((data) => {
   // console.log('Data received:', data);
-  loadedBusStops = [];
   data.forEach((stopData: any) => {
     loadedBusStops.push({
-      stopId: stopData.name,
+      stopId: stopData.busStopId,
+      stopName: stopData.name,
+      coordinate: [stopData.longitude, stopData.latitude]
+    });
+  })
+})
+.catch((error) => {
+  console.error('Error fetching data:', error);
+});
+
+fetch(`${Config.BASE_API_URL}/api/busstop/route/2`) // id 2
+.then((response) => {
+  if (!response.ok) {
+    throw new Error('Network response was not ok ' + response.status);
+  }
+  return response.json();
+})
+.then((data) => {
+  console.log('Data received:', data);
+  data.forEach((stopData: any) => {
+    loadedBusStops.push({
+      stopId: stopData.busStopId,
       stopName: stopData.name,
       coordinate: [stopData.longitude, stopData.latitude]
     });
@@ -65,17 +87,7 @@ export default function RenderAllBusStops({ selected, setSelected, flyTo }: Rend
             coordinate={stop.coordinate} 
             anchor={{ x: 0.5, y: 1 }} //bottom-center hits the coordinate
           >
-            <BusStopButton 
-              selected={selected.id === stop.stopId && selected.type === "busStop"} 
-              onPress={() => {
-                if (selected.id === stop.stopId && selected.type === "busStop") {
-                  setSelected({ type: null, id: null });
-                } else {
-                  setSelected({type: "busStop", id: stop.stopId});
-                }
-                flyTo(stop.coordinate);
-              }} 
-            />
+            <BusStopButton stop={stop} selected={selected} setSelected={setSelected} flyTo={flyTo} />
           </MarkerView>
         ))}
     </>

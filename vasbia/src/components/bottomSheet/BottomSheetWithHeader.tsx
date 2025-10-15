@@ -5,7 +5,7 @@ import ChevronUp from "../../assets/icons/ChevronUp";
 
 type BottomSheetWithHeaderProps = {
   header: string;
-  subHeader: string;
+  subHeader?: string;
   children: React.ReactNode;
 };
 
@@ -29,7 +29,8 @@ export default function BottomSheetWithHeader({
             <ChevronUp />
           </View>
           <Text style={styles.headerText}>{header}</Text>
-          <Text style={styles.subHeaderText}>{subHeader}</Text>
+          {subHeader &&
+          <Text style={styles.subHeaderText}>{subHeader}</Text>}
         </TouchableOpacity>
       )}
 

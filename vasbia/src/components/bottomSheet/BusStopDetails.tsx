@@ -6,10 +6,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../../App";
 
 type BusStopDetails = {
-  id: string;
+  id: number;
   busStopName: string;
-  subDetails: string; 
-  routes: string[];          
+  subDetails?: string; 
+  routes?: string[];          
 };
 
 export default function BusStopDetails({ data }: { data: BusStopDetails }) {
@@ -17,7 +17,7 @@ export default function BusStopDetails({ data }: { data: BusStopDetails }) {
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   
-  const header = data.busStopName;
+  const header = "ป้ายจอดรถ : " + data.busStopName;
   const subHeader = data.subDetails;
 
   return (
@@ -28,7 +28,7 @@ export default function BusStopDetails({ data }: { data: BusStopDetails }) {
       <View style={styles.container}>
         <View>
           <Text style={styles.headerText}>
-            Bus stop: {header}
+            {header}
           </Text>
           <Text style={styles.subHeaderText}>
             {subHeader}
