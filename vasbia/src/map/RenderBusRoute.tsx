@@ -3,7 +3,7 @@ import RenderTrackBus from "./RenderTrackBus";
 import Config from "react-native-config";
 
 type busRoute= {
-  routeId: string;
+  routeId: number;
   routeName: string;
   description?: string;
   color: string;
@@ -12,7 +12,7 @@ type busRoute= {
 
 type SelectedItem = {
   type: "busStop" | "busRoute" | "landmark" | null;
-  id: string | null;
+  id: number | null;
 };
 
 type RenderProps = {
@@ -78,6 +78,7 @@ type RenderProps = {
 
 // ============================ Load bus routes from API ===============================
 var loadedBusRoutes: busRoute[] = [];
+export const RouteNames: String[] = [];
 
 // ============================ Load bus routes from API ===============================
 fetch(`${Config.BASE_API_URL}/api/busroute/all`)
@@ -86,12 +87,13 @@ fetch(`${Config.BASE_API_URL}/api/busroute/all`)
   // console.log("Fetched bus routes:", data);
   data.forEach((route:any) => {
     // console.log("Processing route:", route.path);
+    RouteNames.push(route.name);
     loadedBusRoutes.push({
       routeId: route.routeId,
       routeName: route.name,
       description: route.description,
       color: route.color,
-      coordinates: route.path.map((coord: any) => [coord.latitude, coord.longitude]),
+      coordinates: route.path.map((coord: any) => [coord.longitude, coord.latitude]),
     });
   })
   // console.log("Loaded bus routes:", loadedBusRoutes);
@@ -109,12 +111,12 @@ export default function RenderAllBusRoutes({ selected, setSelected }: RenderProp
       <ShapeSource id="unselectedRoutes" shape={unSelectedRoute}
         onPress={(e) => {
           const pressedFeature = e.features[0];
-          const routeId = pressedFeature?.properties?.routeId;
-          if (routeId) { 
-            if (selected.id === routeId && selected.type === "busRoute") {
+          const PressId = pressedFeature?.properties?.routeId;
+          if (PressId) { 
+            if (selected.id === PressId && selected.type === "busRoute") {
               setSelected({ type: null, id: null });
             } else {
-              setSelected({type: "busRoute", id: routeId});
+              setSelected({type: "busRoute", id: PressId});
             }
           }
         }}
@@ -131,12 +133,12 @@ export default function RenderAllBusRoutes({ selected, setSelected }: RenderProp
       <ShapeSource id="selectedRoute" shape={selectedRoute}
         onPress={(e) => {
           const pressedFeature = e.features[0];
-          const routeId = pressedFeature?.properties?.routeId;
-          if (routeId) { 
-            if (selected.id === routeId && selected.type === "busRoute") {
+          const PressId = pressedFeature?.properties?.routeId;
+          if (PressId) { 
+            if (selected.id === PressId && selected.type === "busRoute") {
               setSelected({ type: null, id: null });
             } else {
-              setSelected({type: "busRoute", id: routeId});
+              setSelected({type: "busRoute", id: PressId});
             }
           }
         }}
@@ -170,7 +172,7 @@ function splitRoutesGeoJSON(busRoutes: busRoute[], selected: SelectedItem)
       type: "Feature",
       geometry: {
         type: "LineString",
-        coordinates: coordsPolish(route.coordinates),
+        coordinates: route.coordinates,
       },
       properties: {
         routeId: route.routeId,
@@ -178,7 +180,7 @@ function splitRoutesGeoJSON(busRoutes: busRoute[], selected: SelectedItem)
       },
     };
 
-    if (selected.type && route.routeId === selected.id) {
+    if (selected.type === "busRoute" && route.routeId === selected.id) {
       selectedRoute.push(feature);
     } else {
       unSelectedRoute.push(feature);
@@ -189,10 +191,4 @@ function splitRoutesGeoJSON(busRoutes: busRoute[], selected: SelectedItem)
     unSelectedRoute: { type: "FeatureCollection", features: unSelectedRoute },
     selectedRoute: { type: "FeatureCollection", features: selectedRoute }
   };
-}
-
-function coordsPolish(coords: [number, number][]): [number, number][] {
-  // const newCoords = [...coords, coords[0]];
-  const newCoords = coords;
-  return newCoords.map(([lat, lng]) => [lng, lat])
 }

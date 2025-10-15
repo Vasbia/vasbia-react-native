@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
 interface Route {
-  id: string;
+  id: number;
   busStop: string;
   times: string[];
 }
@@ -10,7 +10,7 @@ interface Route {
 interface BusStopScrollComponentProps {
   routes: Route[];
   onBusStopPress: (route: Route, index: number) => void;
-  selectedRouteId?: string;
+  selectedRouteId?: number;
   containerStyle?: object;
 }
 

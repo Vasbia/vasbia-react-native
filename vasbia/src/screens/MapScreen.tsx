@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useRef } from 'react';
-import { View, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Dimensions, Platform, TouchableOpacity, Alert, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,9 +20,10 @@ import RenderAllBusRoutes from '../map/RenderBusRoute';
 import RenderAllLandmarks from '../map/RenderLandmark';
 import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
 
-import useUserLocation from '../map/UserLocation';
+import useUserLocation, { requestLocationPermission } from '../map/UserLocation';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
+import Geolocation from '@react-native-community/geolocation';
 
 type MapMode = 'bus' | 'landmark';
 
@@ -32,7 +33,7 @@ export default function MapScreen() {
   const [mode, setMode] = useState<MapMode>('bus');
   const [selected, setSelected] = useState<{
     type: 'busStop' | 'busRoute' | 'landmark' | null;
-    id: string | null;
+    id: number | null;
   }>({ type: null, id: null });
 
   const cameraRef = useRef<CameraRef>(null);
@@ -116,6 +117,7 @@ export default function MapScreen() {
         setSelected={setSelected} 
         flyTo={flyTo}
         setMode={setMode}
+        location={location}
       />
     </View>
   );
