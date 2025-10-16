@@ -32,7 +32,7 @@ export default function RatingModal({ visible, onClose }: RatingModalProps) {
     } catch (error) {
       console.error('Error submitting feedback:', error);
     }
-    onClose;
+    onClose();
     setFeedback('');
     setRating(0);
   };

@@ -10,51 +10,51 @@ import { Dimensions } from 'react-native';
 
 const BusStopTimeTableScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [selectedRouteId, setSelectedRouteId] = React.useState<string>('1'); // Default to first route
+  const [selectedRouteId, setSelectedRouteId] = React.useState<number>(1); // Default to first route
 
   const routeData: Array<{
-    id: string;
+    id: number;
     busStop: string;
     times: string[];
     description?: string;
   }> = [
     {
-      id: '1',
+      id: 1,
       busStop: 'หน้าหอประชุมวิศวะ',
       times: ['09:00', '11:30', '15:30'],
     },
     {
-      id: '2',
+      id: 2,
       busStop: 'สำนักงานคณบดี ตึก A',
       times: ['09:01', '11:31', '15:31'],
     },
     {
-      id: '3',
+      id: 3,
       busStop: 'โรงอาหาร A',
       times: ['09:02', '11:32', '15:32'],
     },
     {
-      id: '4',
+      id: 4,
       busStop: 'อาคาร CV',
       times: ['09:03', '11:33', '15:33'],
     },
     {
-      id: '5',
+      id: 5,
       busStop: 'อาคาร ME, อาคาร IE',
       times: ['09:04', '11:34', '15:34'],
     },
     {
-      id: '6',
+      id: 6,
       busStop: 'อาคาร 12 ชั้น',
       times: ['09:05', '11:35', '15:35'],
     },
     {
-      id: '7',
+      id: 7,
       busStop: 'อาคาร CCA',
       times: ['09:09', '11:39', '15:39'],
     },
     {
-      id: '8',
+      id: 8,
       busStop: 'อาคาร HM',
       times: ['09:11', '11:41', '15:41'],
     },

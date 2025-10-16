@@ -45,9 +45,10 @@ const styles = StyleSheet.create({
   headerContainer: {
     position: "absolute",
     bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#353638",
+    left: 16,
+    right: 16,
+    //stretch so that it left 16 in right
+    backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingVertical: 16,
@@ -61,10 +62,10 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#000",
   },
   subHeaderText: {
-    color: "#ccc",
+    color: "#000",
     paddingBottom: 10,
   },
 });

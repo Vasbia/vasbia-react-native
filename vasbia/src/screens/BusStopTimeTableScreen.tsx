@@ -10,19 +10,24 @@ import { Dimensions } from 'react-native';
 
 const BusStopTimeTableScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [selectedRouteId, setSelectedRouteId] = React.useState<string>('1'); // Default to first route
+  const [selectedRouteId, setSelectedRouteId] = React.useState<number>(1); // Default to first route
 
   const routeData: Array<{
-    id: string;
+    id: number;
     busRoute: string;
     times: string[];
     description?: string;
   }> = [
     {
-      id: '1',
+      id: 1,
       busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM',
       times: ['09:00', '11:30', '15:30'],
     },
+    {
+      id: 2,
+      busRoute: 'สายรถอีกสายที่ผ่านป้ายจอดนี้',
+      times: ['09:00', '11:30', '15:30'],
+    }
   ];
 
   const selectedRoute = routeData.find(route => route.id === selectedRouteId);
@@ -40,7 +45,7 @@ const BusStopTimeTableScreen = () => {
           <BackIcon size={40} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bus Stop Schedule</Text>
-        <Text style={styles.headerSubtitle}>หน้าหอประชุมวิศวะ</Text>
+        <Text style={styles.headerSubtitle}>Name</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>

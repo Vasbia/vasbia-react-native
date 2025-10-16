@@ -35,7 +35,7 @@ export default function BusStopDetails({ data }: { data: BusStopDetails }) {
           </Text>
         </View>
         
-        <TouchableOpacity onPress = {() => navigation.navigate('BusStopTimeTable')}>
+        <TouchableOpacity onPress = {() => navigation.navigate('BusStopTimeTable') }>
           <Text style={styles.timeTable}>ดูตารางเวลา</Text>
         </TouchableOpacity>
 
@@ -54,22 +54,22 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff"
+    color: "#000"
   },
   subHeaderText: {
     fontWeight: "medium",
     paddingBottom: 12,
-    color: "#fff"
+    color: "#000"
   },
   timeTable: {
     fontWeight: "bold", 
     fontSize: 16, 
     paddingBottom: 12, 
     alignSelf: "center", 
-    color: "#fff"
+    color: "#000"
   },
   description: {
     fontWeight: "medium",
-    color: "#fff"
+    color: "#000"
   },
 });

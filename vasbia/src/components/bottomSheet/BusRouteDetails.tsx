@@ -38,11 +38,11 @@ export default function BusRouteDetails({ data }: { data: BusRouteDetails }) {
           </Text>
         </View>
 
-        <TouchableOpacity onPress = {() => navigation.navigate('BusRouteTimeTable')}>
+        <TouchableOpacity onPress = {() => navigation.navigate('BusRouteTimeTable')} >
           <Text style={styles.timeTable}>ดูตารางเวลา</Text>
         </TouchableOpacity>
         
-        <Text style={{ color: "#ccc", marginTop: 8 }}>
+        <Text style={{ color: "#000", marginTop: 8 }}>
           Stops: {data.stops?.map((s: any) => s.name).join(", ") ?? "N/A"}
         </Text>
       </View>
@@ -57,22 +57,22 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff"
+    color: "#000"
   },
   subHeaderText: {
     fontWeight: "medium",
     paddingBottom: 12,
-    color: "#fff"
+    color: "#000"
   },
   timeTable: {
     fontWeight: "bold", 
     fontSize: 16, 
     paddingBottom: 12, 
     alignSelf: "center", 
-    color: "#fff"
+    color: "#000"
   },
   description: {
     fontWeight: "medium",
-    color: "#fff"
+    color: "#000"
   },
 });

@@ -50,12 +50,12 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff"
+    color: "#000"
   },
   subHeaderText: {
     fontWeight: "medium",
     paddingBottom: 12,
-    color: "#fff"
+    color: "#000"
   },
   image: {
     width: "100%",
@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
   },
   description: {
     fontWeight: "medium",
-    color: "#fff"
+    color: "#000"
   },
 });
