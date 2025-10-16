@@ -32,6 +32,7 @@ export default function RatingModal({ visible, onClose }: RatingModalProps) {
     } catch (error) {
       console.error('Error submitting feedback:', error);
     }
+    onClose;
     setFeedback('');
     setRating(0);
   };
@@ -49,6 +50,7 @@ export default function RatingModal({ visible, onClose }: RatingModalProps) {
         ratingBackgroundColor="#eeeeee"
         type="custom"
       />
+      <Text style={styles.feedbackLabel}>Tell us more (optional)</Text>
       <TextInput
         style={styles.feedbackInput}
         placeholder="Please comment here..."
@@ -78,6 +80,12 @@ const styles = StyleSheet.create({
   rating: {
     marginBottom: 16,
     color: '#000',
+  },
+  feedbackLabel: {
+    alignSelf: 'flex-start',
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   feedbackInput: {
     width: '100%',
