@@ -90,7 +90,7 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
     return (
       <BottomSheet visible={visible} onClose={() => setVisible(false)}>
         <View style={{ alignItems: "center", padding: 20 }}>
-          <Text style={{ color: "#fff" }}>กำลังโหลดสถานที่แนะนำ...</Text>
+          <Text style={{ color: "#000" }}>กำลังโหลดสถานที่แนะนำ...</Text>
         </View>
       </BottomSheet>
     );
@@ -146,10 +146,10 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#000",
   },
   subDetails: {
-    color: "#fff",
+    color: "#000",
     fontWeight: "medium",
     paddingBottom: 12,
   },
@@ -178,10 +178,10 @@ const styles = StyleSheet.create({
     fontSize: 16, 
     paddingBottom: 12, 
     alignSelf: "center", 
-    color: "#fff"
+    color: "#000"
   },
   description: {
     fontWeight: "medium",
-    color: "#fff"
+    color: "#000"
   },
 });
