@@ -1,7 +1,5 @@
-
 import React from 'react';
-import { TouchableHighlight} from 'react-native';
-import { StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import SearchBarSvg from '../assets/icons/SearchBarSvg';
 
 type ButtonProps = {
@@ -10,19 +8,23 @@ type ButtonProps = {
 
 export default function SearchBar({ onPressButton }: ButtonProps) {
   return (
-    <TouchableHighlight onPress={onPressButton} style={ [styles.searchbar] }>
+    <TouchableOpacity onPress={onPressButton} style={styles.searchbar} activeOpacity={0.7}>
       <SearchBarSvg />
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   searchbar: {
-    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 4,
+    elevation: 5,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

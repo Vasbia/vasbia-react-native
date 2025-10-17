@@ -24,81 +24,88 @@ export default function LoginScreen() {
       {errorMessage && <ToastError toastMessage={errorMessage} onHide={() => setErrorMessage(null)} />}
       {successMessage && <ToastSuccess toastMessage={successMessage} onHide={() => setErrorMessage(null)} />}
 
-      <Text style={styles.title}>VUSBIA</Text>
-      <Text style={styles.subtitle}>Welcome Back !</Text>
-      <Text style={styles.description}>Enter your username and password to sign in.</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.title}>VASBIA</Text>
+        <Text style={styles.subtitle}>Welcome Back !</Text>
+        <Text style={styles.description}>Enter your username and password to sign in.</Text>
 
-      <TextInput
-        style={styles.inputText}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoCorrect={false}
-        onChangeText={setEmail}
-        value={email}
-        placeholder="Email"
-        placeholderTextColor={'gray'}
-      />
+        <TextInput
+          style={styles.inputText}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          onChangeText={setEmail}
+          value={email}
+          placeholder="Email"
+          placeholderTextColor={'gray'}
+        />
 
-      <TextInput
-        style={styles.inputText}
-        onChangeText={setPassword}
-        value={password}
-        placeholder="Password"
-        secureTextEntry={true}
-        placeholderTextColor={'gray'}
-      />
+        <TextInput
+          style={styles.inputText}
+          onChangeText={setPassword}
+          value={password}
+          placeholder="Password"
+          secureTextEntry={true}
+          placeholderTextColor={'gray'}
+        />
 
-      {/* ============================ login API =============================== */}
-      <TouchableOpacity style={styles.button} onPress={async () => {
-        var encodedEmail = encodeURIComponent(email);
-        var encodedPassword = encodeURIComponent(password);
+        {/* ============================ login API =============================== */}
+        <TouchableOpacity style={styles.button} onPress={async () => {
+          var encodedEmail = encodeURIComponent(email);
+          var encodedPassword = encodeURIComponent(password);
 
-        if (email === '' || password === '') {
-          setErrorMessage('Please enter both email and password.');
-          return;
-        }
+          if (email === '' || password === '') {
+            setErrorMessage('Please enter both email and password.');
+            return;
+          }
 
-        await fetch(`${Config.BASE_API_URL}/api/auth/login?email=${encodedEmail}&password=${encodedPassword}`, {method: 'POST'})
-          .then(response => response.json())
-          .then((res) => {
-            CookieManager.clearAll();
+          await fetch(`${Config.BASE_API_URL}/api/auth/login?email=${encodedEmail}&password=${encodedPassword}`, {method: 'POST'})
+            .then(response => response.json())
+            .then((res) => {
+              CookieManager.clearAll();
 
-            console.log('Login response:', res);
+              console.log('Login response:', res);
+              
+              if (res.message != 'Login Success!!') {
+                setErrorMessage('Invalid email or password.');
+                return;
+              }
             
-            if (res.message != 'Login Success!!') {
+              CookieManager.set(`${Config.BASE_API_URL}`, {
+                name: 'token',
+                value: res.data,
+                domain: `${(Config.BASE_API_URL)?.replace('https://', '')}`,
+                path: '/',
+                version: '1',
+                // expires: '2030-12-31T23:59:59.00-00:00',
+              });
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              setErrorMessage('An error occurred. Please try again..');
+              // Handle any errors that occurred during the request
+            });
+
+            const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
+            console.log('Cookies after login:', cookies['token'].value);
+            
+            if (cookies['token'] === undefined) {
               setErrorMessage('Invalid email or password.');
               return;
             }
-          
-            CookieManager.set(`${Config.BASE_API_URL}`, {
-              name: 'token',
-              value: res.data,
-              domain: `${(Config.BASE_API_URL)?.replace('https://', '')}`,
-              path: '/',
-              version: '1',
-              // expires: '2030-12-31T23:59:59.00-00:00',
-            });
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            setErrorMessage('An error occurred. Please try again..');
-            // Handle any errors that occurred during the request
-          });
+            
+          setSuccessMessage('Login successful!');
+          navigation.replace('Map');
 
-          const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-          console.log('Cookies after login:', cookies['token'].value);
-          
-          if (cookies['token'] === undefined) {
-            setErrorMessage('Invalid email or password.');
-            return;
-          }
-          
-        setSuccessMessage('Login successful!');
-        navigation.replace('Map');
+          }}>
+          <Text style={styles.buttonText}>Continue</Text>
+        </TouchableOpacity>
 
-        }}>
-        <Text style={styles.buttonText}>Sign in</Text>
-      </TouchableOpacity>
+        
+        <TouchableOpacity onPress={() => navigation.replace('Register')}>
+          <Text style={styles.suggestText}>Don't have an account?</Text>
+        </TouchableOpacity>
+      </View>
       {/* ============================ login API =============================== */}
     </View>
   );
@@ -109,8 +116,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+    // justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+  infoContainer: {
+    marginTop: '50%',
+    width: '100%',
   },
   inputText:{
     height: 40,
@@ -126,6 +137,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_24pt-Regular',
     fontSize: 14,
     textAlign: 'left',
+    color: 'black',
   },
   title: {
     fontSize: 40,
@@ -152,9 +164,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#4285F4',
     width: '80%',
     marginTop: 8,
-    paddingVertical: 12,
+    marginLeft: '10%',
+    paddingVertical: 8,
     paddingHorizontal: 24,
-    margin: 30,
+
     borderRadius: 6,
   },
   buttonText: {
@@ -162,5 +175,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
     fontFamily: 'Inter_24pt-Medium',
+  },
+  suggestText: {
+    color: '#828282',
+    fontSize: 12,
+    fontFamily: 'Inter_24pt-Regular',
+    textAlign: 'right',
+    marginRight: '10%',
+    marginTop: 16,
+    textDecorationLine: 'underline',
   },
 });

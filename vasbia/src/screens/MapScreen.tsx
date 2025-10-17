@@ -1,3 +1,22 @@
+// import React from 'react';
+// import { useState, useRef } from 'react';
+// import { View, StyleSheet, Text} from 'react-native';
+// import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
+// import { useFlyTo } from '../map/useFlyTo';
+// import ToggleModeButton from '../components/ToggleModeButton';
+// import RatingButton from '../components/RatingButton';
+// import RatingModal from '../components/bottomSheet/RatingModal';
+// import NotificationButton from '../components/NotificationButton';
+// import SuggestionButton from '../components/SuggestionButton';
+// import { useNavigation } from '@react-navigation/native';
+// import type { StackParamList } from '../../App';
+// import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// import SearchBar from '../components/SearchBar';
+// import RenderAllBusStops from "../map/RenderBusStop";
+// import RenderAllBusRoutes from "../map/RenderBusRoute";
+// import RenderAllLandmarks from "../map/RenderLandmark";
+// import CookieManager from '@react-native-cookies/cookies';
+// import Config from 'react-native-config';
 import React from 'react';
 import { useState, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
@@ -119,7 +138,7 @@ const styles = StyleSheet.create({
   appTitle:{
     marginTop: 64,
     fontSize: 40,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_24pt-SemiBold',
     alignSelf: 'center',
     color: 'black',
   },

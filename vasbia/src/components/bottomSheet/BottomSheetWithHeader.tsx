@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
   },
   dragHandle: {
-
     marginBottom: 8,
     alignSelf: "center",
   },
