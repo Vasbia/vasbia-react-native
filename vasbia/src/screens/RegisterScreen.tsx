@@ -1,3 +1,4 @@
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -6,6 +7,7 @@ import { useState } from 'react';
 import Config from 'react-native-config';
 import ToastError from '../components/ToastError';
 import ToastSuccess from '../components/ToastSuccess';
+import RadioGroup, {RadioButtonProps} from 'react-native-radio-buttons-group';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<StackParamList, 'Login'>;
 
@@ -16,19 +18,51 @@ export default function RegisterScreen() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmedPassword, setConfirmedPassword] = useState('');
+  const [selectedId, setSelectedId] = useState<string>();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const radioButtons: RadioButtonProps[] = useMemo(() => ([
+        {
+            id: 'USER',
+            label: 'User',
+            value: 'USER',
+            labelStyle: styles.roleText,
+        },
+        {
+            id: 'BUS_DRIVER',
+            label: 'Bus Driver',
+            value: 'BUS_DRIVER',
+            labelStyle: styles.roleText,
+        }
+    ]), []);
+
+  const payload = {
+  fname: firstName,
+  lname: lastName,
+  email,
+  password,
+  role: selectedId,
+  };
+
   const handleRegister = async () => {
-    if (!firstName || !lastName || !email || !password) {
+    if (!firstName || !lastName || !email || !password || !confirmedPassword) {
       setErrorMessage('Please fill in all fields.');
       return;
     }
 
+    if (password !== confirmedPassword) {
+      setErrorMessage('Passwords do not match.');
+      return;
+    }
+
+    // console.log('URL:', `${Config.BASE_API_URL}/api/auth/createUser?...`)
+    console.log('payload:', firstName, lastName, email, password, selectedId);
     try {
       const response = await fetch(
-        `${Config.BASE_API_URL}/api/auth/createUser?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=USER&key=%2B%3Dh%2B%5Daq%5E%29Vd%3BEh4mr%5Df%5EvGgmgh%3Ck-7`,
+        `${Config.BASE_API_URL}/api/auth/register?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=${encodeURIComponent(selectedId)}&key=${Config.API_KEY}`,
         { method: 'POST' }
       );
 
@@ -36,7 +70,7 @@ export default function RegisterScreen() {
       console.log('Register response:', res);
 
       if (!res.email || !res.fname || !res.lname) {
-        setErrorMessage('Registration failed. Please try again.');
+        setErrorMessage(res.message || 'Registration failed. Please try again.');
         return;
       }
 
@@ -96,6 +130,24 @@ export default function RegisterScreen() {
           placeholderTextColor={'gray'}
         />
 
+        <TextInput
+          style={styles.inputText}
+          onChangeText={setConfirmedPassword}
+          value={confirmedPassword}
+          placeholder="Confirmed Password"
+          secureTextEntry={true}
+          placeholderTextColor={'gray'}
+        />
+
+        <View/>
+          <Text style={styles.roleTitleText}>Select Role</Text>
+          <RadioGroup 
+              radioButtons={radioButtons} 
+              onPress={setSelectedId}
+              selectedId={selectedId}
+              containerStyle={styles.radioContainer}
+          />
+
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
           <Text style={styles.buttonText}>Sign up</Text>
         </TouchableOpacity>
@@ -118,6 +170,13 @@ const styles = StyleSheet.create({
   infoContainer: {
     marginTop: '45%',
     width: '100%',
+  },
+  radioContainer: {
+    flexDirection: 'row',
+    // justifyContent: 'space-around',
+    alignItems: 'center',
+    textShadowColor: 'black',
+    marginLeft: 28,
   },
   inputText: {
     height: 40,
@@ -179,4 +238,15 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textDecorationLine: 'underline',
   },
+  roleText: {
+    color: 'black',
+    fontSize: 14,
+    fontFamily: 'Inter_24pt-Regular',
+  },
+  roleTitleText:{
+    color: 'black',
+    fontSize: 16,
+    fontFamily: 'Inter_24pt-SemiBold',
+    marginLeft: 32,
+  }
 });
