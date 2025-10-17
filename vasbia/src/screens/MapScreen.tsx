@@ -17,6 +17,8 @@ import RenderAllBusRoutes from "../map/RenderBusRoute";
 import RenderAllLandmarks from "../map/RenderLandmark";
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
+import AccidentButton from "../components/AccidentButton";
+
 
 type MapMode = "bus" | "landmark";
 
@@ -84,6 +86,7 @@ export default function MapScreen() {
         }} />
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
+        <AccidentButton onPress ={() => navigation.navigate('Accident')} />
       </View>
 
       <Modal
