@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -7,35 +7,50 @@ import BusRouteScrollComponent from '../components/BusRouteScrollComponent';
 import TimeScrollComponent from '../components/TimeScrollComponent';
 import BackIcon from '../assets/icons/BackIcon';
 import { Dimensions } from 'react-native';
+import Config from 'react-native-config';
+
+interface RouteData {
+  routeId: number;
+  busRoute: string;
+  times: string[];
+}
 
 const BusStopTimeTableScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const [routes, setRoutes] = useState<RouteData[]>([
+    { routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', times: [] },
+  ]);
   const [selectedRouteId, setSelectedRouteId] = React.useState<number>(1); // Default to first route
 
-  const routeData: Array<{
-    id: number;
-    busRoute: string;
-    times: string[];
-    description?: string;
-  }> = [
-    {
-      id: 1,
-      busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM',
-      times: ['09:00', '11:30', '15:30'],
-    },
-    {
-      id: 2,
-      busRoute: 'สายรถอีกสายที่ผ่านป้ายจอดนี้',
-      times: ['09:00', '11:30', '15:30'],
-    }
-  ];
+  // ============================ Load schedule of this stop from API ===============================
+  React.useEffect(() => {
+    setRoutes([{ routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', times: [] }]);
 
-  const selectedRoute = routeData.find(route => route.id === selectedRouteId);
+    fetch(`${Config.BASE_API_URL}/api/busstop/getBusShedule?busId=1`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const updated = [...routes];
+        updated[0].times = data.busScheduleData.map((item: any) => item.arriveTime);
+        setRoutes(updated);
+        console.log('data:', updated[0]);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
+
+
+  const selectedRoute = routes.find((r) => r.routeId === selectedRouteId);
   const selectedTimes = selectedRoute ? selectedRoute.times.sort() : [];
 
-  const handleBusRoutePress = (route: typeof routeData[0], _index: number) => {
-    setSelectedRouteId(route.id);
-    console.log('Selected route:', route.busRoute);
+  const handleBusRoutePress = (route: RouteData, _index: number) => {
+    setSelectedRouteId(route.routeId);
+    //console.log('Selected route:', route.busRoute);
   };
 
   return (
@@ -50,7 +65,7 @@ const BusStopTimeTableScreen = () => {
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <BusRouteScrollComponent
-          routes={routeData}
+          routes={routes}
           onBusRoutePress={handleBusRoutePress}
           selectedRouteId={selectedRouteId}
         />
