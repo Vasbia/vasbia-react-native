@@ -43,6 +43,7 @@ const BusStopTimeTableScreen = () => {
 
   const handleBusStopPress = (stop: BusStop, _index: number) => {
     setSelectedStopId(stop.id);
+    
     fetch(`${Config.BASE_API_URL}/api/busstop/getBusShedule?busId=${stop.id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Network error ' + res.status);
