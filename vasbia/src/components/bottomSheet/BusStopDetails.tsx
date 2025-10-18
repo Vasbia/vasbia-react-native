@@ -35,7 +35,11 @@ export default function BusStopDetails({ data }: { data: BusStopDetails }) {
           </Text>
         </View>
         
-        <TouchableOpacity onPress = {() => navigation.navigate('BusStopTimeTable') }>
+        <TouchableOpacity onPress={() => navigation.navigate('BusStopTimeTable', {
+          busStopId: data.id,
+          busStopName: data.busStopName,
+          })
+        } >
           <Text style={styles.timeTable}>ดูตารางเวลา</Text>
         </TouchableOpacity>
 

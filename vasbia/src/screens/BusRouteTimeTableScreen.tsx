@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
 import BusStopScrollComponent from '../components/BusStopScrollComponent';
@@ -20,9 +20,12 @@ const BusStopTimeTableScreen = () => {
   const [busStops, setBusStops] = useState<BusStop[]>([]);
   const [selectedStopId, setSelectedStopId] = React.useState<number>(1);
 
+  const route = useRoute<RouteProp<StackParamList, 'BusRouteTimeTable'>>();
+  const { routeId, routeName } = route.params;
+
   useEffect(() => {
     setBusStops([]); 
-    fetch(`${Config.BASE_API_URL}/api/busstop/route/1`)
+    fetch(`${Config.BASE_API_URL}/api/busstop/route/${routeId}`)
       .then((res) => {
         if (!res.ok) throw new Error('Network error ' + res.status);
         return res.json();
@@ -67,7 +70,7 @@ const BusStopTimeTableScreen = () => {
           <BackIcon size={40} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bus Route Schedule</Text>
-        <Text style={styles.headerSubtitle}>หน้าหอประชุมวิศวะ - อาคาร HM</Text>
+        <Text style={styles.headerSubtitle}>{routeName}</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>

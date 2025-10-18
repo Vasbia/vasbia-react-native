@@ -22,8 +22,8 @@ export type StackParamList = {
   Map: undefined;
   Notification: undefined;
   FullNotificationInfo: { notification: Notification };
-  BusStopTimeTable: undefined;
-  BusRouteTimeTable: undefined;
+  BusStopTimeTable: { busStopId: number; busStopName: string };
+  BusRouteTimeTable: { routeId: number; routeName: string };
   Register: undefined;
 };
 

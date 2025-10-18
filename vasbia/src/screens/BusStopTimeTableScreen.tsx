@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp  } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
 import BusRouteScrollComponent from '../components/BusRouteScrollComponent';
@@ -22,11 +22,14 @@ const BusStopTimeTableScreen = () => {
   ]);
   const [selectedRouteId, setSelectedRouteId] = React.useState<number>(1); // Default to first route
 
+  const route = useRoute<RouteProp<StackParamList, 'BusStopTimeTable'>>();
+  const { busStopId, busStopName } = route.params;
+
   // ============================ Load schedule of this stop from API ===============================
   React.useEffect(() => {
     setRoutes([{ routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', times: [] }]);
-
-    fetch(`${Config.BASE_API_URL}/api/busstop/getBusShedule?busId=1`)
+    
+    fetch(`${Config.BASE_API_URL}/api/busstop/getBusShedule?busId=${busStopId}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok ' + response.status);
@@ -37,7 +40,6 @@ const BusStopTimeTableScreen = () => {
         const updated = [...routes];
         updated[0].times = data.busScheduleData.map((item: any) => item.arriveTime);
         setRoutes(updated);
-        console.log('data:', updated[0]);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -60,7 +62,7 @@ const BusStopTimeTableScreen = () => {
           <BackIcon size={40} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bus Stop Schedule</Text>
-        <Text style={styles.headerSubtitle}>Name</Text>
+        <Text style={styles.headerSubtitle}>{busStopName}</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
