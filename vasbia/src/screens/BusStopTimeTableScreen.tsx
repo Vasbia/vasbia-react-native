@@ -43,19 +43,19 @@ const BusStopTimeTableScreen = () => {
         return response.json();
       })
       .then((data) => {
-        const updated = [...routes];
-        const targetIndex = updated.findIndex(
-          (r) => busStopId >= r.stopRange[0] && busStopId <= r.stopRange[1]
-        );
-
-        if (targetIndex !== -1) {
-          updated[targetIndex].times = data.busScheduleData.map((item: any) => item.arriveTime);
-          console.log(updated);
-        } else {
-          console.warn('No matching route found for busStopId:', busStopId);
-        }
-
-        setRoutes(updated);
+        setRoutes((prevRoutes) => {
+          return prevRoutes.map((route) => {
+            // find if this route should be updated
+            if (busStopId >= route.stopRange[0] && busStopId <= route.stopRange[1]) {
+              return {
+                ...route,
+                times: data.busScheduleData.map((item: any) => item.arriveTime),
+              };
+            }
+            // otherwise
+            return route;
+          });
+        });
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
