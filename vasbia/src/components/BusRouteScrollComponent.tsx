@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 interface Route {
   routeId: number;
   busRoute: string;
+  stopRange: number[];
   times: string[];
 }
 

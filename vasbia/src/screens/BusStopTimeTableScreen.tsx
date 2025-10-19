@@ -8,18 +8,24 @@ import TimeScrollComponent from '../components/TimeScrollComponent';
 import BackIcon from '../assets/icons/BackIcon';
 import { Dimensions } from 'react-native';
 import Config from 'react-native-config';
+import { RouteNames } from '../map/RenderBusRoute';
 
 interface RouteData {
   routeId: number;
   busRoute: string;
+  stopRange: number[];
   times: string[];
 }
 
+const RouteInit: RouteData[] = [
+  { routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', stopRange: [1, 8], times: []},
+  { routeId: 2, busRoute: 'Airport Rail Link - KMITL', stopRange: [9, 12], times: []},
+  // { routeId: 3, busRoute: 'New Route', stopRange: [13, 18], times: []},
+];
+
 const BusStopTimeTableScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [routes, setRoutes] = useState<RouteData[]>([
-    { routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', times: [] },
-  ]);
+  const [routes, setRoutes] = useState<RouteData[]>(RouteInit);
   const [selectedRouteId, setSelectedRouteId] = React.useState<number>(1); // Default to first route
 
   const route = useRoute<RouteProp<StackParamList, 'BusStopTimeTable'>>();
@@ -27,7 +33,7 @@ const BusStopTimeTableScreen = () => {
 
   // ============================ Load schedule of this stop from API ===============================
   React.useEffect(() => {
-    setRoutes([{ routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', times: [] }]);
+    setRoutes(RouteInit);
     
     fetch(`${Config.BASE_API_URL}/api/busstop/getBusShedule?busId=${busStopId}`)
       .then((response) => {
@@ -38,7 +44,17 @@ const BusStopTimeTableScreen = () => {
       })
       .then((data) => {
         const updated = [...routes];
-        updated[0].times = data.busScheduleData.map((item: any) => item.arriveTime);
+        const targetIndex = updated.findIndex(
+          (r) => busStopId >= r.stopRange[0] && busStopId <= r.stopRange[1]
+        );
+
+        if (targetIndex !== -1) {
+          updated[targetIndex].times = data.busScheduleData.map((item: any) => item.arriveTime);
+          console.log(updated);
+        } else {
+          console.warn('No matching route found for busStopId:', busStopId);
+        }
+
         setRoutes(updated);
       })
       .catch((error) => {
