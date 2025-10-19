@@ -65,7 +65,6 @@ const BusStopTimeTableScreen = () => {
   };
 
   const selectedStop = busStops.find((stop) => stop.id === selectedStopId);
-  const selectedSchedules = selectedStop ? selectedStop.schedules.sort() : [];
 
   return (
     <View style={styles.container}>
@@ -87,6 +86,7 @@ const BusStopTimeTableScreen = () => {
         <TimeScrollComponent
           schedules={selectedStop?.schedules || []}
           title={`Time: ${selectedStop?.busStop || ''}`}
+          busStopId={selectedStopId}
         />
 
       </ScrollView>

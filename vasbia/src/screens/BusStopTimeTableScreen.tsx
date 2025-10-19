@@ -67,7 +67,6 @@ const BusStopTimeTableScreen = () => {
 
 
   const selectedRoute = routes.find((r) => r.routeId === selectedRouteId);
-  const selectedSchedules = selectedRoute ? selectedRoute.schedules.sort() : [];
 
   const handleBusRoutePress = (route: RouteData, _index: number) => {
     setSelectedRouteId(route.routeId);
