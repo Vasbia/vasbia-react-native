@@ -57,29 +57,32 @@ const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
       date.setSeconds(s || 0);
       const timeToNotify = date.toTimeString().split(' ')[0].slice(0, 8);
 
-      const body = {
-        bus_id: selectedBusId,
-        bus_stop_id: busStopId,
-        schedule_time: selectedTime,
-        time_to_notify: timeToNotify,
-        token,
-      };
+      const url = `${Config.BASE_API_URL}/api/notification/TrackBusStop?` +
+        `bus_id=${selectedBusId}` +
+        `&bus_stop_id=${busStopId}` +
+        `&schedule_time=${encodeURIComponent(selectedTime)}` +
+        `&time_to_notify=${encodeURIComponent(timeToNotify)}` +
+        `&token=${encodeURIComponent(token)}`;
 
-      const res = await fetch(`${Config.BASE_API_URL}/api/notification/TrackBusStop`, {
+      console.log('POST URL:', url);
+
+      const response = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+        headers: {
+          Accept: '*/*',
+        },
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      Alert.alert('✅ Notification set', `You’ll be notified at ${timeToNotify}`);
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      Alert.alert('Notification set', `You’ll be notified at ${timeToNotify}`);
 
       setSelectedTime(null);
       setSelectedBusId(null);
       setMinutesBefore(1);
     } catch (err) {
       console.error(err);
-      Alert.alert('❌ Error', 'Failed to set notification time.');
+      Alert.alert('Error', 'Failed to set notification time.');
     }
   };
 
