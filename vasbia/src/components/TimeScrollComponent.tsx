@@ -22,7 +22,7 @@ const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
     if(selectedTime == null && selectedBusId == null){
       setSelectedBusId(busId);
       setSelectedTime(time);
-      setMinutesBefore(1);
+      setMinutesBefore(0);
     } else {
       setSelectedBusId(null);
       setSelectedTime(null);
@@ -75,6 +75,7 @@ const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
 
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      console.log(response);
       Alert.alert('Notification set', `You’ll be notified at ${timeToNotify}`);
 
       setSelectedTime(null);
