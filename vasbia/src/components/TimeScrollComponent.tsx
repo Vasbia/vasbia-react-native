@@ -12,7 +12,7 @@ interface TimeScrollComponentProps {
 const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
   schedules,
   title = 'Time',
-  busStopId = 0,
+  busStopId,
 }) => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedBusId, setSelectedBusId] = useState<number | null>(null);
