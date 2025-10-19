@@ -14,12 +14,12 @@ interface RouteData {
   routeId: number;
   busRoute: string;
   stopRange: number[];
-  times: string[];
+  schedules: { time: string; busId: number }[];
 }
 
 const RouteInit: RouteData[] = [
-  { routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', stopRange: [1, 8], times: []},
-  { routeId: 2, busRoute: 'Airport Rail Link - KMITL', stopRange: [9, 12], times: []},
+  { routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', stopRange: [1, 8], schedules: []},
+  { routeId: 2, busRoute: 'Airport Rail Link - KMITL', stopRange: [9, 12], schedules: []},
   // { routeId: 3, busRoute: 'New Route', stopRange: [13, 18], times: []},
 ];
 
@@ -49,7 +49,10 @@ const BusStopTimeTableScreen = () => {
             if (busStopId >= route.stopRange[0] && busStopId <= route.stopRange[1]) {
               return {
                 ...route,
-                times: data.busScheduleData.map((item: any) => item.arriveTime),
+                schedules: data.busScheduleData.map((item: any) => ({
+                  time: item.arriveTime,
+                  busId: item.busId
+                })),
               };
             }
             // otherwise
@@ -64,7 +67,7 @@ const BusStopTimeTableScreen = () => {
 
 
   const selectedRoute = routes.find((r) => r.routeId === selectedRouteId);
-  const selectedTimes = selectedRoute ? selectedRoute.times.sort() : [];
+  const selectedSchedules = selectedRoute ? selectedRoute.schedules.sort() : [];
 
   const handleBusRoutePress = (route: RouteData, _index: number) => {
     setSelectedRouteId(route.routeId);
@@ -89,8 +92,9 @@ const BusStopTimeTableScreen = () => {
         />
 
         <TimeScrollComponent
-          times={selectedTimes}
+          schedules={selectedRoute?.schedules || []}
           title={`Time: ${selectedRoute?.busRoute || ''}`}
+          busStopId={busStopId}
         />
 
       </ScrollView>

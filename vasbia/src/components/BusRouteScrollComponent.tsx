@@ -5,7 +5,7 @@ interface Route {
   routeId: number;
   busRoute: string;
   stopRange: number[];
-  times: string[];
+  schedules: { time: string; busId: number }[];
 }
 
 interface BusRouteScrollComponentProps {

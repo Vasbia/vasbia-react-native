@@ -12,7 +12,7 @@ import Config from 'react-native-config';
 interface BusStop {
   id: number;
   busStop: string;
-  times: string[];
+  schedules: { time: string; busId: number }[];
 }
 
 const BusStopTimeTableScreen = () => {
@@ -34,7 +34,7 @@ const BusStopTimeTableScreen = () => {
         const formatted: BusStop[] = data.map((stop: any) => ({
           id: stop.busStopId,
           busStop: stop.name,
-          times: [],
+          schedules: [],
         }));
         setBusStops(formatted);
       })
@@ -52,9 +52,12 @@ const BusStopTimeTableScreen = () => {
       .then((data) => {
         setBusStops((prev) =>
           prev.map((item) =>
-            item.id === stop.id
-              ? { ...item, times: data.busScheduleData.map((t: any) => t.arriveTime) }
-              : item
+            item.id === stop.id ? { 
+              ...item, schedules: data.busScheduleData.map((s: any) => ({
+                time: s.arriveTime,
+                busId: s.busId,
+              }))
+            }: item
           )
         );
       })
@@ -62,7 +65,7 @@ const BusStopTimeTableScreen = () => {
   };
 
   const selectedStop = busStops.find((stop) => stop.id === selectedStopId);
-  const selectedTimes = selectedStop ? selectedStop.times : [];
+  const selectedSchedules = selectedStop ? selectedStop.schedules.sort() : [];
 
   return (
     <View style={styles.container}>
@@ -78,11 +81,11 @@ const BusStopTimeTableScreen = () => {
         <BusStopScrollComponent
           routes={busStops}
           onBusStopPress={handleBusStopPress}
-          selectedRouteId={selectedStopId ?? undefined}
+          selectedRouteId={selectedStopId}
         />
 
         <TimeScrollComponent
-          times={selectedTimes}
+          schedules={selectedStop?.schedules || []}
           title={`Time: ${selectedStop?.busStop || ''}`}
         />
 

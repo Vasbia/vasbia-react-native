@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
-interface Route {
+interface BusStop {
   id: number;
   busStop: string;
-  times: string[];
+  schedules: { time: string; busId: number }[];
 }
 
 interface BusStopScrollComponentProps {
-  routes: Route[];
-  onBusStopPress: (route: Route, index: number) => void;
+  routes: BusStop[];
+  onBusStopPress: (route: BusStop, index: number) => void;
   selectedRouteId?: number;
   containerStyle?: object;
 }
