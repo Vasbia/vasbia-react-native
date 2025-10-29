@@ -40,7 +40,7 @@ import RenderAllLandmarks from '../map/RenderLandmark';
 import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
-import AccidentButton from "../components/AccidentButton";
+// import AccidentButton from "../components/AccidentButton";
 
 
 type MapMode = 'bus' | 'landmark';
@@ -59,13 +59,19 @@ export default function MapScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [suggestVisible, setSuggestVisible] = React.useState(false);
-  // const [searchText, setSearchText] = React.useState('');
+  const [searchText, setSearchText] = React.useState('');
 
   return (
     <View style={styles.page}>
       <View style={styles.searchBarContainer}>
         <Text style={styles.appTitle}>VASBIA</Text>
-        <SearchBar/>
+        <SearchBar
+          value={searchText}
+          onChangeText={setSearchText}
+          placeholder="Search..."
+          style={styles.functionalSearchBar}
+          inputStyle={styles.functionalSearchInput}
+        />
       </View>
 
       <MapView style={styles.map} mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=oQ7ceXLhobx6gMFyLsem"
@@ -115,7 +121,7 @@ export default function MapScreen() {
         <ToggleModeButton mode={mode} setMode={setMode} onToggle={() => setSelected({type: null, id: null})}/>
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
-        <AccidentButton onPress ={() => navigation.navigate('Accident')} />
+        {/* <AccidentButton onPress ={() => navigation.navigate('Accident')} /> */}
       </View>
 
       <TouchableOpacity onPress={() => {setSuggestVisible(true)}} style={styles.suggestButton}>
