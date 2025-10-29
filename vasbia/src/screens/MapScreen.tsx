@@ -40,6 +40,8 @@ import RenderAllLandmarks from '../map/RenderLandmark';
 import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
+import AccidentButton from "../components/AccidentButton";
+
 
 type MapMode = 'bus' | 'landmark';
 
@@ -113,6 +115,7 @@ export default function MapScreen() {
         <ToggleModeButton mode={mode} setMode={setMode} onToggle={() => setSelected({type: null, id: null})}/>
         <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
+        <AccidentButton onPress ={() => navigation.navigate('Accident')} />
       </View>
 
       <TouchableOpacity onPress={() => {setSuggestVisible(true)}} style={styles.suggestButton}>
