@@ -39,17 +39,17 @@ export default function RegisterScreen() {
         }
     ]), []);
 
-  const payload = {
-  fname: firstName,
-  lname: lastName,
-  email,
-  password,
-  role: selectedId,
-  };
+  // const payload = {
+  //   fname: firstName,
+  //   lname: lastName,
+  //   email,
+  //   password,
+  //   role: selectedId,
+  // };
 
   const handleRegister = async () => {
-    if (!firstName || !lastName || !email || !password || !confirmedPassword) {
-      setErrorMessage('Please fill in all fields.');
+    if (!firstName || !lastName || !email || !password || !confirmedPassword || !selectedId) {
+      setErrorMessage('Please fill in all fields and select a role.');
       return;
     }
 
@@ -62,7 +62,7 @@ export default function RegisterScreen() {
     console.log('payload:', firstName, lastName, email, password, selectedId);
     try {
       const response = await fetch(
-        `${Config.BASE_API_URL}/api/auth/register?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=${encodeURIComponent(selectedId)}&key=${Config.API_KEY}`,
+        `${Config.BASE_API_URL}/api/auth/register?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=${encodeURIComponent(selectedId ?? '')}&key=${Config.API_KEY}`,
         { method: 'POST' }
       );
 
