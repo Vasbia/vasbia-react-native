@@ -39,7 +39,7 @@ export default function LandmarkButton({ landmark, selected, setSelected, flyTo 
       }}
       activeOpacity={0.7}
     >
-      <LandmarkIcon size={size} color={isSelected ? "#FF0000" : "#2D6EFF"} />
+      <LandmarkIcon size={size} color={isSelected ? "#FF0000" : "#1F0198"} />
     </TouchableOpacity>
   );
 }

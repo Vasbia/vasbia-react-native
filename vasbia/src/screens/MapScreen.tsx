@@ -21,6 +21,7 @@ import RenderAllLandmarks from '../map/RenderLandmark';
 import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
+import UserIcon from '../assets/icons/UserIcon';
 
 type MapMode = 'bus' | 'landmark';
 
@@ -80,7 +81,7 @@ export default function MapScreen() {
       <MapView style={styles.map} mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=oQ7ceXLhobx6gMFyLsem"
         onDidFinishLoadingMap={() => {
           if (!initialSet) {
-            if (hasPermission && location) {
+            if (location) {
               cameraRef.current?.setCamera({
                 centerCoordinate: [location.longitude, location.latitude],
                 zoomLevel: 17,
@@ -88,8 +89,8 @@ export default function MapScreen() {
               });
             } else {
               cameraRef.current?.setCamera({
-                centerCoordinate: [100.772451, 13.727075],
-                zoomLevel: 18,
+                centerCoordinate: [100.7743534, 13.7270673],
+                zoomLevel: 17,
                 animationDuration: 1000,
               });
             }
@@ -101,7 +102,7 @@ export default function MapScreen() {
 
         {location && (
           <MarkerView coordinate={[location.longitude, location.latitude]}>
-            <View style={styles.marker} />
+            <UserIcon />
           </MarkerView>
         )}
 
@@ -196,14 +197,6 @@ const styles = StyleSheet.create({
   },
   page: { flex: 1},
   map: { flex: 1 },
-  marker: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'blue',
-    borderColor: 'white',
-    borderWidth: 2,
-  },
   buttonContainer: {
     position: 'absolute',
     right: 16,

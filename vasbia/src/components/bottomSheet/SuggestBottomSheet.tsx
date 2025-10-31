@@ -103,7 +103,7 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
         <View style={styles.slide}>
           {currentLandmark.imageUrl &&
             <Animated.View style={{ opacity: fadeAnim }}>
-              <Image source={{ uri: currentLandmark.imageUrl }} style={styles.image} />
+              <Image source={{ uri: `data:image/png;base64,${currentLandmark.imageUrl}` }} style={styles.image} resizeMode="cover"/>
             </Animated.View>
           }
 
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 250,
+    aspectRatio: 1.2, // experiment: 1.3–1.8
     borderRadius: 8,
     marginVertical: 15,
   },

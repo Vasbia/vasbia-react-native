@@ -15,6 +15,7 @@ interface RouteData {
   busRoute: string;
   stopRange: number[];
   schedules: { time: string; busId: number }[];
+  pastSchedules?: { time: string; busId: number }[]; 
 }
 
 const RouteInit: RouteData[] = [
@@ -53,6 +54,10 @@ const BusStopTimeTableScreen = () => {
                   time: item.arriveTime,
                   busId: item.busId
                 })),
+               pastSchedules: (data.busScheduleDataPast || []).map((item: any) => ({
+                 time: item.arriveTime,
+                 busId: item.busId
+               })),
               };
             }
             // otherwise
@@ -92,6 +97,7 @@ const BusStopTimeTableScreen = () => {
 
         <TimeScrollComponent
           schedules={selectedRoute?.schedules || []}
+          pastSchedules={[...(selectedRoute?.pastSchedules || [])].sort((a, b) => (a.time > b.time ? 1 : -1))}
           title={`Time: ${selectedRoute?.busRoute || ''}`}
           busStopId={busStopId}
         />
