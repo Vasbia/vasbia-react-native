@@ -67,7 +67,7 @@ export default function RenderAllBusRoutes({ selected, setSelected }: RenderProp
       >
         <LineLayer id="unselectedLine"
           style={{
-            lineColor: "#2D6EFF",
+            lineColor: ['get', 'color'],
             lineWidth: 5,
             lineOpacity: 0.8,
           }}
@@ -121,6 +121,7 @@ function splitRoutesGeoJSON(busRoutes: busRoute[], selected: SelectedItem)
       properties: {
         routeId: route.routeId,
         routeName: route.routeName,
+        color: route.color,
       },
     };
 

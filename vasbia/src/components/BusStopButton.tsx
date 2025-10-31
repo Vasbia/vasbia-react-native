@@ -39,7 +39,7 @@ export default function BusStopButton({ stop, selected, setSelected, flyTo }: Bu
       }}
       activeOpacity={0.7}
     >
-      <BusStopIcon size={size} color={isSelected ? '#FF0000' : '#2D6EFF'} />
+      <BusStopIcon size={size} color={isSelected ? '#FF0000' : '#1F0198'} />
     </TouchableOpacity>
   );
 }

@@ -5,53 +5,39 @@ type IconProps = {
   color?: string;
 };
 
-export default function SuggestionBIcon({ size = 70 }: IconProps) {
+export default function SuggestionBIcon({ size = 56 }: IconProps) {
   return (
   <Svg
     width={size}
-    height={(size * 57) / 70}
+    height={size}
     fill="none"
   >
+    <Path
+      fill="#fff"
+      stroke="#2D6EFF"
+      strokeWidth={2}
+      d="M20 1h16c10.493 0 19 8.507 19 19v16c0 10.493-8.507 19-19 19H20C9.507 55 1 46.493 1 36V20C1 9.507 9.507 1 20 1Z"
+    />
+    <Path
+      stroke="#1E1E1E"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={3}
+      d="M21.333 38 9.667 44.667V18l11.666-6.667m0 26.667 13.334 6.667M21.333 38V11.333m13.334 33.334L46.333 38V11.333L34.667 18m0 26.667V18m0 0-13.334-6.667"
+    />
     <G clipPath="url(#a)">
       <Path
         fill="#fff"
-        stroke="#2D6EFF"
+        stroke="#1E1E1E"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         strokeWidth={2}
-        d="M20 1h30c10.493 0 19 8.507 19 19v17c0 10.493-8.507 19-19 19H20C9.507 56 1 47.493 1 37V20C1 9.507 9.507 1 20 1Z"
-      />
-      <Path
-        fill="#fff"
-        stroke="#1E1E1E"
-        strokeLinejoin="round"
-        strokeWidth={3}
-        d="m50.5 34.083 4.5 11.5H15l4.5-11.5h31Z"
-      />
-      <Path
-        fill="#fff"
-        d="M48.25 20.75c0 9.917-12.75 18.417-12.75 18.417s-12.75-8.5-12.75-18.417a12.75 12.75 0 0 1 25.5 0Z"
-      />
-      <Path
-        fill="#fff"
-        d="M35.5 25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Z"
-      />
-      <Path
-        stroke="#1E1E1E"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={3}
-        d="M48.25 20.75c0 9.917-12.75 18.417-12.75 18.417s-12.75-8.5-12.75-18.417a12.75 12.75 0 0 1 25.5 0Z"
-      />
-      <Path
-        stroke="#1E1E1E"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={3}
-        d="M35.5 25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Z"
+        d="m44.5 7.25 1.931 3.912 4.319.632-3.125 3.043.737 4.3-3.862-2.03-3.862 2.03.737-4.3-3.125-3.043 4.319-.632L44.5 7.25Z"
       />
     </G>
     <Defs>
       <ClipPath id="a">
-        <Path fill="#fff" d="M0 0h70v57H0z" />
+        <Path fill="#fff" d="M37 6h15v15H37z" />
       </ClipPath>
     </Defs>
   </Svg>
