@@ -1,22 +1,3 @@
-// import React from 'react';
-// import { useState, useRef } from 'react';
-// import { View, StyleSheet, Text} from 'react-native';
-// import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
-// import { useFlyTo } from '../map/useFlyTo';
-// import ToggleModeButton from '../components/ToggleModeButton';
-// import RatingButton from '../components/RatingButton';
-// import RatingModal from '../components/bottomSheet/RatingModal';
-// import NotificationButton from '../components/NotificationButton';
-// import SuggestionButton from '../components/SuggestionButton';
-// import { useNavigation } from '@react-navigation/native';
-// import type { StackParamList } from '../../App';
-// import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// import SearchBar from '../components/SearchBar';
-// import RenderAllBusStops from "../map/RenderBusStop";
-// import RenderAllBusRoutes from "../map/RenderBusRoute";
-// import RenderAllLandmarks from "../map/RenderLandmark";
-// import CookieManager from '@react-native-cookies/cookies';
-// import Config from 'react-native-config';
 import React from 'react';
 import { useState, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
@@ -25,12 +6,12 @@ import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
 import { useFlyTo } from '../map/useFlyTo';
-import useUserLocation, { requestLocationPermission } from '../map/UserLocation';
-import Geolocation from '@react-native-community/geolocation';
+import useUserLocation from '../map/UserLocation';
+import { useFocusEffect } from '@react-navigation/native';
+// import Geolocation from '@react-native-community/geolocation';
 import SearchBar from '../components/SearchBar';
 import ToggleModeButton from '../components/ToggleModeButton';
-import RatingButton from '../components/RatingButton';
-import RatingModal from '../components/bottomSheet/RatingModal';
+import SettingButton from '../components/SettingButton';
 import NotificationButton from '../components/NotificationButton';
 import SuggestionBIcon from '../assets/icons/SuggestionBIcon';
 import SuggestBottomSheet from '../components/bottomSheet/SuggestBottomSheet';
@@ -47,6 +28,7 @@ type MapMode = 'bus' | 'landmark';
 
 export default function MapScreen() {
   const { location, hasPermission } = useUserLocation();
+  const [unreadCount, setUnreadCount] = useState(0);
   const [initialSet, setInitialSet] = useState(false);
   const [mode, setMode] = useState<MapMode>('bus');
   const [selected, setSelected] = useState<{
@@ -55,9 +37,34 @@ export default function MapScreen() {
   }>({ type: null, id: null });
   const cameraRef = useRef<CameraRef>(null);
   const flyTo = useFlyTo(cameraRef);
+  useFocusEffect(
+  React.useCallback(() => {
+    const fetchUnreadCount = async () => {
+      const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
+      const token = cookies.token?.value;
+      if (!token) {
+        console.warn('No token found in cookies');
+        setUnreadCount(0);
+        return;
+      }
+      const response = await fetch(`${Config.BASE_API_URL}/api/notification/countNotification?token=${token}`, {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        console.warn('Failed to fetch unread count');
+        setUnreadCount(0);
+        return;
+      }
+      const count = await response.json();
+      setUnreadCount(count || 0);
+      console.log('===== Unread count: ======', count);
+    };
+    fetchUnreadCount();
+  }, [])
+);
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [modalVisible, setModalVisible] = React.useState(false);
+  // const [modalVisible, setModalVisible] = React.useState(false);
   const [suggestVisible, setSuggestVisible] = React.useState(false);
   const [searchText, setSearchText] = React.useState('');
 
@@ -72,6 +79,10 @@ export default function MapScreen() {
           style={styles.functionalSearchBar}
           inputStyle={styles.functionalSearchInput}
         />
+      </View>
+
+      <View style={{position: 'absolute', top: 64, right: 16, zIndex: 20}}>
+        <SettingButton onPressButton={() => navigation.navigate('Setting')} />
       </View>
 
       <MapView style={styles.map} mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=oQ7ceXLhobx6gMFyLsem"
@@ -119,16 +130,13 @@ export default function MapScreen() {
 
       <View style={styles.buttonContainer}>
         <ToggleModeButton mode={mode} setMode={setMode} onToggle={() => setSelected({type: null, id: null})}/>
-        <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
-        <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
-        {/* <AccidentButton onPress ={() => navigation.navigate('Accident')} /> */}
+        <NotificationButton onPressButton = {() => navigation.navigate('Notification')} badgeCount={unreadCount}/>
       </View>
 
       <TouchableOpacity onPress={() => {setSuggestVisible(true)}} style={styles.suggestButton}>
         <SuggestionBIcon />
       </TouchableOpacity>
 
-      <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
 
       <SuggestBottomSheet 
         visible={suggestVisible} 

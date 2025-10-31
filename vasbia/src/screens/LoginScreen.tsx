@@ -15,6 +15,7 @@ export default function LoginScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -40,14 +41,34 @@ export default function LoginScreen() {
           placeholderTextColor={'gray'}
         />
 
-        <TextInput
-          style={styles.inputText}
-          onChangeText={setPassword}
-          value={password}
-          placeholder="Password"
-          secureTextEntry={true}
-          placeholderTextColor={'gray'}
-        />
+        <View style={{position: 'relative'}}>
+          <TextInput
+            style={styles.inputText}
+            onChangeText={setPassword}
+            value={password}
+            placeholder="Password"
+            secureTextEntry={!showPassword}
+            placeholderTextColor={'gray'}
+          />
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            style={{
+              position: 'absolute',
+              right: 52,
+              top: 0,
+              height: 40,
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{
+              color: "#828282",
+              fontFamily: 'Inter_24pt-SemiBold',
+              fontSize: 12,
+            }}>
+              {showPassword ? 'Hide' : 'Show'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* ============================ login API =============================== */}
         <TouchableOpacity style={styles.button} onPress={async () => {

@@ -11,6 +11,8 @@ import BusRouteTimeTableScreen from './src/screens/BusRouteTimeTableScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
 import BusDriverScreen from './src/screens/BusDriverScreen';
 import SearchScreen from './src/screens/SearchScreen';
+import SettingScreen from './src/screens/SettingScreen';
+
 
 import type { Notification } from './src/types/Notification';
 
@@ -29,6 +31,7 @@ export type StackParamList = {
   Search: undefined;
   Accident: undefined;
   BusDriver: undefined;
+  Setting: undefined;
 };
 
 export default function App() {
@@ -45,6 +48,7 @@ export default function App() {
           <Stack.Screen name="BusDriver" component={BusDriverScreen} />
           <Stack.Screen name="Search" component={SearchScreen} />
 
+          <Stack.Screen name="Setting" component={SettingScreen} />
         </Stack.Navigator>
     </NavigationContainer>
   );
