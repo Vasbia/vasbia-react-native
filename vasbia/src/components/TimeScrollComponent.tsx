@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
   adjustText: {
     fontSize: 14,
     fontWeight: '600',
+    color: '#333',
   },
   minuteLabel: {
     fontSize: 14,
