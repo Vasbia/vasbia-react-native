@@ -13,7 +13,7 @@ type SelectedItem = {
 //API calls for details
 async function fetchLandmarkDetails(id: number) {
   const details = {
-    id: {id},
+    id: id,
     landmarkName: null as string | null,
     imageUrl: null as string | null,
   };
@@ -33,7 +33,7 @@ async function fetchLandmarkDetails(id: number) {
 
 async function fetchBusStopDetails(id: number) {
   const details = {
-    id: {id},
+    id: id,
     busStopName: null as number | null,
   };
   await fetch(`${Config.BASE_API_URL}/api/busstop/${id}`)
@@ -51,7 +51,7 @@ async function fetchBusStopDetails(id: number) {
 
 async function fetchBusRouteDetails(id: number) {
   const details =  {
-    id: {id},
+    id: id,
     routeName: RouteNames[Math.max(0, id - 1)],
     stops: [] as {busStopId:number, name:string}[],
   };

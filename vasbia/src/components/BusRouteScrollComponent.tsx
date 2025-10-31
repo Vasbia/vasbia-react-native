@@ -2,9 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
 interface Route {
-  id: number;
+  routeId: number;
   busRoute: string;
-  times: string[];
+  stopRange: number[];
+  schedules: { time: string; busId: number }[];
 }
 
 interface BusRouteScrollComponentProps {
@@ -30,10 +31,10 @@ const BusRouteScrollComponent: React.FC<BusRouteScrollComponentProps> = ({
         contentContainerStyle={styles.scrollContent}
       >
         {routes.map((route, index) => {
-          const isSelected = route.id === selectedRouteId;
+          const isSelected = route.routeId === selectedRouteId;
           return (
             <TouchableOpacity
-              key={route.id}
+              key={route.routeId}
               style={[
                 styles.busRouteCard,
                 isSelected && styles.selectedBusRouteCard,

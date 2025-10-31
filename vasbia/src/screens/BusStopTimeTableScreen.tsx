@@ -1,41 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp  } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
 import BusRouteScrollComponent from '../components/BusRouteScrollComponent';
 import TimeScrollComponent from '../components/TimeScrollComponent';
 import BackIcon from '../assets/icons/BackIcon';
 import { Dimensions } from 'react-native';
+import Config from 'react-native-config';
+import { RouteNames } from '../map/RenderBusRoute';
+
+interface RouteData {
+  routeId: number;
+  busRoute: string;
+  stopRange: number[];
+  schedules: { time: string; busId: number }[];
+}
+
+const RouteInit: RouteData[] = [
+  { routeId: 1, busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM', stopRange: [1, 8], schedules: []},
+  { routeId: 2, busRoute: 'Airport Rail Link - KMITL', stopRange: [9, 12], schedules: []},
+  // { routeId: 3, busRoute: 'New Route', stopRange: [13, 18], times: []},
+];
 
 const BusStopTimeTableScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+  const [routes, setRoutes] = useState<RouteData[]>(RouteInit);
   const [selectedRouteId, setSelectedRouteId] = React.useState<number>(1); // Default to first route
 
-  const routeData: Array<{
-    id: number;
-    busRoute: string;
-    times: string[];
-    description?: string;
-  }> = [
-    {
-      id: 1,
-      busRoute: 'หน้าหอประชุมวิศวะ - อาคาร HM',
-      times: ['09:00', '11:30', '15:30'],
-    },
-    {
-      id: 2,
-      busRoute: 'สายรถอีกสายที่ผ่านป้ายจอดนี้',
-      times: ['09:00', '11:30', '15:30'],
-    }
-  ];
+  const route = useRoute<RouteProp<StackParamList, 'BusStopTimeTable'>>();
+  const { busStopId, busStopName } = route.params;
 
-  const selectedRoute = routeData.find(route => route.id === selectedRouteId);
-  const selectedTimes = selectedRoute ? selectedRoute.times.sort() : [];
+  // ============================ Load schedule of this stop from API ===============================
+  React.useEffect(() => {
+    setRoutes(RouteInit);
+    
+    fetch(`${Config.BASE_API_URL}/api/busstop/getBusShedule?busId=${busStopId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.status);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setRoutes((prevRoutes) => {
+          return prevRoutes.map((route) => {
+            // find if this route should be updated
+            if (busStopId >= route.stopRange[0] && busStopId <= route.stopRange[1]) {
+              return {
+                ...route,
+                schedules: data.busScheduleData.map((item: any) => ({
+                  time: item.arriveTime,
+                  busId: item.busId
+                })),
+              };
+            }
+            // otherwise
+            return route;
+          });
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
 
-  const handleBusRoutePress = (route: typeof routeData[0], _index: number) => {
-    setSelectedRouteId(route.id);
-    console.log('Selected route:', route.busRoute);
+
+  const selectedRoute = routes.find((r) => r.routeId === selectedRouteId);
+
+  const handleBusRoutePress = (route: RouteData, _index: number) => {
+    setSelectedRouteId(route.routeId);
+    //console.log('Selected route:', route.busRoute);
   };
 
   return (
@@ -45,19 +80,20 @@ const BusStopTimeTableScreen = () => {
           <BackIcon size={40} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bus Stop Schedule</Text>
-        <Text style={styles.headerSubtitle}>Name</Text>
+        <Text style={styles.headerSubtitle}>{busStopName}</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <BusRouteScrollComponent
-          routes={routeData}
+          routes={routes}
           onBusRoutePress={handleBusRoutePress}
           selectedRouteId={selectedRouteId}
         />
 
         <TimeScrollComponent
-          times={selectedTimes}
+          schedules={selectedRoute?.schedules || []}
           title={`Time: ${selectedRoute?.busRoute || ''}`}
+          busStopId={busStopId}
         />
 
       </ScrollView>

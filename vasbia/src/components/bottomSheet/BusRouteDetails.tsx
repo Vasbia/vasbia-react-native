@@ -38,7 +38,11 @@ export default function BusRouteDetails({ data }: { data: BusRouteDetails }) {
           </Text>
         </View>
 
-        <TouchableOpacity onPress = {() => navigation.navigate('BusRouteTimeTable')} >
+        <TouchableOpacity onPress={() => navigation.navigate('BusRouteTimeTable', {
+          routeId: data.id,
+          routeName: data.routeName,
+          })
+        } >
           <Text style={styles.timeTable}>ดูตารางเวลา</Text>
         </TouchableOpacity>
         

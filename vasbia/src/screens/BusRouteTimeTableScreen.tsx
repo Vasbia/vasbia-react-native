@@ -1,72 +1,70 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
 import BusStopScrollComponent from '../components/BusStopScrollComponent';
 import TimeScrollComponent from '../components/TimeScrollComponent';
 import BackIcon from '../assets/icons/BackIcon';
 import { Dimensions } from 'react-native';
+import Config from 'react-native-config';
+
+interface BusStop {
+  id: number;
+  busStop: string;
+  schedules: { time: string; busId: number }[];
+}
 
 const BusStopTimeTableScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  const [selectedRouteId, setSelectedRouteId] = React.useState<number>(1); // Default to first route
+  const [busStops, setBusStops] = useState<BusStop[]>([]);
+  const [selectedStopId, setSelectedStopId] = React.useState<number>(1);
 
-  const routeData: Array<{
-    id: number;
-    busStop: string;
-    times: string[];
-    description?: string;
-  }> = [
-    {
-      id: 1,
-      busStop: 'หน้าหอประชุมวิศวะ',
-      times: ['09:00', '11:30', '15:30'],
-    },
-    {
-      id: 2,
-      busStop: 'สำนักงานคณบดี ตึก A',
-      times: ['09:01', '11:31', '15:31'],
-    },
-    {
-      id: 3,
-      busStop: 'โรงอาหาร A',
-      times: ['09:02', '11:32', '15:32'],
-    },
-    {
-      id: 4,
-      busStop: 'อาคาร CV',
-      times: ['09:03', '11:33', '15:33'],
-    },
-    {
-      id: 5,
-      busStop: 'อาคาร ME, อาคาร IE',
-      times: ['09:04', '11:34', '15:34'],
-    },
-    {
-      id: 6,
-      busStop: 'อาคาร 12 ชั้น',
-      times: ['09:05', '11:35', '15:35'],
-    },
-    {
-      id: 7,
-      busStop: 'อาคาร CCA',
-      times: ['09:09', '11:39', '15:39'],
-    },
-    {
-      id: 8,
-      busStop: 'อาคาร HM',
-      times: ['09:11', '11:41', '15:41'],
-    },
-  ];
+  const route = useRoute<RouteProp<StackParamList, 'BusRouteTimeTable'>>();
+  const { routeId, routeName } = route.params;
 
-  const selectedRoute = routeData.find(route => route.id === selectedRouteId);
-  const selectedTimes = selectedRoute ? selectedRoute.times.sort() : [];
+  useEffect(() => {
+    setBusStops([]); 
+    fetch(`${Config.BASE_API_URL}/api/busstop/route/${routeId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Network error ' + res.status);
+        return res.json();
+      })
+      .then((data) => {
+        const formatted: BusStop[] = data.map((stop: any) => ({
+          id: stop.busStopId,
+          busStop: stop.name,
+          schedules: [],
+        }));
+        setBusStops(formatted);
+      })
+      .catch((err) => console.error('Error fetching route:', err));
+  }, []);
 
-  const handleBusStopPress = (route: typeof routeData[0], _index: number) => {
-    setSelectedRouteId(route.id);
-    console.log('Selected route:', route.busStop);
+  const handleBusStopPress = (stop: BusStop, _index: number) => {
+    setSelectedStopId(stop.id);
+    
+    fetch(`${Config.BASE_API_URL}/api/busstop/getBusShedule?busId=${stop.id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Network error ' + res.status);
+        return res.json();
+      })
+      .then((data) => {
+        setBusStops((prev) =>
+          prev.map((item) =>
+            item.id === stop.id ? { 
+              ...item, schedules: data.busScheduleData.map((s: any) => ({
+                time: s.arriveTime,
+                busId: s.busId,
+              }))
+            }: item
+          )
+        );
+      })
+      .catch((err) => console.error('Error fetching times:', err));
   };
+
+  const selectedStop = busStops.find((stop) => stop.id === selectedStopId);
 
   return (
     <View style={styles.container}>
@@ -75,22 +73,21 @@ const BusStopTimeTableScreen = () => {
           <BackIcon size={40} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Bus Route Schedule</Text>
-        <Text style={styles.headerSubtitle}>หน้าหอประชุมวิศวะ - อาคาร HM</Text>
+        <Text style={styles.headerSubtitle}>{routeName}</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <BusStopScrollComponent
-          routes={routeData}
+          routes={busStops}
           onBusStopPress={handleBusStopPress}
-          selectedRouteId={selectedRouteId}
+          selectedRouteId={selectedStopId}
         />
 
         <TimeScrollComponent
-          times={selectedTimes}
-          title={`Time: ${selectedRoute?.busStop || ''}`}
+          schedules={selectedStop?.schedules || []}
+          title={`Time: ${selectedStop?.busStop || ''}`}
+          busStopId={selectedStopId}
         />
-
-
 
       </ScrollView>
     </View>

@@ -31,9 +31,7 @@ async function fetchSuggestLandmark(userLongitude: number, userLatitude: number)
   try {
     const response = await fetch(`${Config.BASE_API_URL}/api/place/findNearByPlace`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userLatitude: userLatitude,
         userLongitude: userLongitude,
