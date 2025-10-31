@@ -89,8 +89,8 @@ export default function MapScreen() {
               });
             } else {
               cameraRef.current?.setCamera({
-                centerCoordinate: [100.772451, 13.727075],
-                zoomLevel: 18,
+                centerCoordinate: [100.7743534, 13.7270673],
+                zoomLevel: 17,
                 animationDuration: 1000,
               });
             }
