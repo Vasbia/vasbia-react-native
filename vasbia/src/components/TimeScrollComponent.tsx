@@ -65,13 +65,13 @@ const TimeScrollComponent: React.FC<Props> = ({
       const res = await fetch(url, { method: 'POST', headers: { Accept: '*/*' } });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      Alert.alert('✅ Notification set', `You’ll be notified at ${timeToNotify}`);
+      Alert.alert('✅ ตั้งค่าการแจ้งเตือนสำเร็จ', `คุณจะได้รับการแจ้งเตือนเมื่อ ${timeToNotify}`);
       setSelectedTime(null);
       setSelectedBusId(null);
       setMinutesBefore(1);
     } catch (e) {
       console.error(e);
-      Alert.alert('❌ Error', 'Failed to set notification time.');
+      Alert.alert('❌ เกิดข้อผิดพลาด', 'ตั้งค่าการแจ้งเตือนไม่สำเร็จ');
     }
   };
 
@@ -109,7 +109,7 @@ const TimeScrollComponent: React.FC<Props> = ({
       {selectedTime && (
         <View style={styles.adjustContainer}>
           <Text style={styles.selectedTimeLabel}>
-            Selected: {selectedTime} ({minutesBefore} min before)
+            เลือก: {selectedTime} ({minutesBefore} นาที ก่อนหน้า)
           </Text>
 
           <View style={styles.adjustRow}>
@@ -119,7 +119,7 @@ const TimeScrollComponent: React.FC<Props> = ({
               </TouchableOpacity>
             ))}
 
-            <Text style={styles.minuteLabel}>{minutesBefore} min before</Text>
+            <Text style={styles.minuteLabel}>ก่อน {minutesBefore} นาที</Text>
 
             {[1, 5, 10].map(v => (
               <TouchableOpacity key={v} style={styles.adjustButton} onPress={() => adjustMinutes(v)}>
@@ -129,7 +129,7 @@ const TimeScrollComponent: React.FC<Props> = ({
           </View>
 
           <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-            <Text style={styles.confirmText}>Confirm Notification</Text>
+            <Text style={styles.confirmText}>ยืนยันการแจ้งเตือน</Text>
           </TouchableOpacity>
         </View>
       )}
