@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
 
-interface TimeScrollComponentProps {
-  schedules: { time: string; busId: number }[];
+interface TimeItem { time: string; busId: number }
+
+interface Props {
+  schedules: TimeItem[];
+  pastSchedules?: TimeItem[];
   title?: string;
   busStopId?: number;
 }
 
-const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
+const TimeScrollComponent: React.FC<Props> = ({
   schedules,
+  pastSchedules = [],
   title = 'Time',
   busStopId = 0,
 }) => {
@@ -19,18 +23,13 @@ const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
   const [minutesBefore, setMinutesBefore] = useState<number>(1);
 
   const handleTimePress = (busId: number, time: string) => {
-    if(selectedTime == null && selectedBusId == null){
-      setSelectedBusId(busId);
-      setSelectedTime(time);
-      setMinutesBefore(0);
-    } else {
-      setSelectedBusId(null);
-      setSelectedTime(null);
-    }
+    setSelectedBusId(busId);
+    setSelectedTime(time);
+    setMinutesBefore(1);
   };
 
   const adjustMinutes = (delta: number) => {
-    setMinutesBefore((prev) => Math.max(0, prev + delta));
+    setMinutesBefore(prev => Math.max(0, prev + delta));
   };
 
   const handleConfirm = async () => {
@@ -38,52 +37,41 @@ const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
       Alert.alert('⚠️ Select a time first');
       return;
     }
-
     try {
-      // Retrieve token from cookies
       const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
       const token = cookies['token']?.value;
-
       if (!token) {
         Alert.alert('⚠️ Not logged in', 'Please log in again.');
         return;
       }
 
-      // calculate time_to_notify
+      // build HH:mm:ss notify time
       const [h, m, s] = selectedTime.split(':').map(Number);
-      const date = new Date();
-      date.setHours(h);
-      date.setMinutes(m - minutesBefore);
-      date.setSeconds(s || 0);
-      const timeToNotify = date.toTimeString().split(' ')[0].slice(0, 8);
+      const d = new Date();
+      d.setHours(h);
+      d.setMinutes(m - minutesBefore);
+      d.setSeconds(s || 0);
+      const timeToNotify = d.toTimeString().split(' ')[0].slice(0, 8);
 
-      const url = `${Config.BASE_API_URL}/api/notification/TrackBusStop?` +
+      // this endpoint expects query params (empty body)
+      const url =
+        `${Config.BASE_API_URL}/api/notification/TrackBusStop?` +
         `bus_id=${selectedBusId}` +
         `&bus_stop_id=${busStopId}` +
         `&schedule_time=${encodeURIComponent(selectedTime)}` +
         `&time_to_notify=${encodeURIComponent(timeToNotify)}` +
         `&token=${encodeURIComponent(token)}`;
 
-      console.log('POST URL:', url);
+      const res = await fetch(url, { method: 'POST', headers: { Accept: '*/*' } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Accept: '*/*',
-        },
-      });
-
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      console.log(response);
-      Alert.alert('Notification set', `You’ll be notified at ${timeToNotify}`);
-
+      Alert.alert('✅ Notification set', `You’ll be notified at ${timeToNotify}`);
       setSelectedTime(null);
       setSelectedBusId(null);
       setMinutesBefore(1);
-    } catch (err) {
-      console.error(err);
-      Alert.alert('Error', 'Failed to set notification time.');
+    } catch (e) {
+      console.error(e);
+      Alert.alert('❌ Error', 'Failed to set notification time.');
     }
   };
 
@@ -91,53 +79,50 @@ const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>{title}</Text>
 
-      {/* Horizontal Time Scroll */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {schedules.map((s, index) => {
+      {/* Wrapping grid (upcoming first) */}
+      <View style={styles.wrapGrid}>
+        {schedules.map((s, i) => {
           const isSelected = selectedTime === s.time && selectedBusId === s.busId;
           return (
             <TouchableOpacity
-              key={index}
-              style={[styles.timeSlot, isSelected && styles.selectedSlot]}
+              key={`up-${i}`}
               onPress={() => handleTimePress(s.busId, s.time)}
+              style={[styles.chip, isSelected && styles.chipSelected]}
+              activeOpacity={0.7}
             >
-              <Text style={styles.timeText}>{s.time}</Text>
+              <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+                {s.time}
+              </Text>
             </TouchableOpacity>
           );
         })}
-      </ScrollView>
 
-      {/* Adjustment Bar (outside scroll view) */}
+        {/* Past schedules appended, greyed & not tappable */}
+        {pastSchedules.map((s, i) => (
+          <View key={`past-${i}`} style={[styles.chip, styles.chipPast]}>
+            <Text style={styles.chipTextPast}>{s.time}</Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Adjustment bar (outside the grid) */}
       {selectedTime && (
         <View style={styles.adjustContainer}>
           <Text style={styles.selectedTimeLabel}>
-            Selected: {selectedTime} (เตือนก่อนหน้า {minutesBefore} นาที)
+            Selected: {selectedTime} ({minutesBefore} min before)
           </Text>
 
           <View style={styles.adjustRow}>
-            {[-10, -5, -1].map((v) => (
-              <TouchableOpacity
-                key={v}
-                style={styles.adjustButton}
-                onPress={() => adjustMinutes(v)}
-              >
+            {[-10, -5, -1].map(v => (
+              <TouchableOpacity key={v} style={styles.adjustButton} onPress={() => adjustMinutes(v)}>
                 <Text style={styles.adjustText}>{v}</Text>
               </TouchableOpacity>
             ))}
 
-            <Text style={styles.minuteLabel}>{minutesBefore}</Text>
+            <Text style={styles.minuteLabel}>{minutesBefore} min before</Text>
 
-            {[+1, +5, +10].map((v) => (
-              <TouchableOpacity
-                key={v}
-                style={styles.adjustButton}
-                onPress={() => adjustMinutes(v)}
-              >
+            {[1, 5, 10].map(v => (
+              <TouchableOpacity key={v} style={styles.adjustButton} onPress={() => adjustMinutes(v)}>
                 <Text style={styles.adjustText}>{`+${v}`}</Text>
               </TouchableOpacity>
             ))}
@@ -152,6 +137,8 @@ const TimeScrollComponent: React.FC<TimeScrollComponentProps> = ({
   );
 };
 
+const GAP = 8;
+
 const styles = StyleSheet.create({
   container: { marginVertical: 16 },
   sectionTitle: {
@@ -161,25 +148,40 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 16,
   },
-  scrollView: { paddingLeft: 16 },
-  scrollContent: { paddingRight: 16 },
-  timeSlot: {
-    backgroundColor: '#000',
+
+  // Wrapping grid: chips flow to next line automatically
+  wrapGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginHorizontal: 6,
-    alignItems: 'center',
-    minWidth: 70,
+    gap: GAP, // RN 0.71+; if older, replace with margins on chip
   },
-  selectedSlot: {
+
+  chip: {
+    backgroundColor: '#000',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 10,
+    minWidth: 70,
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    // If 'gap' unsupported, uncomment these and remove gap above:
+    // marginRight: 8,
+    // marginBottom: 8,
+  },
+  chipSelected: {
     backgroundColor: '#2D6EFF',
   },
-  timeText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+  chipPast: {
+    backgroundColor: '#E6E6E6',
   },
+
+  chipText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+  chipTextSelected: { color: '#fff' },
+  chipTextPast: { fontSize: 15, fontWeight: '700', color: '#8A8A8A' },
+
+  // Adjust bar
   adjustContainer: {
     marginTop: 16,
     paddingHorizontal: 16,
@@ -198,8 +200,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
     flexWrap: 'wrap',
+    marginBottom: 10,
   },
   adjustButton: {
     backgroundColor: '#fff',
@@ -210,28 +212,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
   },
-  adjustText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-  },
-  minuteLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginHorizontal: 8,
-  },
+  adjustText: { fontSize: 14, fontWeight: '600' },
+  minuteLabel: { fontSize: 14, fontWeight: '600', color: '#333', marginHorizontal: 8 },
+
   confirmButton: {
     backgroundColor: '#2D6EFF',
     borderRadius: 8,
     paddingVertical: 10,
     alignItems: 'center',
   },
-  confirmText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
+  confirmText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
 });
 
 export default TimeScrollComponent;
