@@ -5,7 +5,7 @@ type IconProps = {
   color?: string;
 };
 
-export default function RatingBIcon({ size = 49 }: IconProps) {
+export default function RatingBIcon({}: IconProps) {
   return (
     <Svg width={320} height={60} fill="none">
       <G>

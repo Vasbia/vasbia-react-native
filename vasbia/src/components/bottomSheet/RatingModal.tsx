@@ -83,9 +83,9 @@ const styles = StyleSheet.create({
   },
   feedbackLabel: {
     alignSelf: 'flex-start',
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#000',
+    fontSize: 14,
+    fontFamily: 'Inter_24pt-SemiBold',
   },
   feedbackInput: {
     width: '100%',
