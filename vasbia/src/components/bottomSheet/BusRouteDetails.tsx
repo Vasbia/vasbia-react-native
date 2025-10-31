@@ -47,7 +47,7 @@ export default function BusRouteDetails({ data }: { data: BusRouteDetails }) {
         </TouchableOpacity>
         
         <Text style={{ color: "#000", marginTop: 8 }}>
-          Stops: {data.stops?.map((s: any) => s.name).join(", ") ?? "N/A"}
+          ป้ายจอดรถ: {data.stops?.map((s: any) => s.name).join(", ") ?? "N/A"}
         </Text>
       </View>
     </BottomSheetWithHeader>

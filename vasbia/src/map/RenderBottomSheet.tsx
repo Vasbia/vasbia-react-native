@@ -20,7 +20,7 @@ async function fetchLandmarkDetails(id: number) {
   await fetch(`${Config.BASE_API_URL}/api/place/${id}`)
   .then((response) => response.json())
   .then((data) => {
-    console.log("Fetched landmark details:", data);
+    // console.log("Fetched landmark details:", data);
     details.landmarkName = data.name;
     details.imageUrl = data.image;
   })

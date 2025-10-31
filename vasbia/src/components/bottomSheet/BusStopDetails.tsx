@@ -44,7 +44,7 @@ export default function BusStopDetails({ data }: { data: BusStopDetails }) {
         </TouchableOpacity>
 
         <Text style={styles.description}>
-          Routes: {data.routes?.join(", ") ?? "N/A"}
+          รายละเอียดของป้ายจอดรถ
         </Text>
       </View>
     </BottomSheetWithHeader>
