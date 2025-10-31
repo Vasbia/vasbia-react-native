@@ -18,7 +18,9 @@ export default function RegisterScreen() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [confirmedPassword, setConfirmedPassword] = useState('');
+  const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
   const [selectedId, setSelectedId] = useState<string>();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -39,17 +41,17 @@ export default function RegisterScreen() {
         }
     ]), []);
 
-  const payload = {
-  fname: firstName,
-  lname: lastName,
-  email,
-  password,
-  role: selectedId,
-  };
+  // const payload = {
+  //   fname: firstName,
+  //   lname: lastName,
+  //   email,
+  //   password,
+  //   role: selectedId,
+  // };
 
   const handleRegister = async () => {
-    if (!firstName || !lastName || !email || !password || !confirmedPassword) {
-      setErrorMessage('Please fill in all fields.');
+    if (!firstName || !lastName || !email || !password || !confirmedPassword || !selectedId) {
+      setErrorMessage('Please fill in all fields and select a role.');
       return;
     }
 
@@ -62,7 +64,7 @@ export default function RegisterScreen() {
     console.log('payload:', firstName, lastName, email, password, selectedId);
     try {
       const response = await fetch(
-        `${Config.BASE_API_URL}/api/auth/register?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=${encodeURIComponent(selectedId)}&key=${Config.API_KEY}`,
+        `${Config.BASE_API_URL}/api/auth/register?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}&role=${encodeURIComponent(selectedId ?? '')}&key=${Config.API_KEY}`,
         { method: 'POST' }
       );
 
@@ -121,23 +123,63 @@ export default function RegisterScreen() {
           placeholderTextColor={'gray'}
         />
 
-        <TextInput
-          style={styles.inputText}
-          onChangeText={setPassword}
-          value={password}
-          placeholder="Password"
-          secureTextEntry={true}
-          placeholderTextColor={'gray'}
-        />
+        <View style={{position: 'relative'}}>
+          <TextInput
+            style={styles.inputText}
+            onChangeText={setPassword}
+            value={password}
+            placeholder="Password"
+            secureTextEntry={!showPassword}
+            placeholderTextColor={'gray'}
+          />
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            style={{
+              position: 'absolute',
+              right: 52,
+              top: 0,
+              height: 40,
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{
+              color: "#828282",
+              fontFamily: 'Inter_24pt-SemiBold',
+              fontSize: 12,
+            }}>
+              {showPassword ? 'Hide' : 'Show'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-        <TextInput
-          style={styles.inputText}
-          onChangeText={setConfirmedPassword}
-          value={confirmedPassword}
-          placeholder="Confirmed Password"
-          secureTextEntry={true}
-          placeholderTextColor={'gray'}
-        />
+        <View style={{position: 'relative'}}>
+          <TextInput
+            style={styles.inputText}
+            onChangeText={setConfirmedPassword}
+            value={confirmedPassword}
+            placeholder="Confirmed Password"
+            secureTextEntry={!showConfirmedPassword}
+            placeholderTextColor={'gray'}
+          />
+          <TouchableOpacity
+            onPress={() => setShowConfirmedPassword(!showConfirmedPassword)}
+            style={{
+              position: 'absolute',
+              right: 52,
+              top: 0,
+              height: 40,
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{
+              color: "#828282",
+              fontFamily: 'Inter_24pt-SemiBold',
+              fontSize: 12,
+            }}>
+              {showConfirmedPassword ? 'Hide' : 'Show'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <View/>
           <Text style={styles.roleTitleText}>Select Role</Text>

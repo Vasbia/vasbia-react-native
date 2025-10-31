@@ -3,21 +3,16 @@ import {
   View,
   Text,
   StyleSheet,
-  Platform,
   TouchableOpacity,
   ScrollView,
   Dimensions,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import BackIcon from '../assets/icons/BackIcon';
-
-type Notification = {
-  title: string;
-  date: string;
-  subtitle: string;
-};
+import { Notification } from '../types/Notification';
 
 function formatNotificationDate(dateString: string) {
+  if (dateString === '') return '';
   const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
   const now = new Date();
 
@@ -57,7 +52,6 @@ export default function FullNotificationInfo() {
 
   return (
     <View style={styles.container}>
-      {/* Title Bar */}
       <View style={styles.titleBar}>
         <TouchableOpacity
           style={styles.backButton}
@@ -68,11 +62,12 @@ export default function FullNotificationInfo() {
         <Text style={styles.pageTitle}>Notification</Text>
       </View>
 
-      {/* Full Content */}
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>{notification.title}</Text>
-        <Text style={styles.date}>{formatNotificationDate(notification.date)}</Text>
-        <Text style={styles.description}>{notification.subtitle}</Text>
+        <View style={styles.row}>
+          <Text style={styles.title}>{notification.title}</Text>
+          <Text style={styles.date}>{formatNotificationDate(notification.datetime)}</Text>
+        </View>
+          <Text style={styles.description}>{notification.message}</Text>
       </ScrollView>
     </View>
   );
@@ -80,11 +75,13 @@ export default function FullNotificationInfo() {
 
 const { width: screenWidth } = Dimensions.get('window');
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   titleBar: {
     width: '100%',
-    marginTop: Platform.OS === 'ios' ? screenWidth * 0.13 : screenWidth * 0.08,
-    marginBottom: screenWidth * 0.025,
+    marginTop: 64,
     paddingHorizontal: screenWidth * 0.025,
     justifyContent: 'center',
     alignItems: 'center',
@@ -98,9 +95,38 @@ const styles = StyleSheet.create({
     top: '30%',
     transform: [{ translateY: -screenWidth * 0.035 }],
   },
-  pageTitle: { fontSize: screenWidth * 0.06, fontWeight: 'bold', color: '#000', textAlign: 'center' },
-  content: { padding: screenWidth * 0.045 },
-  title: { fontSize: screenWidth * 0.06, fontWeight: 'bold', marginBottom: screenWidth * 0.015, color: '#000' },
-  date: { color: '#888', fontSize: screenWidth * 0.037, marginBottom: screenWidth * 0.03 },
-  description: { fontSize: screenWidth * 0.042, lineHeight: screenWidth * 0.06, color : '#000' },
+  pageTitle: {
+    fontSize: 32,
+    fontFamily: 'Inter_24pt-Bold',
+    color: '#000',
+    textAlign: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  content: {
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontFamily: 'Inter_24pt-Bold',
+    marginBottom: 16,
+    color: '#2d6eff',
+    width: '70%',
+  },
+  date: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    color: '#888',
+    fontSize: 14,
+    marginBottom: 16,
+    fontFamily: 'Inter_24pt-Regular',
+  },
+  description: {
+    fontSize: 16,
+    color: '#000',
+    fontFamily: 'Inter_24pt-Regular',
+  },
 });

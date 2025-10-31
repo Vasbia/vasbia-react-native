@@ -1,18 +1,17 @@
 import * as React from 'react';
+import { Notification } from '../types/Notification';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-type NotificationCardProps = {
-  title: string;
-  date: string;
-  description: string;
+type NotificationCardProps = Notification & {
   onPress?: () => void;
 };
 
 function formatNotificationDate(dateString: string) {
+  if (dateString === '') return '';
+
   const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
   const now = new Date();
 
-  // remove time parts for comparison
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
@@ -43,20 +42,30 @@ function formatNotificationDate(dateString: string) {
 
 export default function NotificationCard({
   title,
-  date,
-  description,
+  datetime,
+  message,
+  is_read,
   onPress,
 }: NotificationCardProps) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.row}>
-        <Text style={styles.title}>{title}</Text>
+        <Text
+          style={[
+            styles.title,
+            is_read ? styles.titleRead : styles.titleUnread
+          ]}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {title}
+        </Text>
         <Text style={styles.date}>
-          {formatNotificationDate(date)}
+          {formatNotificationDate(datetime)}
         </Text>
       </View>
       <Text style={styles.description} numberOfLines={2} ellipsizeMode="tail">
-        {description}
+        {message}
       </Text>
     </TouchableOpacity>
   );
@@ -76,21 +85,32 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 4,
   },
-  title: { 
-    fontSize: 20,
-    fontFamily: 'Inter_24pt-Bold',
-    color: '#2d6eff' },
-  date: { 
+  title: {
+    flex: 1,
+    fontSize: 18,
+    fontFamily: 'Inter_24pt-SemiBold',
+  },
+  titleRead: {
+    color: '#828282',
+  },
+  titleUnread: {
+    flex: 1,
+    fontSize: 18,
+    fontFamily: 'Inter_24pt-SemiBold',
+    color: '#2d6eff',
+  },
+  date: {
     color: '#888',
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Inter_24pt-Regular',
+    marginLeft: 8,
   },
   description: { 
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Inter_24pt-Regular',
-    color: '#666'
+    color: '#666',
   },
 });

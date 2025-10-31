@@ -9,6 +9,7 @@ import FullNotificationInfoScreen from './src/screens/FullNotificationInfoScreen
 import BusStopTimeTableScreen from './src/screens/BusStopTimeTableScreen';
 import BusRouteTimeTableScreen from './src/screens/BusRouteTimeTableScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+import SettingScreen from './src/screens/SettingScreen';
 
 
 import type { Notification } from './src/types/Notification';
@@ -25,6 +26,7 @@ export type StackParamList = {
   BusStopTimeTable: { busStopId: number; busStopName: string };
   BusRouteTimeTable: { routeId: number; routeName: string };
   Register: undefined;
+  Setting: undefined;
 };
 
 export default function App() {
@@ -38,6 +40,7 @@ export default function App() {
           <Stack.Screen name="BusStopTimeTable" component={BusStopTimeTableScreen} />
           <Stack.Screen name="BusRouteTimeTable" component={BusRouteTimeTableScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Setting" component={SettingScreen} />
         </Stack.Navigator>
     </NavigationContainer>
   );
