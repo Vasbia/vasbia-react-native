@@ -19,19 +19,6 @@ type RenderProps = {
   flyTo: (coordinate: [number, number], duration?: number, zoom?: number) => void;
 };
 
-//const loadedLandmark: Landmark[] = [
-//  {
-//    landmarkId: "landmark1",
-//    landmarkName: "อาคาร 12 ชั้น",
-//    coordinate: [100.772388, 13.727487]
-//  },
-//  {
-//    landmarkId: "landmark2",
-//    landmarkName: "ภาควิชาวิศวกรรมเกษตร",
-//    coordinate: [100.77255, 13.726472]
-//  }
-//];
-
 var loadedLandmark: Landmark[] = [];
 
 // ============================ Load landmarks from API ===============================
