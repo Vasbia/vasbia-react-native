@@ -49,7 +49,7 @@ export default function SettingScreen() {
 
             <Modal
                 visible={showLogoutModal}
-                transparent
+                transparent={true}
                 animationType="fade"
                 onRequestClose={() => setShowLogoutModal(false)}
             >
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.3)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         alignItems: 'center',
     },
