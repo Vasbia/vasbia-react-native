@@ -104,7 +104,7 @@ export default function LoginScreen() {
               navigation.replace('Map');
             }
             else if (res.role == "BUS_DRIVER"){
-              navigation.replace('Map'); //to be changed to Driver's screen
+              navigation.replace('BusDriver');
             }
           })
           .catch((error) => {
