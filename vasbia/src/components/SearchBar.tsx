@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     backgroundColor: '#fff',
     borderRadius: 8,
-  }
+  },
 });
 
 export default SearchBar;

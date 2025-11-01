@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Text, Dimensions, ScrollView } from "react-native";
+import { View, StyleSheet, Text, Dimensions, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -17,7 +17,7 @@ import RenderAllBusRoutes from '../map/RenderBusRoute';
 // import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
-import AccidentButton from "../components/AccidentButton";
+import AccidentButton from '../components/AccidentButton';
 import RenderDriverBus from '../map/RenderDriverBus';
 import SettingButton from '../components/SettingButton';
 
@@ -29,23 +29,23 @@ export default function BusDriverScreen() {
     }>({ type: null, id: null });
     const cameraRef = useRef<CameraRef>(null);
     const flyTo = useFlyTo(cameraRef);
-  
+
     const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
     const [modalVisible, setModalVisible] = React.useState(false);
     // const [suggestVisible, setSuggestVisible] = React.useState(false);
     // const [searchText, setSearchText] = React.useState('');
 
-    const [driverStatus, setDriverStatus] = useState<string | null>("REST");
+    const [driverStatus, setDriverStatus] = useState<string | null>('REST');
     const [etaTime, setEtaTime] = useState<number | null>(null);
 
     const driverStatusCallback = (status: string | null, eta: number | null, rem_sch: any[]) => {
-      status ? setDriverStatus(status) : setDriverStatus("REST");
+      status ? setDriverStatus(status) : setDriverStatus('REST');
       eta ? setEtaTime(eta) : setEtaTime(null);
       setDriverData(prev => ({
         ...prev,
         busStops: rem_sch,
       }));
-    }
+    };
 
   // const busId = 'bus123'; // Example bus ID, replace with actual data as needed
 
@@ -62,16 +62,16 @@ export default function BusDriverScreen() {
         const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
         const token = cookies.token?.value;
         if (!token) {
-          console.warn("⚠️ No token found");
+          console.warn('⚠️ No token found');
           return;
         }
 
         const response1 = await fetch(`${Config.BASE_API_URL}/api/busdriver/info?token=${token}`);
-        if (!response1.ok) throw new Error("Network error: " + response1.status);
+        if (!response1.ok) {throw new Error('Network error: ' + response1.status);}
 
         const data1 = await response1.json();
-        console.log("✅ Driver bus info:", data1);
-        
+        console.log('✅ Driver bus info:', data1);
+
         // const response2 = await fetch(`${Config.BASE_API_URL}/api/busdriver/schedule/token?token=${token}`);
         // if (!response2.ok) throw new Error("Network error: " + response2.status);
 
@@ -90,7 +90,7 @@ export default function BusDriverScreen() {
           // busStops: schedules,
         });
       } catch (error) {
-        console.error("❌ Error fetching driver route:", error);
+        console.error('❌ Error fetching driver route:', error);
       }
     };
 
@@ -130,7 +130,7 @@ export default function BusDriverScreen() {
         }}
       >
         <Camera ref={cameraRef} />
-        
+
         <MarkerView coordinate={[100.772451, 13.727075]}>
           <View style={styles.marker} />
         </MarkerView>
@@ -149,7 +149,7 @@ export default function BusDriverScreen() {
           onPress={async () => {
             const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
             const token = cookies.token?.value;
-            console.log("🚍 Retrieved token for accident report:", token);
+            console.log('🚍 Retrieved token for accident report:', token);
             // console.log("🚍 Accident report sent for Bus ID:", busId);
 
             // 🛰️ Send to API
@@ -163,11 +163,11 @@ export default function BusDriverScreen() {
                 return response;
               })
               .then((data) => {
-                console.log("✅ Accident report submitted:", data);
+                console.log('✅ Accident report submitted:', data);
                 // alert("อุบัติเหตุถูกส่งเรียบร้อยแล้ว! 🚨");
               })
               .catch((error) => {
-                console.error("❌ Error submitting accident:", error);
+                console.error('❌ Error submitting accident:', error);
                 // alert("ไม่สามารถส่งรายงานอุบัติเหตุได้ โปรดลองอีกครั้ง 😢");
               });
           }}
@@ -179,12 +179,12 @@ export default function BusDriverScreen() {
       <View style={styles.bottomBox}>
         <Text style={styles.tableTitle}>🚌 Monitor</Text>
 
-        <Text style={driverStatus === 'REST' ? styles.driverStatusInActive : driverStatus === "LATE" ? styles.driverStatusLate : driverStatus === "EARLY" ? styles.driverStatusEarly : styles.driverStatusActive}>{driverStatus}</Text>
-        <Text style={{ textAlign: "center", marginBottom: 8, color: "#444", fontFamily: 'Inter_24pt-Regular' }}>
-          {etaTime ? "by est. " + etaTime + " s" : ""}
+        <Text style={driverStatus === 'REST' ? styles.driverStatusInActive : driverStatus === 'LATE' ? styles.driverStatusLate : driverStatus === 'EARLY' ? styles.driverStatusEarly : styles.driverStatusActive}>{driverStatus}</Text>
+        <Text style={{ textAlign: 'center', marginBottom: 8, color: '#444', fontFamily: 'Inter_24pt-Regular' }}>
+          {etaTime ? 'by est. ' + etaTime + ' s' : ''}
         </Text>
 
-        <ScrollView 
+        <ScrollView
           style={styles.scrollArea}
           showsVerticalScrollIndicator={true}
           contentContainerStyle={{ paddingBottom: 20 }}
@@ -203,14 +203,14 @@ export default function BusDriverScreen() {
               </View>
             ))
           ) : (
-            <Text style={{ textAlign: "center", padding: 10, color: "#888", fontFamily: 'Inter_24pt-Regular' }}>No active schedule</Text>
+            <Text style={{ textAlign: 'center', padding: 10, color: '#888', fontFamily: 'Inter_24pt-Regular' }}>No active schedule</Text>
           )}
         </View>
         </ScrollView>
       </View>
-      
+
       <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
-      
+
     </View>
   );
 }
@@ -293,57 +293,57 @@ const styles = StyleSheet.create({
   },
 
   bottomBox: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     height: screenHeight / 2.5,
-    overflow: "hidden",
-    backgroundColor: "#FFFFFF",
+    overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 10,
     zIndex: 50,
-    alignItems: "center",
-    justifyContent: "flex-start",
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
 
-  tableTitle: { fontSize: 20, textAlign: "center", marginBottom: 12, color: 'black', fontFamily: 'Inter_24pt-SemiBold' },
+  tableTitle: { fontSize: 20, textAlign: 'center', marginBottom: 12, color: 'black', fontFamily: 'Inter_24pt-SemiBold' },
   tableContainer: {
-    width: "100%",
+    width: '100%',
     marginTop: 10,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 8,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   tableHeader: {
-    flexDirection: "row",
-    backgroundColor: "#f0f0f0",
-    color: 'black'
+    flexDirection: 'row',
+    backgroundColor: '#f0f0f0',
+    color: 'black',
   },
   tableRow: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    color: 'black'
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    color: 'black',
   },
   cell: {
     flex: 1,
     paddingVertical: 8,
-    textAlign: "center",
+    textAlign: 'center',
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     fontSize: 16,
     color:'#000',
     fontFamily: 'Inter_24pt-Medium',
   },
   headerCell: { fontFamily: 'Inter_24pt-SemiBold', color: '#000' },
-  highlightCell: { backgroundColor: "#D6E4FF", borderColor: "#2D6EFF" },
+  highlightCell: { backgroundColor: '#D6E4FF', borderColor: '#2D6EFF' },
   scrollArea: {
     flexGrow: 0,
     maxHeight: '75%', // 👈 ตารางจะสูงได้ไม่เกิน 75% ของกล่อง
@@ -352,29 +352,29 @@ const styles = StyleSheet.create({
   driverStatusActive: {
     fontSize: 18,
     fontFamily: 'Inter_24pt-Bold',
-    color: "green",
-    textAlign: "center",
+    color: 'green',
+    textAlign: 'center',
     marginBottom: 10,
   },
   driverStatusInActive: {
     fontSize: 18,
     fontFamily: 'Inter_24pt-Bold',
-    color: "red",
-    textAlign: "center",
+    color: 'red',
+    textAlign: 'center',
     marginBottom: 10,
   },
   driverStatusLate: {
     fontSize: 18,
     fontFamily: 'Inter_24pt-Bold',
-    color: "orange",
-    textAlign: "center",
+    color: 'orange',
+    textAlign: 'center',
     marginBottom: 10,
   },
   driverStatusEarly: {
     fontSize: 18,
     fontFamily: 'Inter_24pt-Bold',
-    color: "blue",
-    textAlign: "center",
+    color: 'blue',
+    textAlign: 'center',
     marginBottom: 10,
   },
   firstRowHighlight: {

@@ -42,7 +42,7 @@ export default function SearchScreen() {
         // Assume your API returns an array of matching results
         setSuggestions(data.slice(0, 3)); // only show 3
       } catch (error) {
-        console.error("❌ Error fetching suggestions:", error);
+        console.error('❌ Error fetching suggestions:', error);
         setSuggestions([]);
       } finally {
         setLoading(false);

@@ -102,7 +102,7 @@ export default function SettingScreen() {
             </Modal>
         </View>
   );
-};
+}
 
 const { width: screenWidth } = Dimensions.get('window');
 const styles = StyleSheet.create({
