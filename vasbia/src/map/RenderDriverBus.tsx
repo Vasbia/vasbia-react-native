@@ -43,7 +43,7 @@ function useMockTrackedBuses(selectedRouteId: number | null, DriverBus: number |
       });
 
       if (!checked){
-        setBuses([]);
+        setBuses([{rem_sch: null} as TrackedBus]);
         return;
       }
 
@@ -101,13 +101,13 @@ export default function RenderDriverBus({ selectedRouteId, DriverBus, onBusUpdat
   return (
     <>
       {trackedBuses.map((bus) => (
-        <MarkerView
+        (bus.busId && <MarkerView
           key={bus.busId}
           coordinate={bus.coordinate}
           anchor={{ x: 0.5, y: 1 }} // bottom-center hits the coordinate
         >
           <TrackBusIcon />
-        </MarkerView>
+        </MarkerView>)
       ))}
     </>
   );

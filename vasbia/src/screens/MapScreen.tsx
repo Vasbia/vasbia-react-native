@@ -71,13 +71,7 @@ export default function MapScreen() {
     <View style={styles.page}>
       <View style={styles.searchBarContainer}>
         <Text style={styles.appTitle}>VASBIA</Text>
-        <SearchBar
-          value={searchText}
-          onChangeText={setSearchText}
-          placeholder="Search..."
-          style={styles.functionalSearchBar}
-          inputStyle={styles.functionalSearchInput}
-        />
+        <SearchBar onPressButton={() => navigation.navigate('Search')}/>
       </View>
 
       <View style={{position: 'absolute', top: 64, right: 16, zIndex: 20}}>

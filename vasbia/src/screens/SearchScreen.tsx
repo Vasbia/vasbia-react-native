@@ -14,8 +14,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
 import BackIcon from '../assets/icons/BackIcon';
-import SearchBar from '../components/SearchBar';
-import Config from 'react-native-config'; // Make sure you have your BASE_API_URL here
+import SearchBar2 from '../components/SearchBar2';
+import Config from 'react-native-config';
 
 export default function SearchScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
@@ -66,7 +66,7 @@ export default function SearchScreen() {
   return (
     <View style={styles.container}>
       {/* 🔙 Back button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('BusDriver')}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Map')}>
         <BackIcon size={40} color="#000" />
       </TouchableOpacity>
 
@@ -75,7 +75,7 @@ export default function SearchScreen() {
 
       {/* 🔍 Search Bar */}
       <View style={styles.searchBar}>
-        <SearchBar
+        <SearchBar2
           value={query}
           onChangeText={setQuery}
           placeholder="ค้นหา"

@@ -19,6 +19,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
 import AccidentButton from "../components/AccidentButton";
 import RenderDriverBus from '../map/RenderDriverBus';
+import SettingButton from '../components/SettingButton';
 
 export default function BusDriverScreen() {
     const [initialSet, setInitialSet] = useState(false);
@@ -37,9 +38,9 @@ export default function BusDriverScreen() {
     const [driverStatus, setDriverStatus] = useState<string | null>("REST");
     const [etaTime, setEtaTime] = useState<number | null>(null);
 
-    const driverStatusCallback = (status: string, eta: number, rem_sch: any[]) => {
-      setDriverStatus(status);
-      setEtaTime(eta);
+    const driverStatusCallback = (status: string | null, eta: number | null, rem_sch: any[]) => {
+      status ? setDriverStatus(status) : setDriverStatus("REST");
+      eta ? setEtaTime(eta) : setEtaTime(null);
       setDriverData(prev => ({
         ...prev,
         busStops: rem_sch,
@@ -71,22 +72,22 @@ export default function BusDriverScreen() {
         const data1 = await response1.json();
         console.log("✅ Driver bus info:", data1);
         
-        const response2 = await fetch(`${Config.BASE_API_URL}/api/busdriver/schedule/token?token=${token}`);
-        if (!response2.ok) throw new Error("Network error: " + response2.status);
+        // const response2 = await fetch(`${Config.BASE_API_URL}/api/busdriver/schedule/token?token=${token}`);
+        // if (!response2.ok) throw new Error("Network error: " + response2.status);
 
-        const data2 = await response2.json();
-        console.log("✅ Driver route data:", data2);
+        // const data2 = await response2.json();
+        // console.log("✅ Driver route data:", data2);
 
-        var schedules: any[] = [];
-        data2.forEach((schedule: any) => {
-            schedules.push({ busStopName: schedule.busStopName, arriveTime: schedule.arriveTime })
-        });
+        // var schedules: any[] = [];
+        // data2.forEach((schedule: any) => {
+        //     schedules.push({ busStopName: schedule.busStopName, arriveTime: schedule.arriveTime })
+        // });
 
         // Store into state
         setDriverData({
           route: data1.routeId,
           bus: data1.busId,
-          busStops: schedules,
+          // busStops: schedules,
         });
       } catch (error) {
         console.error("❌ Error fetching driver route:", error);
@@ -108,6 +109,10 @@ export default function BusDriverScreen() {
           inputStyle={styles.functionalSearchInput}
         />
       </View> */}
+
+      <View style={{position: 'absolute', top: 64, right: 16, zIndex: 20}}>
+        <SettingButton onPressButton={() => navigation.navigate('Setting')} />
+      </View>
 
       <MapView style={styles.map} mapStyle="https://api.maptiler.com/maps/streets-v2/style.json?key=oQ7ceXLhobx6gMFyLsem"
         onDidFinishLoadingMap={() => {
@@ -139,7 +144,7 @@ export default function BusDriverScreen() {
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
         <AccidentButton
           onPress={async () => {
-            const cookies = await CookieManager.get('192.168.1.5');
+            const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
             const token = cookies.token?.value;
             console.log("🚍 Retrieved token for accident report:", token);
             // console.log("🚍 Accident report sent for Bus ID:", busId);
@@ -195,7 +200,7 @@ export default function BusDriverScreen() {
               </View>
             ))
           ) : (
-            <Text style={{ textAlign: "center", padding: 10, color: "#888" }}>Loading...</Text>
+            <Text style={{ textAlign: "center", padding: 10, color: "#888" }}>No active schedule</Text>
           )}
         </View>
         </ScrollView>
@@ -305,7 +310,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
 
-  tableTitle: { fontSize: 20, fontWeight: "700", textAlign: "center", marginBottom: 12 },
+  tableTitle: { fontSize: 20, fontWeight: "700", textAlign: "center", marginBottom: 12, color: 'black' },
   tableContainer: {
     width: "100%",
     marginTop: 10,
@@ -314,8 +319,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: "hidden",
   },
-  tableHeader: { flexDirection: "row", backgroundColor: "#f0f0f0" },
-  tableRow: { flexDirection: "row", backgroundColor: "#fff" },
+  tableHeader: { flexDirection: "row", backgroundColor: "#f0f0f0", color: 'black' },
+  tableRow: { flexDirection: "row", backgroundColor: "#fff", color: 'black' },
   cell: { flex: 1, paddingVertical: 8, textAlign: "center", borderWidth: 1, borderColor: "#ccc", fontSize: 16 },
   headerCell: { fontWeight: "700" },
   highlightCell: { backgroundColor: "#D6E4FF", borderColor: "#2D6EFF" },
@@ -345,5 +350,6 @@ const styles = StyleSheet.create({
 
   normalCell: {
     backgroundColor: '#fff',
+    color: 'black',
   },
 });
