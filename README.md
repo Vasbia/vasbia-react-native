@@ -42,6 +42,8 @@ npm install react-native-screens react-native-safe-area-context
 npm install react-native-svg
 npm install react-native-elements 
 npm install @react-native-community/geolocation
+npm install react-native-picker-select
+npm install @react-native-picker/picker
 ```
 
 **open 2 terminal**
