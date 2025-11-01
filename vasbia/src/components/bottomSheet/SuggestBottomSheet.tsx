@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {View, Image, TouchableOpacity, StyleSheet, Text, ScrollView, Animated,} from "react-native";
-import ChevronUp from "../../assets/icons/ChevronUp";
-import BottomSheet from "./BottomSheet";
-import Config from "react-native-config";
+import React, { useEffect, useState } from 'react';
+import {View, Image, TouchableOpacity, StyleSheet, Text, ScrollView, Animated} from 'react-native';
+import ChevronUp from '../../assets/icons/ChevronUp';
+import BottomSheet from './BottomSheet';
+import Config from 'react-native-config';
 
 type LandmarkDetails = {
   id: number;
@@ -14,7 +14,7 @@ type LandmarkDetails = {
 };
 
 type SelectedItem = {
-  type: "busStop" | "busRoute" | "landmark" | null;
+  type: 'busStop' | 'busRoute' | 'landmark' | null;
   id: number | null;
 };
 
@@ -30,15 +30,15 @@ type SuggestBottomSheetProps = {
 async function fetchSuggestLandmark(userLongitude: number, userLatitude: number) {
   try {
     const response = await fetch(`${Config.BASE_API_URL}/api/place/findNearByPlace`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userLatitude: userLatitude,
         userLongitude: userLongitude,
         routeId: 1, // route ID?
       }),
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -48,13 +48,13 @@ async function fetchSuggestLandmark(userLongitude: number, userLatitude: number)
       id: landmark.place_id,
       landmarkName: landmark.name,
       imageUrl: landmark.image,
-      coordinate: [landmark.longitude, landmark.latitude]
+      coordinate: [landmark.longitude, landmark.latitude],
     }));
   } catch (error) {
-    console.error("Error fetching suggest landmarks:", error);
+    console.error('Error fetching suggest landmarks:', error);
     return [];
   }
-};
+}
 
 export default function SuggestBottomSheet({ visible, setVisible, setSelected, flyTo, setMode, location}: SuggestBottomSheetProps) {
   const [suggestLandmark, setSuggestLandmark] = useState<LandmarkDetails[]>([]);
@@ -67,27 +67,27 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
         .then((data:any) => setSuggestLandmark(data));
       console.log(suggestLandmark);
     }
-  }, [visible]);  
+  }, [visible]);
 
-  const changeSlide = (direction: "next" | "prev") => {
+  const changeSlide = (direction: 'next' | 'prev') => {
     Animated.sequence([
       Animated.timing(fadeAnim, { toValue: 0, duration: 150, useNativeDriver: true }),
       Animated.timing(fadeAnim, { toValue: 1, duration: 150, useNativeDriver: true }),
     ]).start();
 
     setCurrent((prev) =>
-      direction === "next"
+      direction === 'next'
         ? (prev + 1) % suggestLandmark.length
         : (prev - 1 + suggestLandmark.length) % suggestLandmark.length
     );
   };
 
   const currentLandmark = suggestLandmark[current];
-  
+
   if (!currentLandmark) {
     return (
       <BottomSheet visible={visible} onClose={() => setVisible(false)}>
-        <View style={{ alignItems: "center", padding: 20 }}>
+        <View style={{ alignItems: 'center', padding: 20 }}>
           <Text style={styles.suggestLoadingText}>Trying to fetch....</Text>
         </View>
       </BottomSheet>
@@ -95,7 +95,7 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
   }
 
   return (
-    <BottomSheet visible={visible} onClose={() => {setVisible(false)}}>
+    <BottomSheet visible={visible} onClose={() => {setVisible(false);}}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.headerText}>{currentLandmark.landmarkName}</Text>
         <Text style={styles.subDetails}>{currentLandmark.subDetails}</Text>
@@ -108,14 +108,14 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
           }
 
             <View style={styles.slideControls}>
-              <TouchableOpacity onPress={() => changeSlide("prev")} style={styles.arrowButton}>
-                <View style={{ transform: [{ rotate: "-90deg" }] }}>
+              <TouchableOpacity onPress={() => changeSlide('prev')} style={styles.arrowButton}>
+                <View style={{ transform: [{ rotate: '-90deg' }] }}>
                   <ChevronUp />
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => changeSlide("next")} style={styles.arrowButton}>
-                <View style={{ transform: [{ rotate: "90deg" }] }}>
+              <TouchableOpacity onPress={() => changeSlide('next')} style={styles.arrowButton}>
+                <View style={{ transform: [{ rotate: '90deg' }] }}>
                   <ChevronUp />
                 </View>
               </TouchableOpacity>
@@ -123,9 +123,9 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
         </View>
 
         <TouchableOpacity onPress = { () => {
-            setMode("landmark");
+            setMode('landmark');
             setVisible(false);
-            setSelected({type: "landmark", id: currentLandmark.id});
+            setSelected({type: 'landmark', id: currentLandmark.id});
             flyTo(currentLandmark.coordinate);
         }}>
           <View style={styles.button}>
@@ -141,58 +141,58 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#000",
+    fontWeight: 'bold',
+    color: '#000',
   },
   subDetails: {
-    color: "#000",
-    fontWeight: "medium",
+    color: '#000',
+    fontWeight: 'medium',
     paddingBottom: 12,
   },
   slide: {
-    width: "100%",
+    width: '100%',
   },
   image: {
-    width: "100%",
+    width: '100%',
     aspectRatio: 1.2, // experiment: 1.3–1.8
     borderRadius: 8,
     marginVertical: 15,
   },
   slideControls: {
-    position: "absolute",
-    flexDirection: "row",
+    position: 'absolute',
+    flexDirection: 'row',
     marginTop: 20,
-    justifyContent: "space-between",
-    width: "100%",
-    top: "35%",
+    justifyContent: 'space-between',
+    width: '100%',
+    top: '35%',
   },
   arrowButton: {
     paddingVertical: 16,
   },
   guide: {
-    fontFamily: "Inter_24pt-SemiBold",
-    fontSize: 16, 
-    paddingBottom: 12, 
-    alignSelf: "center", 
-    color: "#fff"
+    fontFamily: 'Inter_24pt-SemiBold',
+    fontSize: 16,
+    paddingBottom: 12,
+    alignSelf: 'center',
+    color: '#fff',
   },
   description: {
-    fontWeight: "medium",
-    color: "#000"
+    fontWeight: 'medium',
+    color: '#000',
   },
   suggestLoadingText: {
     fontSize: 16,
-    fontFamily: "Inter_24pt-SemiBold",
-    color: "#000",
+    fontFamily: 'Inter_24pt-SemiBold',
+    color: '#000',
   },
   button:{
     backgroundColor: '#2d6eff',
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 16,
-  }
+  },
 });

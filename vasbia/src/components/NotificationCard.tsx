@@ -7,7 +7,7 @@ type NotificationCardProps = Notification & {
 };
 
 function formatNotificationDate(dateString: string) {
-  if (dateString === '') return '';
+  if (dateString === '') {return '';}
 
   const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
   const now = new Date();
@@ -53,7 +53,7 @@ export default function NotificationCard({
         <Text
           style={[
             styles.title,
-            is_read ? styles.titleRead : styles.titleUnread
+            is_read ? styles.titleRead : styles.titleUnread,
           ]}
           numberOfLines={2}
           ellipsizeMode="tail"
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_24pt-Regular',
     marginLeft: 8,
   },
-  description: { 
+  description: {
     fontSize: 14,
     fontFamily: 'Inter_24pt-Regular',
     color: '#666',

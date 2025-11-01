@@ -61,7 +61,7 @@ export default function LoginScreen() {
             }}
           >
             <Text style={{
-              color: "#828282",
+              color: '#828282',
               fontFamily: 'Inter_24pt-SemiBold',
               fontSize: 12,
             }}>
@@ -86,12 +86,12 @@ export default function LoginScreen() {
               CookieManager.clearAll();
 
               console.log('Login response:', res);
-              
-              if (res.message != 'Login Success!!') {
+
+              if (res.message !== 'Login Success!!') {
                 setErrorMessage('Invalid email or password.');
                 return;
               }
-            
+
               CookieManager.set(`${Config.BASE_API_URL}`, {
                 name: 'token',
                 value: res.data,
@@ -106,25 +106,25 @@ export default function LoginScreen() {
               setErrorMessage('An error occurred. Please try again..');
               // Handle any errors that occurred during the request
             });
- 
-            const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
-            console.log('Cookies after login:', cookies['token'].value);
 
-            if (cookies['token'] === undefined) {
+            const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
+            console.log('Cookies after login:', cookies.token.value);
+
+            if (cookies.token === undefined) {
               setErrorMessage('Invalid email or password.');
               return;
             }
 
           setSuccessMessage('Login successful!');
 
-          await fetch(`${Config.BASE_API_URL}/api/user/current_user_info?token=${cookies['token'].value}`)
+          await fetch(`${Config.BASE_API_URL}/api/user/current_user_info?token=${cookies.token.value}`)
           .then(response => response.json())
           .then((res) => {
             console.log('Current user info response:', res);
-            if (res.role == "USER"){
+            if (res.role === 'USER'){
               navigation.replace('Map');
             }
-            else if (res.role == "BUS_DRIVER"){
+            else if (res.role === 'BUS_DRIVER'){
               navigation.replace('BusDriver');
             }
           })
@@ -136,7 +136,7 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
 
-        
+
         <TouchableOpacity onPress={() => navigation.replace('Register')}>
           <Text style={styles.suggestText}>Don't have an account?</Text>
         </TouchableOpacity>

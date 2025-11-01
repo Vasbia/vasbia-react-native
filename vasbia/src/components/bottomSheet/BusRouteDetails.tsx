@@ -1,9 +1,9 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import BottomSheetWithHeader from "./BottomSheetWithHeader";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../../../App";
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import BottomSheetWithHeader from './BottomSheetWithHeader';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackParamList } from '../../../App';
 
 type BusRouteDetails = {
   id: number;
@@ -16,11 +16,11 @@ type BusRouteDetails = {
 };
 
 export default function BusRouteDetails({ data }: { data: BusRouteDetails }) {
-  if (!data) return null;
+  if (!data) {return null;}
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
 
-  const header = "สายรถ : " + data.routeName;
+  const header = 'Route: ' + data.routeName;
   const subHeader = data.subDetails;
 
   return (
@@ -43,11 +43,11 @@ export default function BusRouteDetails({ data }: { data: BusRouteDetails }) {
           routeName: data.routeName,
           })
         } style={styles.tableButton}>
-          <Text style={styles.timeTable}>ดูตารางเวลา</Text>
+          <Text style={styles.timeTable}>Click to see time table</Text>
         </TouchableOpacity>
-        
-        <Text style={{ color: "#000", marginTop: 8 }}>
-          ป้ายจอดรถ: {data.stops?.map((s: any) => s.name).join(", ") ?? "N/A"}
+
+        <Text style={{ color: '#000', fontFamily: 'Inter_24pt-Regular', marginTop: 8 }}>
+          Bus Stops: {data.stops?.map((s: any) => s.name).join(', ') ?? 'N/A'}
         </Text>
       </View>
     </BottomSheetWithHeader>
@@ -56,27 +56,27 @@ export default function BusRouteDetails({ data }: { data: BusRouteDetails }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
   },
   headerText: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#000"
+    fontFamily: 'Inter_24pt-Bold',
+    color: '#000',
   },
   subHeaderText: {
-    fontWeight: "medium",
+    fontFamily: 'Inter_24pt-Medium',
     paddingBottom: 12,
-    color: "#000"
+    color: '#000',
   },
   tableButton : {
-    paddingBottom:12
+    paddingBottom:12,
   },
   timeTable: {
-    fontWeight: "bold", 
-    fontSize: 16, 
-    alignSelf: "center", 
-    color: "#fff",
-    backgroundColor: '#000',
+    fontFamily: 'Inter_24pt-SemiBold',
+    fontSize: 16,
+    alignSelf: 'center',
+    color: '#fff',
+    backgroundColor: '#2d6eff',
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 10,
@@ -85,7 +85,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   description: {
-    fontWeight: "medium",
-    color: "#000"
+    fontFamily: 'Inter_24pt-Medium',
+    fontSize: 14,
+    color: '#000',
   },
 });

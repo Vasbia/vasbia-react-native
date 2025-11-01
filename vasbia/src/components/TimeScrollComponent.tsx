@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
 
@@ -10,6 +10,8 @@ interface Props {
   pastSchedules?: TimeItem[];
   title?: string;
   busStopId?: number;
+  onSuccess?: (msg: string) => void;
+  onError?: (msg: string) => void;
 }
 
 const TimeScrollComponent: React.FC<Props> = ({
@@ -17,6 +19,8 @@ const TimeScrollComponent: React.FC<Props> = ({
   pastSchedules = [],
   title = 'Time',
   busStopId = 0,
+  onSuccess,
+  onError,
 }) => {
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedBusId, setSelectedBusId] = useState<number | null>(null);
@@ -34,14 +38,14 @@ const TimeScrollComponent: React.FC<Props> = ({
 
   const handleConfirm = async () => {
     if (!selectedTime || !selectedBusId) {
-      Alert.alert('⚠️ Select a time first');
+      onError?.('⚠️ Select a time first');
       return;
     }
     try {
       const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
       const token = cookies['token']?.value;
       if (!token) {
-        Alert.alert('⚠️ Not logged in', 'Please log in again.');
+        onError?.('⚠️ Not logged in Please log in again.');
         return;
       }
 
@@ -65,18 +69,19 @@ const TimeScrollComponent: React.FC<Props> = ({
       const res = await fetch(url, { method: 'POST', headers: { Accept: '*/*' } });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      Alert.alert('✅ ตั้งค่าการแจ้งเตือนสำเร็จ', `คุณจะได้รับการแจ้งเตือนเมื่อ ${timeToNotify}`);
+      onSuccess?.(`✅ You will get notification at ${timeToNotify}`);
       setSelectedTime(null);
       setSelectedBusId(null);
       setMinutesBefore(1);
     } catch (e) {
       console.error(e);
-      Alert.alert('❌ เกิดข้อผิดพลาด', 'ตั้งค่าการแจ้งเตือนไม่สำเร็จ');
+      onError?.('❌ An error occurred. Failed to set notification.');
     }
   };
 
   return (
     <View style={styles.container}>
+
       <Text style={styles.sectionTitle}>{title}</Text>
 
       {/* Wrapping grid (upcoming first) */}

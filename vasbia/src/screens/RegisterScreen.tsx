@@ -38,7 +38,7 @@ export default function RegisterScreen() {
             label: 'Bus Driver',
             value: 'BUS_DRIVER',
             labelStyle: styles.roleText,
-        }
+        },
     ]), []);
 
   // const payload = {
@@ -143,7 +143,7 @@ export default function RegisterScreen() {
             }}
           >
             <Text style={{
-              color: "#828282",
+              color: '#828282',
               fontFamily: 'Inter_24pt-SemiBold',
               fontSize: 12,
             }}>
@@ -172,7 +172,7 @@ export default function RegisterScreen() {
             }}
           >
             <Text style={{
-              color: "#828282",
+              color: '#828282',
               fontFamily: 'Inter_24pt-SemiBold',
               fontSize: 12,
             }}>
@@ -183,8 +183,8 @@ export default function RegisterScreen() {
 
         <View/>
           <Text style={styles.roleTitleText}>Select Role</Text>
-          <RadioGroup 
-              radioButtons={radioButtons} 
+          <RadioGroup
+              radioButtons={radioButtons}
               onPress={setSelectedId}
               selectedId={selectedId}
               containerStyle={styles.radioContainer}
@@ -290,5 +290,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter_24pt-SemiBold',
     marginLeft: 32,
-  }
+  },
 });
