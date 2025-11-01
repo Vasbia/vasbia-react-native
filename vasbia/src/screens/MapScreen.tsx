@@ -65,13 +65,13 @@ export default function MapScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   // const [modalVisible, setModalVisible] = React.useState(false);
   const [suggestVisible, setSuggestVisible] = React.useState(false);
-  // const [searchText, setSearchText] = React.useState('');
+  const [searchText, setSearchText] = React.useState('');
 
   return (
     <View style={styles.page}>
       <View style={styles.searchBarContainer}>
         <Text style={styles.appTitle}>VASBIA</Text>
-        <SearchBar/>
+        <SearchBar onPressButton={() => navigation.navigate('Search')}/>
       </View>
 
       <View style={{position: 'absolute', top: 64, right: 16, zIndex: 20}}>

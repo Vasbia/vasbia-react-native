@@ -106,17 +106,31 @@ export default function LoginScreen() {
               setErrorMessage('An error occurred. Please try again..');
               // Handle any errors that occurred during the request
             });
-
+ 
             const cookies = await CookieManager.get(`${Config.BASE_API_URL}`);
             console.log('Cookies after login:', cookies['token'].value);
-            
+
             if (cookies['token'] === undefined) {
               setErrorMessage('Invalid email or password.');
               return;
             }
-            
+
           setSuccessMessage('Login successful!');
-          navigation.replace('Map');
+
+          await fetch(`${Config.BASE_API_URL}/api/user/current_user_info?token=${cookies['token'].value}`)
+          .then(response => response.json())
+          .then((res) => {
+            console.log('Current user info response:', res);
+            if (res.role == "USER"){
+              navigation.replace('Map');
+            }
+            else if (res.role == "BUS_DRIVER"){
+              navigation.replace('BusDriver');
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
 
           }}>
           <Text style={styles.buttonText}>Continue</Text>
