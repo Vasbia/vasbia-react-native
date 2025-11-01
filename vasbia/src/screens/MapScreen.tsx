@@ -9,7 +9,7 @@ import { useFlyTo } from '../map/useFlyTo';
 import useUserLocation from '../map/UserLocation';
 import { useFocusEffect } from '@react-navigation/native';
 // import Geolocation from '@react-native-community/geolocation';
-import SearchBar from '../components/SearchBar';
+import SearchBar from '../components/SearchBarMainPage';
 import ToggleModeButton from '../components/ToggleModeButton';
 import SettingButton from '../components/SettingButton';
 import NotificationButton from '../components/NotificationButton';
@@ -65,7 +65,6 @@ export default function MapScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   // const [modalVisible, setModalVisible] = React.useState(false);
   const [suggestVisible, setSuggestVisible] = React.useState(false);
-  const [searchText, setSearchText] = React.useState('');
 
   return (
     <View style={styles.page}>

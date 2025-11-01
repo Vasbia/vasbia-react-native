@@ -9,20 +9,44 @@ import LogOutIcon from '../assets/icons/LogOutIcon';
 import RatingModal from '../components/bottomSheet/RatingModal';
 import { Dimensions } from 'react-native';
 import CookieManager from '@react-native-cookies/cookies';
+import ToastError from '../components/ToastError';
+import ToastSuccess from '../components/ToastSuccess';
 
 export default function SettingScreen() {
     const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
+    const [showRatingSuccess, setShowRatingSuccess] = useState(false);
+    const [showRatingError, setShowRatingError] = useState(false);
+    const [showLogoutSuccess, setShowLogoutSuccess] = useState(false);
+    const [showLogoutError, setShowLogoutError] = useState(false);
+
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [ratingModalVisible, setRatingModalVisible] = useState(false);
 
     const handleLogout = async () => {
         setShowLogoutModal(false);
+        setShowLogoutSuccess(true);
+        setTimeout(() => {
+            setShowLogoutSuccess(false); // Hide toast
+            navigation.replace('Login'); // Navigate to Login screen
+        }, 3000); // 3 seconds
         await CookieManager.clearAll(true);
-        navigation.replace('Login');
     };
 
     return (
         <View style={styles.container}>
+            {showRatingSuccess && (
+                <ToastSuccess toastMessage="Feedback submitted!" onHide={() => setShowRatingSuccess(false)} />
+            )}
+            {showRatingError && (
+                <ToastError toastMessage="Error submitting feedback." onHide={() => setShowRatingError(false)} />
+            )}
+            {showLogoutSuccess && (
+                <ToastSuccess toastMessage="Logged out successfully!" onHide={() => setShowLogoutSuccess(false)} />
+            )}
+            {showLogoutError && (
+                <ToastError toastMessage="Error logging out." onHide={() => setShowLogoutError(false)} />
+            )}
+
             <View style={styles.titleBar}>
                 <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
                     <BackIcon size={40} color="#000" />
@@ -45,6 +69,8 @@ export default function SettingScreen() {
             <RatingModal
                 visible={ratingModalVisible}
                 onClose={() => setRatingModalVisible(false)}
+                onSuccess={() => setShowRatingSuccess(true)}
+                onError={() => setShowRatingError(true)}
             />
 
             <Modal

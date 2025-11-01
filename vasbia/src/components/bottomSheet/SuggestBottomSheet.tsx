@@ -88,7 +88,7 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
     return (
       <BottomSheet visible={visible} onClose={() => setVisible(false)}>
         <View style={{ alignItems: "center", padding: 20 }}>
-          <Text style={{ color: "#000" }}>กำลังโหลดสถานที่แนะนำ...</Text>
+          <Text style={styles.suggestLoadingText}>Trying to fetch....</Text>
         </View>
       </BottomSheet>
     );
@@ -128,7 +128,9 @@ export default function SuggestBottomSheet({ visible, setVisible, setSelected, f
             setSelected({type: "landmark", id: currentLandmark.id});
             flyTo(currentLandmark.coordinate);
         }}>
-            <Text style={styles.guide}>แสดงในแผนที่</Text>
+          <View style={styles.button}>
+            <Text style={styles.guide}>Show in map</Text>
+          </View>
         </TouchableOpacity>
 
         <Text style={styles.description}>{currentLandmark.description}</Text>
@@ -172,14 +174,25 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   guide: {
-    fontWeight: "bold", 
+    fontFamily: "Inter_24pt-SemiBold",
     fontSize: 16, 
     paddingBottom: 12, 
     alignSelf: "center", 
-    color: "#000"
+    color: "#fff"
   },
   description: {
     fontWeight: "medium",
     color: "#000"
   },
+  suggestLoadingText: {
+    fontSize: 16,
+    fontFamily: "Inter_24pt-SemiBold",
+    color: "#000",
+  },
+  button:{
+    backgroundColor: '#2d6eff',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  }
 });

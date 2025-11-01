@@ -2,19 +2,17 @@ import * as React from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   FlatList,
   StyleSheet,
   Dimensions,
-  Platform,
   ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { StackParamList } from '../../App';
 import BackIcon from '../assets/icons/BackIcon';
-import SearchBar2 from '../components/SearchBar2';
+import SearchBar from '../components/SearchBar';
 import Config from 'react-native-config';
 
 export default function SearchScreen() {
@@ -71,14 +69,15 @@ export default function SearchScreen() {
       </TouchableOpacity>
 
       {/* 🔠 Title */}
-      <Text style={styles.title}>VUSBIA</Text>
+      <Text style={styles.title}>VASBIA</Text>
 
       {/* 🔍 Search Bar */}
       <View style={styles.searchBar}>
-        <SearchBar2
+        <SearchBar
           value={query}
           onChangeText={setQuery}
-          placeholder="ค้นหา"
+          inputStyle={styles.inputStyle}
+          placeholder="Search for bus stops/routes here"
           onSubmit={handleSubmit}
         />
       </View>
@@ -86,7 +85,7 @@ export default function SearchScreen() {
       {/* 🧭 Suggestions Section */}
       {query.length > 0 && (
         <View>
-          <Text style={styles.sectionTitle}>ผลลัพธ์ที่ใกล้เคียง</Text>
+          <Text style={styles.sectionTitle}>Similiar results</Text>
           {loading ? (
             <ActivityIndicator color="#2D6EFF" style={{ marginTop: 16 }} />
           ) : (
@@ -110,7 +109,7 @@ export default function SearchScreen() {
       )}
 
       {/* 🕓 Recent Searches */}
-      <Text style={[styles.sectionTitle, { marginTop: 30 }]}>ค้นหาล่าสุด</Text>
+      <Text style={[styles.sectionTitle, { marginTop: 30 }]}>Recently searched</Text>
       <FlatList
         data={recent}
         keyExtractor={(item, i) => i.toString()}
@@ -136,39 +135,39 @@ export default function SearchScreen() {
   );
 }
 
-const { width } = Dimensions.get('window');
-
+const {width: screenWidth} = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
   },
   backButton: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 40,
-    left: 16,
+    left: screenWidth * 0.025,
+    top: 64,
     zIndex: 2,
   },
   title: {
-    fontFamily: 'Inter',
-    fontWeight: '600',
+    fontFamily: 'Inter_24pt-SemiBold',
     fontSize: 40,
     lineHeight: 60,
     textAlign: 'center',
     color: '#000',
-    marginBottom: 20,
+    marginTop: 64,
   },
   searchBar: {
-    marginTop: 20,
-    marginBottom: 10,
+    padding: 8,
+  },
+  inputStyle: {
+    fontSize: 16,
+    fontFamily: 'Inter_24pt-Regular',
+    color: '#222',
   },
   sectionTitle: {
-    marginTop: 20,
-    fontSize: 20,
-    fontWeight: '500',
-    color: '#626262',
+    fontSize: 16,
+    fontFamily: 'Inter_24pt-SemiBold',
+    color: '#000',
     opacity: 0.8,
   },
   listContainer: {
@@ -185,12 +184,13 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: '#B0B0B0',
+    backgroundColor: '#2d6eff',
     marginRight: 12,
   },
   resultText: {
     flex: 1,
     fontSize: 18,
+    fontFamily: 'Inter_24pt-Regular',
     color: '#626262',
   },
   removeText: {

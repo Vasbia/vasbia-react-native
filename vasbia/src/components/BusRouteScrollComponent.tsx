@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontFamily: 'Inter_24pt-SemiBold',
+    color: '#000',
     marginBottom: 12,
     paddingHorizontal: 16,
   },
@@ -87,18 +87,19 @@ const styles = StyleSheet.create({
   },
   busRouteText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    fontFamily: 'Inter_24pt-Medium',
+    color: '#000',
     lineHeight: 22,
   },
   selectedBusRouteCard: {
-    backgroundColor: '#141488',
+    backgroundColor: '#2d6eff',
     borderWidth: 2,
-    borderColor: '#3636bb',
+    borderColor: '#2d6eff',
   },
   selectedBusRouteText: {
     color: '#fff',
+    fontSize: 16,
+    fontFamily: 'Inter_24pt-Medium',
   },
   selectedTimesCount: {
     color: '#fff',

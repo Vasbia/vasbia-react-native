@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { Text, TextInput, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import { Rating } from 'react-native-ratings';
 import BottomSheet from './BottomSheet';
 
@@ -11,11 +11,14 @@ const { width: screenWidth } = Dimensions.get('window');
 type RatingModalProps = {
   visible: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
+  onError?: () => void;
 };
 
-export default function RatingModal({ visible, onClose }: RatingModalProps) {
+export default function RatingModal({ visible, onClose, onSuccess, onError }: RatingModalProps) {
   const [rating, setRating] = useState(0);
   const [feedback, setFeedback] = useState('');
+
 
   const handleSubmit = async () => {
     try {
@@ -29,8 +32,10 @@ export default function RatingModal({ visible, onClose }: RatingModalProps) {
       }
       const data = await response.json();
       console.log('Feedback submitted successfully:', data);
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error('Error submitting feedback:', error);
+      if (onError) onError();
     }
     onClose();
     setFeedback('');
