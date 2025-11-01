@@ -39,12 +39,12 @@ export default function BusStopDetails({ data }: { data: BusStopDetails }) {
           busStopId: data.id,
           busStopName: data.busStopName,
           })
-        } >
+        } style={styles.tableButton}>
           <Text style={styles.timeTable}>ดูตารางเวลา</Text>
         </TouchableOpacity>
 
         <Text style={styles.description}>
-          Routes: {data.routes?.join(", ") ?? "N/A"}
+          รายละเอียดของป้ายจอดรถ
         </Text>
       </View>
     </BottomSheetWithHeader>
@@ -62,15 +62,23 @@ const styles = StyleSheet.create({
   },
   subHeaderText: {
     fontWeight: "medium",
-    paddingBottom: 12,
     color: "#000"
+  },
+  tableButton : {
+    paddingBottom:12
   },
   timeTable: {
     fontWeight: "bold", 
     fontSize: 16, 
-    paddingBottom: 12, 
     alignSelf: "center", 
-    color: "#000"
+    color: "#fff",
+    backgroundColor: '#000',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 10,
+    minWidth: 70,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   description: {
     fontWeight: "medium",

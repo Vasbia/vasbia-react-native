@@ -42,12 +42,12 @@ export default function BusRouteDetails({ data }: { data: BusRouteDetails }) {
           routeId: data.id,
           routeName: data.routeName,
           })
-        } >
+        } style={styles.tableButton}>
           <Text style={styles.timeTable}>ดูตารางเวลา</Text>
         </TouchableOpacity>
         
         <Text style={{ color: "#000", marginTop: 8 }}>
-          Stops: {data.stops?.map((s: any) => s.name).join(", ") ?? "N/A"}
+          ป้ายจอดรถ: {data.stops?.map((s: any) => s.name).join(", ") ?? "N/A"}
         </Text>
       </View>
     </BottomSheetWithHeader>
@@ -68,12 +68,21 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     color: "#000"
   },
+  tableButton : {
+    paddingBottom:12
+  },
   timeTable: {
     fontWeight: "bold", 
     fontSize: 16, 
-    paddingBottom: 12, 
     alignSelf: "center", 
-    color: "#000"
+    color: "#fff",
+    backgroundColor: '#000',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 10,
+    minWidth: 70,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   description: {
     fontWeight: "medium",

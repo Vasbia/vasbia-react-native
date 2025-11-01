@@ -13,6 +13,7 @@ interface BusStop {
   id: number;
   busStop: string;
   schedules: { time: string; busId: number }[];
+  pastSchedules?: { time: string; busId: number }[]; 
 }
 
 const BusStopTimeTableScreen = () => {
@@ -35,6 +36,7 @@ const BusStopTimeTableScreen = () => {
           id: stop.busStopId,
           busStop: stop.name,
           schedules: [],
+          pastSchedules: [],
         }));
         setBusStops(formatted);
       })
@@ -56,7 +58,11 @@ const BusStopTimeTableScreen = () => {
               ...item, schedules: data.busScheduleData.map((s: any) => ({
                 time: s.arriveTime,
                 busId: s.busId,
-              }))
+              })),
+              pastSchedules: (data.busScheduleDataPast || []).map((s: any) => ({
+                time: s.arriveTime,
+                busId: s.busId,
+              })),
             }: item
           )
         );
@@ -85,6 +91,7 @@ const BusStopTimeTableScreen = () => {
 
         <TimeScrollComponent
           schedules={selectedStop?.schedules || []}
+          pastSchedules={[...(selectedStop?.pastSchedules || [])].sort((a, b) => (a.time > b.time ? 1 : -1))}
           title={`Time: ${selectedStop?.busStop || ''}`}
           busStopId={selectedStopId}
         />

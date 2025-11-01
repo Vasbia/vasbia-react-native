@@ -22,7 +22,7 @@ const BusStopScrollComponent: React.FC<BusStopScrollComponentProps> = ({
 }) => {
   return (
     <View style={[styles.container, containerStyle]}>
-      <Text style={styles.sectionTitle}>Bus Route</Text>
+      <Text style={styles.sectionTitle}>Bus Stop</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

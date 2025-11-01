@@ -32,11 +32,11 @@ export default function LandmarkDetails({ data }: { data: LandmarkDetails }) {
         </View>
 
         {data.imageUrl && (
-          <Image source={{ uri: data.imageUrl }} style={styles.image} />
+          <Image source={{ uri: `data:image/png;base64,${data.imageUrl}` }} style={styles.image} />
         )}
         
         <Text style={styles.description}>
-          {data.description ?? "No description"}
+          {data.description ?? "รายละเอียดของสถานที่"}
         </Text>
       </View>
     </BottomSheetWithHeader>
