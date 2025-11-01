@@ -23,7 +23,7 @@ export default function SearchScreen() {
     'โรงอาหาร A',
     'อาคาร CCA',
   ]);
-  const [suggestions, setSuggestions] = React.useState<string[]>([]);
+  const [suggestions, setSuggestions] = React.useState<{name: string, id: number, lon: number, lat: number, type: string}[]>([]);
   const [loading, setLoading] = React.useState(false);
 
   // 🧠 Fetch suggestions when user types
@@ -37,10 +37,17 @@ export default function SearchScreen() {
       setLoading(true);
       try {
         // Example API: change this to your actual endpoint
-        const response = await fetch(`${Config.BASE_API_URL}/api/search?query=${encodeURIComponent(query)}`);
+        const response = await fetch(`${Config.BASE_API_URL}/api/search/substring?keyword=${encodeURIComponent(query)}`);
         const data = await response.json();
         // Assume your API returns an array of matching results
-        setSuggestions(data.slice(0, 3)); // only show 3
+        var matches = data.matches.slice(0, 3).map((item: any) => ({
+          name: item.name,
+          id: item.id,
+          lon: item.longitude,
+          lat: item.latitude,
+          type: item.type,
+        }));
+        setSuggestions(matches); // only show 3
       } catch (error) {
         console.error("❌ Error fetching suggestions:", error);
         setSuggestions([]);
@@ -53,12 +60,14 @@ export default function SearchScreen() {
   }, [query]);
 
   // 🧩 When submitting a search (press enter)
-  const handleSubmit = (text: string) => {
+  const handleSubmit = (text: string, id?: number, latitude?: number, longitude?: number, type?: string) => {
     setRecent(prev => {
       const updated = prev.filter(item => item !== text);
       return [text, ...updated];
     });
     setQuery('');
+
+    (navigation as any).navigate('Map', { search_location: { id, latitude, longitude, type } });
   };
 
   return (
@@ -96,11 +105,11 @@ export default function SearchScreen() {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.resultRow}
-                  onPress={() => handleSubmit(item)}
+                  onPress={() => handleSubmit(item.name, item.id, item.lat, item.lon, item.type)}
                   activeOpacity={0.7}
                 >
                   <View style={[styles.iconCircle, { backgroundColor: '#2D6EFF' }]} />
-                  <Text style={styles.resultText}>{item}</Text>
+                  <Text style={styles.resultText}>{item.name}</Text>
                 </TouchableOpacity>
               )}
             />

@@ -209,8 +209,6 @@ export default function BusDriverScreen() {
         </ScrollView>
       </View>
       
-      <RatingModal visible={modalVisible} onClose={() => setModalVisible(false)} />
-      
     </View>
   );
 }

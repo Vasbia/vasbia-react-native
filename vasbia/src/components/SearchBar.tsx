@@ -16,7 +16,7 @@ interface SearchBarProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
-  onSubmit?: (text: string) => void;  // ✅ New prop
+  onSubmit?: (text: string, id?: number, latitude?: number, longitude?: number, type?: string) => void;  // ✅ New prop
   style?: ViewStyle;
   inputStyle?: TextStyle;
   [key: string]: any;
