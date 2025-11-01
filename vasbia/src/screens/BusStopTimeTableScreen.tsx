@@ -8,7 +8,8 @@ import TimeScrollComponent from '../components/TimeScrollComponent';
 import BackIcon from '../assets/icons/BackIcon';
 import { Dimensions } from 'react-native';
 import Config from 'react-native-config';
-import { RouteNames } from '../map/RenderBusRoute';
+// import { RouteNames } from '../map/RenderBusRoute';
+// import { Line } from 'react-native-svg';
 
 interface RouteData {
   routeId: number;
@@ -114,21 +115,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   header: {
-    backgroundColor: '#696969',
-    paddingTop: 50,
+    paddingTop: 64,
     paddingBottom: 20,
-    paddingHorizontal: 16,
+    paddingHorizontal: screenWidth * 0.025,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontSize: 28,
+    fontFamily: 'Inter_24pt-Bold',
+    color: '#000',
     marginBottom: 4,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#fff',
+    fontFamily: 'Inter_24pt-Medium',
+    color: '#000000',
     opacity: 0.9,
   },
   scrollContainer: {
@@ -272,8 +275,8 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    left: screenWidth * 0.025,
-    top: '70%',
+    left: 16,
+    top: '100%',
     transform: [{ translateY: -screenWidth * 0.035 }],
   },
 });

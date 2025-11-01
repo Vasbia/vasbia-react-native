@@ -36,7 +36,7 @@ export default function LandmarkDetails({ data }: { data: LandmarkDetails }) {
         )}
         
         <Text style={styles.description}>
-          {data.description ?? "รายละเอียดของสถานที่"}
+          {data.description ?? "No description available."}
         </Text>
       </View>
     </BottomSheetWithHeader>
@@ -49,11 +49,11 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: "Inter_24pt-Bold",
     color: "#000"
   },
   subHeaderText: {
-    fontWeight: "medium",
+    fontFamily: "Inter_24pt-Regular",
     paddingBottom: 12,
     color: "#000"
   },
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   description: {
-    fontWeight: "medium",
+    fontFamily: "Inter_24pt-Regular",
     color: "#000"
   },
 });

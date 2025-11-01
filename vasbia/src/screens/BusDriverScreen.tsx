@@ -1,20 +1,20 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Modal, TouchableOpacity, Text, TextInput, Dimensions, Platform, ScrollView } from "react-native";
+import { View, StyleSheet, Text, Dimensions, ScrollView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
 import { useFlyTo } from '../map/useFlyTo';
-import Geolocation from '@react-native-community/geolocation';
-import SearchBar from '../components/SearchBar';
-import RatingButton from '../components/RatingButton';
+// import Geolocation from '@react-native-community/geolocation';
+// import SearchBar from '../components/SearchBar';
+// import RatingButton from '../components/RatingButton';
 import RatingModal from '../components/bottomSheet/RatingModal';
 import NotificationButton from '../components/NotificationButton';
 import RenderAllBusStops from '../map/RenderBusStop';
 import RenderAllBusRoutes from '../map/RenderBusRoute';
-import RenderAllLandmarks from '../map/RenderLandmark';
-import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
+// import RenderAllLandmarks from '../map/RenderLandmark';
+// import RenderDetailsBottomSheet from '../map/RenderBottomSheet';
 import CookieManager from '@react-native-cookies/cookies';
 import Config from 'react-native-config';
 import AccidentButton from "../components/AccidentButton";
@@ -32,8 +32,8 @@ export default function BusDriverScreen() {
   
     const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
     const [modalVisible, setModalVisible] = React.useState(false);
-    const [suggestVisible, setSuggestVisible] = React.useState(false);
-    const [searchText, setSearchText] = React.useState('');
+    // const [suggestVisible, setSuggestVisible] = React.useState(false);
+    // const [searchText, setSearchText] = React.useState('');
 
     const [driverStatus, setDriverStatus] = useState<string | null>("REST");
     const [etaTime, setEtaTime] = useState<number | null>(null);
@@ -100,6 +100,9 @@ export default function BusDriverScreen() {
 
   return (
     <View style={styles.page}>
+      <View style={styles.searchBarContainer}>
+        <Text style={styles.appTitle}>VASBIA</Text>
+      </View>
       {/* <View style={styles.searchBarContainer}>
         <SearchBar
           value={searchText}
@@ -140,7 +143,7 @@ export default function BusDriverScreen() {
       </MapView>
 
       <View style={styles.buttonContainer}>
-        <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} />
+        {/* <RatingButton onPressButton = {() => { console.log('RatingBIcon pressed'); setModalVisible(true); }} /> */}
         <NotificationButton  onPressButton = {() => navigation.navigate('Notification')} />
         <AccidentButton
           onPress={async () => {
@@ -176,8 +179,8 @@ export default function BusDriverScreen() {
       <View style={styles.bottomBox}>
         <Text style={styles.tableTitle}>🚌 Monitor</Text>
 
-        <Text style={styles.driverStatus}>{driverStatus}</Text>
-        <Text style={{ textAlign: "center", marginBottom: 8, color: "#444" }}>
+        <Text style={driverStatus === 'REST' ? styles.driverStatusInActive : driverStatus === "LATE" ? styles.driverStatusLate : driverStatus === "EARLY" ? styles.driverStatusEarly : styles.driverStatusActive}>{driverStatus}</Text>
+        <Text style={{ textAlign: "center", marginBottom: 8, color: "#444", fontFamily: 'Inter_24pt-Regular' }}>
           {etaTime ? "by est. " + etaTime + " s" : ""}
         </Text>
 
@@ -189,7 +192,7 @@ export default function BusDriverScreen() {
         <View style={styles.tableContainer}>
           <View style={styles.tableHeader}>
             <Text style={[styles.cell, styles.headerCell]}>Bus Stop</Text>
-            <Text style={[styles.cell, styles.headerCell]}>ScheduleTime</Text>
+            <Text style={[styles.cell, styles.headerCell]}>Schedule Time</Text>
           </View>
 
           {driverData.busStops ? (
@@ -200,7 +203,7 @@ export default function BusDriverScreen() {
               </View>
             ))
           ) : (
-            <Text style={{ textAlign: "center", padding: 10, color: "#888" }}>No active schedule</Text>
+            <Text style={{ textAlign: "center", padding: 10, color: "#888", fontFamily: 'Inter_24pt-Regular' }}>No active schedule</Text>
           )}
         </View>
         </ScrollView>
@@ -211,7 +214,7 @@ export default function BusDriverScreen() {
     </View>
   );
 }
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const {height: screenHeight } = Dimensions.get('window');
 // const { width: screenWidth } = Dimensions.get('window');
 const styles = StyleSheet.create({
   appTitle:{
@@ -219,7 +222,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontFamily: 'Inter_24pt-SemiBold',
     alignSelf: 'center',
-    color: 'black',
+    color: '#000',
   },
   searchBarContainer: {
     position: 'absolute',
@@ -294,7 +297,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: screenHeight / 3,
+    height: screenHeight / 2.5,
     overflow: "hidden",
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 20,
@@ -310,7 +313,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
 
-  tableTitle: { fontSize: 20, fontWeight: "700", textAlign: "center", marginBottom: 12, color: 'black' },
+  tableTitle: { fontSize: 20, textAlign: "center", marginBottom: 12, color: 'black', fontFamily: 'Inter_24pt-SemiBold' },
   tableContainer: {
     width: "100%",
     marginTop: 10,
@@ -319,33 +322,71 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: "hidden",
   },
-  tableHeader: { flexDirection: "row", backgroundColor: "#f0f0f0", color: 'black' },
-  tableRow: { flexDirection: "row", backgroundColor: "#fff", color: 'black' },
-  cell: { flex: 1, paddingVertical: 8, textAlign: "center", borderWidth: 1, borderColor: "#ccc", fontSize: 16 },
-  headerCell: { fontWeight: "700" },
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#f0f0f0",
+    color: 'black'
+  },
+  tableRow: {
+    flexDirection: "row",
+    backgroundColor: "#fff",
+    color: 'black'
+  },
+  cell: {
+    flex: 1,
+    paddingVertical: 8,
+    textAlign: "center",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    fontSize: 16,
+    color:'#000',
+    fontFamily: 'Inter_24pt-Medium',
+  },
+  headerCell: { fontFamily: 'Inter_24pt-SemiBold', color: '#000' },
   highlightCell: { backgroundColor: "#D6E4FF", borderColor: "#2D6EFF" },
   scrollArea: {
     flexGrow: 0,
     maxHeight: '75%', // 👈 ตารางจะสูงได้ไม่เกิน 75% ของกล่อง
     width: '100%',
   },
-  driverStatus: {
-  fontSize: 18,
-  fontWeight: "bold",
-  color: "#333",
-  textAlign: "center",
-  marginBottom: 10,
+  driverStatusActive: {
+    fontSize: 18,
+    fontFamily: 'Inter_24pt-Bold',
+    color: "green",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  driverStatusInActive: {
+    fontSize: 18,
+    fontFamily: 'Inter_24pt-Bold',
+    color: "red",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  driverStatusLate: {
+    fontSize: 18,
+    fontFamily: 'Inter_24pt-Bold',
+    color: "orange",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  driverStatusEarly: {
+    fontSize: 18,
+    fontFamily: 'Inter_24pt-Bold',
+    color: "blue",
+    textAlign: "center",
+    marginBottom: 10,
   },
   firstRowHighlight: {
-    backgroundColor: '#FFF6D0',
+    backgroundColor: '#rgba(45,110,255,0.8)',
     borderTopWidth: 2,
     borderBottomWidth: 2,
-    borderColor: '#FFD700',
+    borderColor: '#113eFF',
   },
   firstRowCell: {
-    backgroundColor: '#FFEAB6',
-    fontWeight: 'bold',
-    color: '#000',
+    backgroundColor: '#rgba(45,110,255,0.8)',
+    fontFamily: 'Inter_24pt-Bold',
+    color: '#fff',
   },
 
   normalCell: {

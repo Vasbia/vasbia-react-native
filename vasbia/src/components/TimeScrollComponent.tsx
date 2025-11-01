@@ -109,7 +109,8 @@ const TimeScrollComponent: React.FC<Props> = ({
       {selectedTime && (
         <View style={styles.adjustContainer}>
           <Text style={styles.selectedTimeLabel}>
-            เลือก: {selectedTime} ({minutesBefore} นาที ก่อนหน้า)
+            Selecting schedule: {selectedTime} {'\n'}
+            (Announce {minutesBefore} min before)
           </Text>
 
           <View style={styles.adjustRow}>
@@ -119,7 +120,7 @@ const TimeScrollComponent: React.FC<Props> = ({
               </TouchableOpacity>
             ))}
 
-            <Text style={styles.minuteLabel}>ก่อน {minutesBefore} นาที</Text>
+            <Text style={styles.minuteLabel}>{minutesBefore} min before</Text>
 
             {[1, 5, 10].map(v => (
               <TouchableOpacity key={v} style={styles.adjustButton} onPress={() => adjustMinutes(v)}>
@@ -129,7 +130,7 @@ const TimeScrollComponent: React.FC<Props> = ({
           </View>
 
           <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-            <Text style={styles.confirmText}>ยืนยันการแจ้งเตือน</Text>
+            <Text style={styles.confirmText}>Confirm</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -140,10 +141,10 @@ const TimeScrollComponent: React.FC<Props> = ({
 const GAP = 8;
 
 const styles = StyleSheet.create({
-  container: { marginVertical: 16 },
+  container: { marginVertical: 16, marginBottom: 64 },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_24pt-SemiBold',
     color: '#333',
     marginBottom: 12,
     paddingHorizontal: 16,
@@ -158,11 +159,11 @@ const styles = StyleSheet.create({
   },
 
   chip: {
-    backgroundColor: '#000',
+    backgroundColor: '#2d6eff',
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 10,
-    minWidth: 70,
+    minWidth: 100,
     alignItems: 'center',
     justifyContent: 'center',
 
@@ -177,9 +178,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#E6E6E6',
   },
 
-  chipText: { fontSize: 15, fontWeight: '700', color: '#fff' },
+  chipText: { fontSize: 16, fontFamily: 'Inter_24pt-Medium', color: '#fff' },
   chipTextSelected: { color: '#fff' },
-  chipTextPast: { fontSize: 15, fontWeight: '700', color: '#8A8A8A' },
+  chipTextPast: { fontSize: 16, fontFamily: 'Inter_24pt-Medium', color: '#8A8A8A' },
 
   // Adjust bar
   adjustContainer: {
@@ -191,7 +192,7 @@ const styles = StyleSheet.create({
   },
   selectedTimeLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontFamily: 'Inter_24pt-SemiBold',
     marginBottom: 8,
     textAlign: 'center',
     color: '#333',
@@ -206,14 +207,14 @@ const styles = StyleSheet.create({
   adjustButton: {
     backgroundColor: '#fff',
     borderRadius: 6,
-    paddingHorizontal: 10,
+    paddingHorizontal: 4,
     paddingVertical: 6,
     marginHorizontal: 4,
     borderWidth: 1,
     borderColor: '#ccc',
   },
-  adjustText: { fontSize: 14, fontWeight: '600' },
-  minuteLabel: { fontSize: 14, fontWeight: '600', color: '#333', marginHorizontal: 8 },
+  adjustText: { fontSize: 12, fontFamily: 'Inter_24pt-SemiBold', color: '#333' },
+  minuteLabel: { fontSize: 14, fontFamily: 'Inter_24pt-Medium', color: '#333', marginHorizontal: 4 },
 
   confirmButton: {
     backgroundColor: '#2D6EFF',
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
   },
-  confirmText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
+  confirmText: { color: '#fff', fontFamily: 'Inter_24pt-SemiBold', fontSize: 14 },
 });
 
 export default TimeScrollComponent;
