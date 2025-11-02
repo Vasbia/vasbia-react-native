@@ -94,7 +94,7 @@ export default function LoginScreen() {
           }
           
         setSuccessMessage("Login successful!");
-        navigation.replace('Map');
+        navigation.replace('BusDriver');
 
         }}>
         <Text style={styles.buttonText}>Sign in</Text>

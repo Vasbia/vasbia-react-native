@@ -8,7 +8,7 @@ import NotificationScreen from './src/screens/NotificationScreen';
 import FullNotificationInfoScreen from './src/screens/FullNotificationInfoScreen';
 import SearchScreen from './src/screens/SearchScreen';
 import AccidentScreen from './src/screens/AccidentScreen';
-
+import BusDriverScreen from './src/screens/BusDriverScreen';
 
 import type { Notification } from './src/types/Notification';
 
@@ -23,18 +23,20 @@ export type StackParamList = {
   FullNotificationInfo: { notification: Notification };
   Search: undefined;
   Accident: undefined;
+  BusDriver: undefined;
 };
 
 export default function App() {
   return (
     <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={isLoggedIn ? 'Map' : 'Login'}>
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={isLoggedIn ? 'BusDriver' : 'Login'}>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Map" component={MapScreen} />
           <Stack.Screen name="Notification" component={NotificationScreen} />
           <Stack.Screen name="FullNotificationInfo" component={FullNotificationInfoScreen} />
           <Stack.Screen name="Search" component={SearchScreen} />
           <Stack.Screen name="Accident" component={AccidentScreen} />
+          <Stack.Screen name="BusDriver" component={BusDriverScreen} />
 
         </Stack.Navigator>
     </NavigationContainer>

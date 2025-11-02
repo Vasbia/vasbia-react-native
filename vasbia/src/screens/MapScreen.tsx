@@ -42,7 +42,7 @@ export default function MapScreen() {
         <SearchBar
           value={searchText}
           onChangeText={setSearchText}
-          placeholder="Search..."
+          placeholder="..."
           style={styles.functionalSearchBar}
           inputStyle={styles.functionalSearchInput}
         />
