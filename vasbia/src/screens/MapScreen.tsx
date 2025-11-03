@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useRef } from 'react';
+import { useState, useRef , useEffect} from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { StackParamList } from '../../App';
@@ -7,7 +7,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MapView, Camera, MarkerView, CameraRef } from '@maplibre/maplibre-react-native';
 import { useFlyTo } from '../map/useFlyTo';
 import useUserLocation from '../map/UserLocation';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 // import Geolocation from '@react-native-community/geolocation';
 import SearchBar from '../components/SearchBarMainPage';
 import ToggleModeButton from '../components/ToggleModeButton';
@@ -65,6 +65,29 @@ export default function MapScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   // const [modalVisible, setModalVisible] = React.useState(false);
   const [suggestVisible, setSuggestVisible] = React.useState(false);
+
+  const route = useRoute();
+  const { search_location } = (route.params ?? {}) as { search_location?: { id: number; latitude: number; longitude: number, type: string } };
+
+  useEffect(() => {
+    if (initialSet && search_location) {
+      if (search_location.type === 'landmark') {
+        setMode('landmark');
+        setSelected({ type: 'landmark', id: search_location.id });
+        flyTo([search_location.longitude, search_location.latitude], 1000, 17);
+      }
+      else if (search_location.type === 'bus_stop') {
+        setMode('bus');
+        setSelected({ type: 'busStop', id: search_location.id });
+        flyTo([search_location.longitude, search_location.latitude], 1000, 17);
+      }
+      else if (search_location.type === 'bus_route') {
+        setMode('bus');
+        setSelected({ type: 'busRoute', id: search_location.id });
+        flyTo([search_location.longitude, search_location.latitude], 1000, 15);
+      }
+    }
+  }, [initialSet, search_location]);
 
   return (
     <View style={styles.page}>

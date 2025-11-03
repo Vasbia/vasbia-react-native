@@ -14,19 +14,35 @@ import type { StackParamList } from '../../App';
 import BackIcon from '../assets/icons/BackIcon';
 import SearchBar from '../components/SearchBar';
 import Config from 'react-native-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SearchScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
   const [query, setQuery] = React.useState('');
-  const [recent, setRecent] = React.useState([
-    'อาคาร 12 ชั้น',
-    'โรงอาหาร A',
-    'อาคาร CCA',
-  ]);
-  const [suggestions, setSuggestions] = React.useState<string[]>([]);
+  const [recent, setRecent] = React.useState<string[]>([]);
+  const [suggestions, setSuggestions] = React.useState<
+    { name: string; id: number; lon: number; lat: number; type: string }[]
+  >([]);
   const [loading, setLoading] = React.useState(false);
 
-  // 🧠 Fetch suggestions when user types
+  // ✅ โหลด recent search จาก AsyncStorage
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const saved = await AsyncStorage.getItem('recentSearch');
+        if (saved) setRecent(JSON.parse(saved));
+      } catch (error) {
+        console.error('❌ Error loading recent search:', error);
+      }
+    })();
+  }, []);
+
+  React.useEffect(() => {
+    AsyncStorage.setItem('recentSearch', JSON.stringify(recent)).catch((error) =>
+      console.error('❌ Error saving recent search:', error)
+    );
+  }, [recent]);
+
   React.useEffect(() => {
     if (query.trim() === '') {
       setSuggestions([]);
@@ -36,29 +52,46 @@ export default function SearchScreen() {
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        // Example API: change this to your actual endpoint
-        const response = await fetch(`${Config.BASE_API_URL}/api/search?query=${encodeURIComponent(query)}`);
+        const response = await fetch(
+          `${Config.BASE_API_URL}/api/search/substring?keyword=${encodeURIComponent(query)}`
+        );
         const data = await response.json();
-        // Assume your API returns an array of matching results
-        setSuggestions(data.slice(0, 3)); // only show 3
+
+        const matches = data.matches.slice(0, 3).map((item: any) => ({
+          name: item.name,
+          id: item.id,
+          lon: item.longitude,
+          lat: item.latitude,
+          type: item.type,
+        }));
+
+        setSuggestions(matches);
       } catch (error) {
         console.error('❌ Error fetching suggestions:', error);
         setSuggestions([]);
       } finally {
         setLoading(false);
       }
-    }, 400); // small debounce
+    }, 400); // debounce
 
     return () => clearTimeout(timer);
   }, [query]);
 
-  // 🧩 When submitting a search (press enter)
-  const handleSubmit = (text: string) => {
-    setRecent(prev => {
-      const updated = prev.filter(item => item !== text);
-      return [text, ...updated];
+  const handleSubmit = (
+    text: string,
+    id?: number,
+    latitude?: number,
+    longitude?: number,
+    type?: string
+  ) => {
+    setRecent((prev) => {
+      const updated = prev.filter((item) => item !== text);
+      const newList = [text, ...updated].slice(0, 10); // จำกัดแค่ 10 รายการ
+      return newList;
     });
+
     setQuery('');
+    (navigation as any).navigate('Map', { search_location: { id, latitude, longitude, type } });
   };
 
   return (
@@ -96,11 +129,13 @@ export default function SearchScreen() {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.resultRow}
-                  onPress={() => handleSubmit(item)}
+                  onPress={() =>
+                    handleSubmit(item.name, item.id, item.lat, item.lon, item.type)
+                  }
                   activeOpacity={0.7}
                 >
                   <View style={[styles.iconCircle, { backgroundColor: '#2D6EFF' }]} />
-                  <Text style={styles.resultText}>{item}</Text>
+                  <Text style={styles.resultText}>{item.name}</Text>
                 </TouchableOpacity>
               )}
             />
@@ -123,7 +158,7 @@ export default function SearchScreen() {
             <View style={styles.iconCircle} />
             <Text style={styles.resultText}>{item}</Text>
             <TouchableOpacity
-              onPress={() => setRecent(prev => prev.filter(r => r !== item))}
+              onPress={() => setRecent((prev) => prev.filter((r) => r !== item))}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Text style={styles.removeText}>x</Text>
@@ -135,7 +170,7 @@ export default function SearchScreen() {
   );
 }
 
-const {width: screenWidth} = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -156,23 +191,15 @@ const styles = StyleSheet.create({
     color: '#000',
     marginTop: 64,
   },
-  searchBar: {
-    padding: 8,
-  },
-  inputStyle: {
-    fontSize: 16,
-    fontFamily: 'Inter_24pt-Regular',
-    color: '#222',
-  },
+  searchBar: { padding: 8 },
+  inputStyle: { fontSize: 16, color: '#222' },
   sectionTitle: {
     fontSize: 16,
-    fontFamily: 'Inter_24pt-SemiBold',
+    fontWeight: '700',
     color: '#000',
     opacity: 0.8,
   },
-  listContainer: {
-    marginTop: 16,
-  },
+  listContainer: { marginTop: 16 },
   resultRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -187,15 +214,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#2d6eff',
     marginRight: 12,
   },
-  resultText: {
-    flex: 1,
-    fontSize: 18,
-    fontFamily: 'Inter_24pt-Regular',
-    color: '#626262',
-  },
-  removeText: {
-    fontSize: 18,
-    color: '#626262',
-    marginLeft: 8,
-  },
+  resultText: { flex: 1, fontSize: 18, color: '#626262' },
+  removeText: { fontSize: 18, color: '#626262', marginLeft: 8 },
 });
