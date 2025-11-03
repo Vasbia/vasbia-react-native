@@ -46,13 +46,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         position: 'absolute',
         width: '100%',
-        height: '8%',
+        height: '10%',
         backgroundColor: '#F8D7DA',
         top: 50,
         left: 20,
-        paddingHorizontal: 20,
-        paddingVertical: 0,
-        marginTop:10,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
         borderRadius: 10,
         zIndex: 1000,
         borderColor: '#F5C6CB',
@@ -72,7 +71,7 @@ const styles = StyleSheet.create({
 
     titleToast:{
         fontSize: 14,
-        fontFamily: 'Inter_24pt-Medium',
+        fontFamily: 'Inter_24pt-SemiBold',
         color: 'black',
     },
     subTitleToast:{
@@ -82,7 +81,7 @@ const styles = StyleSheet.create({
     },
     closeButton:{
         fontSize: 18,
-        fontWeight: 'bold',
+        fontFamily: 'Inter_24pt-Bold',
         color: 'black',
     },
 

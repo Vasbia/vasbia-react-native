@@ -68,9 +68,11 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     paddingLeft: 16,
+    paddingVertical: 4,
   },
   scrollContent: {
     paddingRight: 16,
+    paddingVertical: 4,
   },
   busRouteCard: {
     backgroundColor: '#fff',
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Inter_24pt-Medium',
     color: '#000',
-    lineHeight: 22,
+    // lineHeight: 22,
   },
   selectedBusRouteCard: {
     backgroundColor: '#2d6eff',

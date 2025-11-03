@@ -148,15 +148,15 @@ export default function MapScreen() {
         <NotificationButton onPressButton = {() => navigation.navigate('Notification')} badgeCount={unreadCount}/>
       </View>
 
-      <TouchableOpacity onPress={() => {setSuggestVisible(true)}} style={styles.suggestButton}>
+      <TouchableOpacity onPress={() => {setSuggestVisible(true);}} style={styles.suggestButton}>
         <SuggestionBIcon />
       </TouchableOpacity>
 
 
-      <SuggestBottomSheet 
-        visible={suggestVisible} 
-        setVisible={setSuggestVisible} 
-        setSelected={setSelected} 
+      <SuggestBottomSheet
+        visible={suggestVisible}
+        setVisible={setSuggestVisible}
+        setSelected={setSelected}
         flyTo={flyTo}
         setMode={setMode}
         location={location}

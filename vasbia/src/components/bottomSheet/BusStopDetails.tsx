@@ -1,23 +1,23 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import BottomSheetWithHeader from "./BottomSheetWithHeader";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { StackParamList } from "../../../App";
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import BottomSheetWithHeader from './BottomSheetWithHeader';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { StackParamList } from '../../../App';
 
 type BusStopDetails = {
   id: number;
   busStopName: string;
-  subDetails?: string; 
-  routes?: string[];          
+  subDetails?: string;
+  routes?: string[];
 };
 
 export default function BusStopDetails({ data }: { data: BusStopDetails }) {
-  if (!data) return null;
+  if (!data) {return null;}
 
   const navigation = useNavigation<NativeStackNavigationProp<StackParamList>>();
-  
-  const header = "ป้ายจอดรถ : " + data.busStopName;
+
+  const header = 'Bus Stop: ' + data.busStopName;
   const subHeader = data.subDetails;
 
   return (
@@ -34,7 +34,7 @@ export default function BusStopDetails({ data }: { data: BusStopDetails }) {
             {subHeader}
           </Text>
         </View>
-        
+
         <TouchableOpacity onPress={() => navigation.navigate('BusStopTimeTable', {
           busStopId: data.id,
           busStopName: data.busStopName,
@@ -51,28 +51,28 @@ export default function BusStopDetails({ data }: { data: BusStopDetails }) {
   );
 }
 
-const styles = StyleSheet.create({  
+const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
   },
   headerText: {
     fontSize: 20,
-    fontFamily: "Inter_24pt-Bold",
-    color: "#000"
+    fontFamily: 'Inter_24pt-Bold',
+    color: '#000',
   },
   subHeaderText: {
-    fontWeight: "medium",
-    color: "#000"
+    fontWeight: 'medium',
+    color: '#000',
   },
   tableButton : {
     paddingBottom:12,
   },
   timeTable: {
-    fontWeight: "bold", 
-    fontSize: 16, 
-    alignSelf: "center", 
-    color: "#fff",
-    backgroundColor: "#2d6eff",
+    fontWeight: 'bold',
+    fontSize: 16,
+    alignSelf: 'center',
+    color: '#fff',
+    backgroundColor: '#2d6eff',
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 10,
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   description: {
-    fontFamily: "Inter_24pt-Regular",
-    color: "#000"
+    fontFamily: 'Inter_24pt-Regular',
+    color: '#000',
   },
 });

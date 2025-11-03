@@ -8,6 +8,9 @@ import TimeScrollComponent from '../components/TimeScrollComponent';
 import BackIcon from '../assets/icons/BackIcon';
 import { Dimensions } from 'react-native';
 import Config from 'react-native-config';
+import ToastError from '../components/ToastError';
+import ToastSuccess from '../components/ToastSuccess';
+// import { getBusRouteColor } from '../map/BusRouteColorHelper';
 // import { RouteNames } from '../map/RenderBusRoute';
 // import { Line } from 'react-native-svg';
 
@@ -16,7 +19,7 @@ interface RouteData {
   busRoute: string;
   stopRange: number[];
   schedules: { time: string; busId: number }[];
-  pastSchedules?: { time: string; busId: number }[]; 
+  pastSchedules?: { time: string; busId: number }[];
 }
 
 const RouteInit: RouteData[] = [
@@ -30,13 +33,17 @@ const BusStopTimeTableScreen = () => {
   const [routes, setRoutes] = useState<RouteData[]>(RouteInit);
   const [selectedRouteId, setSelectedRouteId] = React.useState<number>(1); // Default to first route
 
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const route = useRoute<RouteProp<StackParamList, 'BusStopTimeTable'>>();
   const { busStopId, busStopName } = route.params;
 
   // ============================ Load schedule of this stop from API ===============================
   React.useEffect(() => {
     setRoutes(RouteInit);
-    
+
     fetch(`${Config.BASE_API_URL}/api/busstop/getBusShedule?busId=${busStopId}`)
       .then((response) => {
         if (!response.ok) {
@@ -53,11 +60,11 @@ const BusStopTimeTableScreen = () => {
                 ...route,
                 schedules: data.busScheduleData.map((item: any) => ({
                   time: item.arriveTime,
-                  busId: item.busId
+                  busId: item.busId,
                 })),
                pastSchedules: (data.busScheduleDataPast || []).map((item: any) => ({
                  time: item.arriveTime,
-                 busId: item.busId
+                 busId: item.busId,
                })),
               };
             }
@@ -81,6 +88,17 @@ const BusStopTimeTableScreen = () => {
 
   return (
     <View style={styles.container}>
+      {showSuccess && (
+        <View style={{ position: 'absolute', top: 50, left: 0, right: 0, zIndex: 100, alignItems: 'center' }}>
+          <ToastSuccess toastMessage={successMsg} onHide={() => setShowSuccess(false)} />
+        </View>
+      )}
+      {showError && (
+        <View style={{ position: 'absolute', top: 50, left: 0, right: 0, zIndex: 100, alignItems: 'center' }}>
+          <ToastError toastMessage={errorMsg} onHide={() => setShowError(false)} />
+        </View>
+      )}
+
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <BackIcon size={40} color="#000" />
@@ -101,6 +119,8 @@ const BusStopTimeTableScreen = () => {
           pastSchedules={[...(selectedRoute?.pastSchedules || [])].sort((a, b) => (a.time > b.time ? 1 : -1))}
           title={`Time: ${selectedRoute?.busRoute || ''}`}
           busStopId={busStopId}
+          onSuccess={(msg) => { setSuccessMsg(msg); setShowSuccess(true); }}
+          onError={(msg) => { setErrorMsg(msg); setShowError(true); }}
         />
 
       </ScrollView>
@@ -159,14 +179,14 @@ const styles = StyleSheet.create({
   },
   headerCell: {
     flex: 1,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_24pt-SemiBold',
     fontSize: 14,
     color: '#495057',
     textAlign: 'center',
   },
   headerCellDestination: {
     flex: 2,
-    fontWeight: 'bold',
+    fontFamily: 'Inter_24pt-SemiBold',
     fontSize: 14,
     color: '#495057',
     textAlign: 'center',
